@@ -4,859 +4,363 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Backlog Reborn — Painel Executivo</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --teal: #00C9B7;
-    --teal-dark: #00A89A;
-    --navy: #0A1F3F;
-    --navy-light: #132D54;
-    --lime: #C5D93E;
-    --lime-soft: #D4E45A;
-    --white: #FFFFFF;
-    --off-white: #F7F8FC;
-    --gray-50: #F9FAFB;
-    --gray-100: #F3F4F6;
-    --gray-200: #E5E7EB;
-    --gray-300: #D1D5DB;
-    --gray-400: #9CA3AF;
-    --gray-500: #6B7280;
-    --gray-600: #4B5563;
-    --gray-700: #374151;
-    --gray-800: #1F2937;
-    --red: #EF4444;
-    --red-bg: #FEF2F2;
-    --red-border: #FECACA;
-    --amber: #F59E0B;
-    --amber-bg: #FFFBEB;
-    --amber-border: #FDE68A;
-    --blue: #3B82F6;
-    --blue-bg: #EFF6FF;
-    --blue-border: #BFDBFE;
-    --font-display: 'Plus Jakarta Sans', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 12px rgba(10,31,63,0.08);
-    --shadow-lg: 0 8px 30px rgba(10,31,63,0.12);
-    --shadow-card: 0 2px 8px rgba(10,31,63,0.06);
-    --radius: 10px;
-    --radius-lg: 14px;
-  }
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --teal:#00C9B7;--teal-d:#009E90;--navy:#0A1F3F;--navy-l:#132D54;
+  --lime:#C5D93E;--white:#FFF;--off:#F4F6FA;
+  --g50:#F9FAFB;--g100:#F3F4F6;--g200:#E5E7EB;--g300:#D1D5DB;
+  --g400:#9CA3AF;--g500:#6B7280;--g600:#4B5563;--g700:#374151;--g800:#1F2937;
+  --red:#EF4444;--red-bg:#FEF2F2;--red-b:#FECACA;
+  --amber:#F59E0B;--amber-bg:#FFFBEB;--amber-b:#FDE68A;
+  --blue:#3B82F6;--blue-bg:#EFF6FF;--blue-b:#BFDBFE;
+  --green:#10B981;--purple:#8B5CF6;--orange:#F97316;--orange-bg:#FFF7ED;--orange-b:#FED7AA;
+  --font-d:'Plus Jakarta Sans',sans-serif;
+  --font-b:'DM Sans',sans-serif;
+  --rad:10px;--rad-sm:6px;
+  --shadow-md:0 4px 16px rgba(10,31,63,.1);
+  --shadow-drag:0 12px 36px rgba(10,31,63,.18);
+}
+html{font-size:14px}
+body{font-family:var(--font-b);background:var(--off);color:var(--g700);min-height:100vh;overflow-x:hidden}
+.hdr{background:var(--navy);position:sticky;top:0;z-index:200}
+.hdr-in{max-width:1900px;margin:0 auto;padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.7rem}
+.brand-bar{width:4px;height:24px;background:var(--teal);border-radius:2px}
+.brand h1{font-family:var(--font-d);font-size:1rem;font-weight:800;color:var(--white);letter-spacing:-.01em}
+.brand h1 span{color:var(--teal);font-weight:600}
+.hdr-right{display:flex;align-items:center;gap:.6rem}
+.btn{padding:.5rem 1rem;border-radius:var(--rad-sm);font-family:var(--font-b);font-weight:600;font-size:.75rem;cursor:pointer;transition:all .2s;border:none;letter-spacing:.02em}
+.btn-primary{background:var(--teal);color:var(--navy)}.btn-primary:hover{background:var(--lime)}
+.btn-ghost{background:transparent;color:var(--g400);border:1px solid var(--g600)}.btn-ghost:hover{color:var(--white);border-color:var(--g400)}
+.btn-add{background:var(--lime);color:var(--navy);font-weight:700}.btn-add:hover{background:var(--teal)}
+.stats{background:var(--white);border-bottom:1px solid var(--g200)}
+.stats-in{max-width:1900px;margin:0 auto;padding:.65rem 1.5rem;display:flex;align-items:center;gap:1.4rem;overflow-x:auto}
+.stat{display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+.stat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.stat .sl{font-size:.7rem;color:var(--g500);font-weight:500}
+.stat .sc{font-family:var(--font-d);font-weight:800;font-size:.88rem;color:var(--g800)}
+.stat-div{width:1px;height:20px;background:var(--g200);flex-shrink:0}
+.filters{background:var(--white);border-bottom:1px solid var(--g200);position:sticky;top:50px;z-index:150}
+.filters-in{max-width:1900px;margin:0 auto;padding:.55rem 1.5rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.f-label{font-size:.66rem;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-right:.1rem}
+.f-sep{width:1px;height:20px;background:var(--g200);margin:0 .35rem;flex-shrink:0}
+.chip{padding:.25rem .6rem;border-radius:14px;font-size:.68rem;font-weight:600;border:1.5px solid var(--g200);background:var(--white);color:var(--g600);cursor:pointer;transition:all .18s;user-select:none;white-space:nowrap}
+.chip:hover{border-color:var(--teal);color:var(--teal-d)}
+.chip.on{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.chip.on-teal{background:var(--teal);color:var(--navy);border-color:var(--teal)}
+.label-toggle{display:flex;align-items:center;gap:.3rem;cursor:pointer;padding:.25rem .6rem;border-radius:14px;font-size:.68rem;font-weight:600;color:var(--teal-d);border:1.5px solid var(--teal);background:rgba(0,201,183,.06);transition:all .2s;user-select:none}
+.label-toggle:hover{background:rgba(0,201,183,.12)}
+.label-toggle .arrow{transition:transform .25s;display:inline-block;font-size:.6rem}
+.label-toggle.open .arrow{transform:rotate(180deg)}
+.label-drawer{display:flex;gap:.3rem;flex-wrap:wrap;max-height:0;overflow:hidden;transition:max-height .3s ease,opacity .3s ease,padding .3s ease;opacity:0;padding:0}
+.label-drawer.open{max-height:200px;opacity:1;padding:.4rem 0}
+.search-box{display:flex;align-items:center;gap:.4rem;margin-left:auto}
+.search-box input{padding:.3rem .65rem;border-radius:14px;border:1.5px solid var(--g200);font-size:.7rem;font-family:var(--font-b);color:var(--g700);background:var(--g50);width:170px;outline:none;transition:border .2s}
+.search-box input:focus{border-color:var(--teal)}
+.search-box input::placeholder{color:var(--g400)}
+.board{max-width:1900px;margin:0 auto;padding:.85rem 1.5rem 5rem;display:flex;gap:.75rem;overflow-x:auto;min-height:calc(100vh - 155px);align-items:flex-start}
+.col{min-width:52px;max-width:290px;flex:1 0 260px;background:var(--g50);border-radius:var(--rad);border:1px solid var(--g200);display:flex;flex-direction:column;max-height:calc(100vh - 165px);transition:min-width .3s ease,flex .3s ease,max-width .3s ease}
+.col.collapsed{min-width:52px;max-width:52px;flex:0 0 52px;cursor:pointer;overflow:hidden}
+.col.col-dragging{opacity:.5;transform:scale(.97)}
+.col-head{padding:.65rem .75rem .5rem;display:flex;align-items:center;gap:.45rem;border-bottom:1px solid var(--g200);position:sticky;top:0;background:var(--g50);border-radius:var(--rad) var(--rad) 0 0;z-index:10;cursor:grab}
+.col-head:active{cursor:grabbing}
+.col-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.col-title{font-family:var(--font-d);font-weight:700;font-size:.74rem;color:var(--g800);letter-spacing:-.01em;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.col-count{font-family:var(--font-d);font-weight:800;font-size:.66rem;color:var(--white);background:var(--g400);padding:.08rem .4rem;border-radius:10px;min-width:20px;text-align:center;flex-shrink:0}
+.col-toggle{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--g200);background:var(--white);color:var(--g500);cursor:pointer;font-size:.65rem;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.col-toggle:hover{border-color:var(--teal);color:var(--teal-d);background:rgba(0,201,183,.06)}
+.col.collapsed .col-head{flex-direction:column;padding:.5rem .25rem;gap:.5rem;border-bottom:none}
+.col.collapsed .col-title{writing-mode:vertical-lr;text-orientation:mixed;transform:rotate(180deg);font-size:.7rem;overflow:visible}
+.col.collapsed .col-cards{display:none}
+.col.collapsed .col-toggle{transform:rotate(180deg)}
+.col.collapsed .col-count{margin:0}
+.col-cards{padding:.4rem;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.45rem;min-height:50px;transition:background .2s}
+.col-cards.drag-over{background:rgba(0,201,183,.08);border-radius:0 0 var(--rad) var(--rad)}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+.card{background:var(--white);border:1px solid var(--g200);border-radius:var(--rad-sm);padding:.65rem .75rem;cursor:grab;transition:all .2s;position:relative}
+.card:active{cursor:grabbing}
+.card:hover{box-shadow:var(--shadow-md);border-color:var(--g300)}
+.card.dragging{opacity:.35;transform:scale(.96)}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:.4rem;margin-bottom:.35rem}
+.card-id{font-size:.6rem;font-weight:700;color:var(--g400);font-family:'SF Mono','Fira Code',monospace;letter-spacing:.02em}
+.card-top-right{display:flex;align-items:center;gap:.3rem}
+.card-delete{width:18px;height:18px;border-radius:50%;border:none;background:transparent;color:var(--g300);cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center;transition:all .2s;opacity:0;flex-shrink:0}
+.card:hover .card-delete{opacity:1}
+.card-delete:hover{background:var(--red-bg);color:var(--red)}
+.prio{font-size:.56rem;font-weight:700;padding:.1rem .38rem;border-radius:3px;text-transform:uppercase;letter-spacing:.04em}
+.prio-urgente{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}
+.prio-importante{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}
+.prio-media{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
+.card-title{font-family:var(--font-d);font-weight:700;font-size:.74rem;color:var(--g800);line-height:1.35;margin-bottom:.3rem}
+.card-desc{font-size:.67rem;color:var(--g500);line-height:1.5;margin-bottom:.4rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-tags{display:flex;flex-wrap:wrap;gap:.18rem;margin-bottom:.4rem}
+.tag{font-size:.55rem;font-weight:500;color:var(--g500);background:var(--g100);padding:.08rem .35rem;border-radius:3px}
+.tag.tag-incident{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-b);font-weight:600}
+.card-progress{display:flex;align-items:center;gap:.3rem}
+.prog-dot{width:5px;height:5px;border-radius:50%}
+.prog-label{font-size:.6rem;color:var(--g400);font-weight:500}
+.dir-area{border-top:1px solid var(--g100);padding-top:.5rem;margin-top:.1rem;display:flex;align-items:center;gap:.22rem;flex-wrap:wrap}
+.dir-label{font-size:.58rem;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.04em;width:100%;margin-bottom:.15rem}
+.dir-btn{font-size:.58rem;font-weight:600;padding:.2rem .45rem;border-radius:4px;border:1.5px solid var(--g200);background:var(--white);color:var(--g500);cursor:pointer;transition:all .18s}
+.dir-btn:hover{border-color:var(--teal);color:var(--teal-d);background:#F0FDFB}
+.dir-btn.sel{color:var(--white)}
+.dir-btn.sel.d-manter{background:#059669;border-color:#059669}
+.dir-btn.sel.d-priorizar{background:var(--teal-d);border-color:var(--teal-d)}
+.dir-btn.sel.d-adiar{background:var(--amber);border-color:var(--amber);color:var(--g800)}
+.dir-btn.sel.d-cancelar{background:var(--red);border-color:var(--red)}
+.dir-btn.sel.d-reavaliar{background:var(--g600);border-color:var(--g600)}
+.drop-placeholder{border:2px dashed var(--teal);border-radius:var(--rad-sm);background:rgba(0,201,183,.04);min-height:40px}
+.col-drop-placeholder{min-width:260px;max-width:290px;flex:0 0 260px;border:2px dashed var(--teal);border-radius:var(--rad);background:rgba(0,201,183,.04);min-height:200px}
+.summary-bar{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--teal);padding:.55rem 1.5rem;z-index:200;transform:translateY(100%);transition:transform .3s ease}
+.summary-bar.visible{transform:translateY(0)}
+.summary-in{max-width:1900px;margin:0 auto;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.sum-item{display:flex;align-items:center;gap:.3rem}
+.sum-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sum-count{font-family:var(--font-d);font-weight:800;font-size:.95rem;color:var(--white)}
+.sum-label{font-size:.68rem;color:var(--g400);font-weight:500}
+.sum-sep{width:1px;height:18px;background:var(--g600);flex-shrink:0}
+.modal-overlay{position:fixed;inset:0;background:rgba(10,31,63,.5);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--white);border-radius:var(--rad);width:95%;max-width:560px;max-height:90vh;overflow-y:auto;padding:1.5rem;box-shadow:var(--shadow-drag);position:relative}
+.modal-close{position:absolute;top:.7rem;right:.7rem;width:26px;height:26px;border-radius:50%;border:none;background:var(--g100);color:var(--g500);cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:5}
+.modal-close:hover{background:var(--g200);color:var(--g800)}
+.form-title{font-family:var(--font-d);font-weight:800;font-size:1rem;color:var(--g800);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.form-title-badge{font-size:.65rem;font-weight:600;padding:.15rem .5rem;border-radius:10px;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
+.form-row{margin-bottom:.85rem}
+.form-label{display:block;font-size:.7rem;font-weight:600;color:var(--g600);margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.04em}
+.form-input,.form-select,.form-textarea{width:100%;padding:.45rem .65rem;border:1.5px solid var(--g200);border-radius:var(--rad-sm);font-family:var(--font-b);font-size:.8rem;color:var(--g700);background:var(--g50);outline:none;transition:border .2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--teal)}
+.form-textarea{min-height:70px;resize:vertical}
+.form-tags-wrap{display:flex;flex-wrap:wrap;gap:.3rem}
+.form-tag{padding:.25rem .55rem;border-radius:14px;font-size:.66rem;font-weight:600;border:1.5px solid var(--g200);background:var(--white);color:var(--g600);cursor:pointer;transition:all .18s;user-select:none}
+.form-tag.sel{background:var(--teal);color:var(--navy);border-color:var(--teal)}
+.form-actions{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.2rem;flex-wrap:wrap}
+.btn-cancel{background:var(--g100);color:var(--g600);border:1px solid var(--g200)}.btn-cancel:hover{background:var(--g200)}
+.btn-save{background:var(--teal);color:var(--navy);font-weight:700}.btn-save:hover{background:var(--lime)}
+.btn-del-modal{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b);margin-right:auto}.btn-del-modal:hover{background:var(--red);color:var(--white)}
+.col-cards::-webkit-scrollbar{width:4px}.col-cards::-webkit-scrollbar-track{background:transparent}.col-cards::-webkit-scrollbar-thumb{background:var(--g300);border-radius:4px}
+@media(max-width:900px){.board{flex-direction:column;align-items:stretch}.col,.col.collapsed{min-width:100%;max-width:100%;max-height:none;flex:1 0 auto}.col.collapsed .col-head{flex-direction:row}.col.collapsed .col-title{writing-mode:horizontal-tb;transform:none}.col.collapsed .col-cards{display:none}.hdr-in,.stats-in,.filters-in,.board{padding-left:1rem;padding-right:1rem}}
 
-  body {
-    font-family: var(--font-body);
-    background: var(--off-white);
-    color: var(--gray-700);
-    min-height: 100vh;
-  }
-
-  /* ── Header ── */
-  .header {
-    background: var(--navy);
-    padding: 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1.25rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .brand-icon {
-    width: 10px;
-    height: 28px;
-    background: var(--teal);
-    border-radius: 2px;
-  }
-  .brand h1 {
-    font-family: var(--font-display);
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--white);
-    letter-spacing: -0.02em;
-  }
-  .brand h1 span {
-    color: var(--teal);
-    font-weight: 600;
-  }
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .btn-export {
-    background: var(--teal);
-    color: var(--navy);
-    border: none;
-    padding: 0.55rem 1.25rem;
-    border-radius: 8px;
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-  }
-  .btn-export:hover { background: var(--lime); }
-  .btn-secondary {
-    background: transparent;
-    color: var(--gray-400);
-    border: 1px solid var(--gray-600);
-    padding: 0.55rem 1.25rem;
-    border-radius: 8px;
-    font-family: var(--font-body);
-    font-weight: 500;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-secondary:hover { color: var(--white); border-color: var(--gray-400); }
-
-  /* ── Stats Bar ── */
-  .stats-bar {
-    background: var(--white);
-    border-bottom: 1px solid var(--gray-200);
-    padding: 0;
-  }
-  .stats-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    overflow-x: auto;
-  }
-  .stat-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    white-space: nowrap;
-  }
-  .stat-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .stat-pill .stat-label {
-    font-size: 0.78rem;
-    color: var(--gray-500);
-    font-weight: 500;
-  }
-  .stat-pill .stat-count {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1rem;
-    color: var(--gray-800);
-  }
-  .stat-divider {
-    width: 1px;
-    height: 28px;
-    background: var(--gray-200);
-    flex-shrink: 0;
-  }
-
-  /* ── Filters ── */
-  .filters-bar {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1.25rem 2rem 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-  .filter-chip {
-    padding: 0.4rem 0.9rem;
-    border-radius: 20px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    border: 1.5px solid var(--gray-200);
-    background: var(--white);
-    color: var(--gray-600);
-    cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
-  }
-  .filter-chip:hover { border-color: var(--teal); color: var(--teal-dark); }
-  .filter-chip.active {
-    background: var(--navy);
-    color: var(--white);
-    border-color: var(--navy);
-  }
-  .filter-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--gray-400);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-right: 0.25rem;
-  }
-  .filter-separator {
-    width: 1px;
-    height: 24px;
-    background: var(--gray-200);
-    margin: 0 0.5rem;
-  }
-
-  /* ── Board ── */
-  .board {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1.25rem 2rem 3rem;
-  }
-
-  /* ── Bucket Section ── */
-  .bucket-section {
-    margin-bottom: 2rem;
-    animation: fadeUp 0.4s ease both;
-  }
-  .bucket-section:nth-child(2) { animation-delay: 0.06s; }
-  .bucket-section:nth-child(3) { animation-delay: 0.12s; }
-  .bucket-section:nth-child(4) { animation-delay: 0.18s; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .bucket-header {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    margin-bottom: 0.85rem;
-  }
-  .bucket-indicator {
-    width: 4px;
-    height: 22px;
-    border-radius: 2px;
-  }
-  .bucket-title {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--gray-800);
-    letter-spacing: -0.01em;
-  }
-  .bucket-count {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--white);
-    padding: 0.15rem 0.55rem;
-    border-radius: 10px;
-    margin-left: 0.25rem;
-  }
-
-  /* ── Cards Grid ── */
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 0.85rem;
-  }
-
-  /* ── Card ── */
-  .card {
-    background: var(--white);
-    border-radius: var(--radius);
-    border: 1px solid var(--gray-200);
-    padding: 1.1rem 1.25rem;
-    transition: all 0.25s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px;
-    height: 100%;
-    border-radius: 10px 0 0 10px;
-  }
-  .card:hover {
-    box-shadow: var(--shadow-md);
-    border-color: var(--gray-300);
-    transform: translateY(-1px);
-  }
-  .card.priority-urgente::before { background: var(--red); }
-  .card.priority-importante::before { background: var(--amber); }
-  .card.priority-media::before { background: var(--blue); }
-
-  .card-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 0.6rem;
-  }
-  .card-id {
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: var(--gray-400);
-    letter-spacing: 0.03em;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    flex-shrink: 0;
-  }
-  .priority-badge {
-    font-size: 0.65rem;
-    font-weight: 700;
-    padding: 0.18rem 0.55rem;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    flex-shrink: 0;
-  }
-  .priority-badge.urgente { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
-  .priority-badge.importante { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
-  .priority-badge.media { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
-
-  .card-title {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--gray-800);
-    line-height: 1.35;
-    margin-bottom: 0.45rem;
-    letter-spacing: -0.01em;
-  }
-  .card-desc {
-    font-size: 0.8rem;
-    color: var(--gray-500);
-    line-height: 1.55;
-    margin-bottom: 0.85rem;
-  }
-  .card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    margin-bottom: 0.9rem;
-  }
-  .tag {
-    font-size: 0.65rem;
-    font-weight: 500;
-    color: var(--gray-500);
-    background: var(--gray-100);
-    padding: 0.15rem 0.5rem;
-    border-radius: 4px;
-  }
-
-  /* ── Direction Selector ── */
-  .direction-area {
-    border-top: 1px solid var(--gray-100);
-    padding-top: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-  .direction-label {
-    font-size: 0.68rem;
-    font-weight: 600;
-    color: var(--gray-400);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-right: 0.2rem;
-  }
-  .direction-btn {
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.3rem 0.7rem;
-    border-radius: 6px;
-    border: 1.5px solid var(--gray-200);
-    background: var(--white);
-    color: var(--gray-500);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .direction-btn:hover {
-    border-color: var(--teal);
-    color: var(--teal-dark);
-    background: #F0FDFB;
-  }
-  .direction-btn.selected {
-    background: var(--navy);
-    color: var(--white);
-    border-color: var(--navy);
-  }
-  .direction-btn.selected.dir-manter { background: #059669; border-color: #059669; }
-  .direction-btn.selected.dir-priorizar { background: var(--teal-dark); border-color: var(--teal-dark); }
-  .direction-btn.selected.dir-adiar { background: var(--amber); border-color: var(--amber); color: var(--gray-800); }
-  .direction-btn.selected.dir-cancelar { background: var(--red); border-color: var(--red); }
-  .direction-btn.selected.dir-reavaliar { background: var(--gray-600); border-color: var(--gray-600); }
-
-  /* ── Summary Panel ── */
-  .summary-panel {
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem 2rem;
-    margin-bottom: 2rem;
-    box-shadow: var(--shadow-sm);
-  }
-  .summary-title {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 0.85rem;
-    color: var(--gray-800);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 1rem;
-  }
-  .summary-grid {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .summary-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--gray-50);
-    border-radius: 8px;
-    min-width: 130px;
-  }
-  .summary-item .s-count {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1.3rem;
-    color: var(--gray-800);
-  }
-  .summary-item .s-label {
-    font-size: 0.75rem;
-    color: var(--gray-500);
-    font-weight: 500;
-  }
-  .summary-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  /* ── Hidden bucket ── */
-  .bucket-section.hidden { display: none; }
-
-  /* ── Responsive ── */
-  @media (max-width: 768px) {
-    .header-inner, .stats-inner, .filters-bar, .board { padding-left: 1rem; padding-right: 1rem; }
-    .cards-grid { grid-template-columns: 1fr; }
-    .stats-inner { gap: 1rem; }
-    .summary-grid { flex-direction: column; }
-  }
+/* Confirm toast */
+.confirm-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--white);border:1px solid var(--g200);border-radius:var(--rad);padding:1.2rem 1.5rem;box-shadow:var(--shadow-drag);z-index:400;text-align:center;min-width:280px}
+.confirm-toast p{font-size:.85rem;color:var(--g700);margin-bottom:1rem;font-weight:500}
+.confirm-toast .cb{display:flex;gap:.5rem;justify-content:center}
+.confirm-overlay{position:fixed;inset:0;background:rgba(10,31,63,.3);z-index:399;display:none}
+.confirm-overlay.show{display:block}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-inner">
-    <div class="brand">
-      <div class="brand-icon"></div>
-      <h1>AUSTRAL <span>SEGURADORA</span> — Backlog Reborn</h1>
-    </div>
-    <div class="header-actions">
-      <button class="btn-secondary" onclick="resetAll()">Limpar Seleções</button>
-      <button class="btn-export" onclick="exportSummary()">Exportar Resumo</button>
-    </div>
+<div class="hdr"><div class="hdr-in">
+  <div class="brand"><div class="brand-bar"></div><h1>AUSTRAL <span>SEGURADORA</span> — Backlog Reborn</h1></div>
+  <div class="hdr-right">
+    <button class="btn btn-add" onclick="openNewCardForm()">+ Novo Card</button>
+    <button class="btn btn-ghost" onclick="resetAll()">Limpar</button>
+    <button class="btn btn-primary" onclick="exportSummary()">Exportar</button>
   </div>
-</div>
-
-<div class="stats-bar">
-  <div class="stats-inner">
-    <div class="stat-pill">
-      <div class="stat-dot" style="background:var(--teal)"></div>
-      <span class="stat-label">Em Execução</span>
-      <span class="stat-count" id="count-exec">3</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-pill">
-      <div class="stat-dot" style="background:var(--navy)"></div>
-      <span class="stat-label">Priorizado</span>
-      <span class="stat-count" id="count-prio">8</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-pill">
-      <div class="stat-dot" style="background:#2D6A4F"></div>
-      <span class="stat-label">Backlog</span>
-      <span class="stat-count" id="count-back">4</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-pill">
-      <div class="stat-dot" style="background:var(--gray-400)"></div>
-      <span class="stat-label">Refinamento</span>
-      <span class="stat-count" id="count-ref">6</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat-pill">
-      <span class="stat-label" style="font-weight:700;color:var(--gray-700)">Total</span>
-      <span class="stat-count" style="color:var(--teal-dark)">21</span>
-    </div>
-  </div>
-</div>
-
-<div class="filters-bar">
-  <span class="filter-label">Filtrar por:</span>
-  <span class="filter-chip active" data-filter="all" onclick="toggleFilter(this)">Todos</span>
-  <span class="filter-chip" data-filter="bucket-exec" onclick="toggleFilter(this)">Em Execução</span>
-  <span class="filter-chip" data-filter="bucket-prio" onclick="toggleFilter(this)">Priorizado</span>
-  <span class="filter-chip" data-filter="bucket-back" onclick="toggleFilter(this)">Backlog</span>
-  <span class="filter-chip" data-filter="bucket-ref" onclick="toggleFilter(this)">Refinamento</span>
-  <div class="filter-separator"></div>
-  <span class="filter-label">Prioridade:</span>
-  <span class="filter-chip" data-prio="urgente" onclick="togglePrio(this)">Urgente</span>
-  <span class="filter-chip" data-prio="importante" onclick="togglePrio(this)">Importante</span>
-  <span class="filter-chip" data-prio="media" onclick="togglePrio(this)">Média</span>
-</div>
-
-<div class="board" id="board">
-
-  <!-- Summary -->
-  <div class="summary-panel" id="summary-panel">
-    <div class="summary-title">Direcionamento Selecionado</div>
-    <div class="summary-grid" id="summary-grid">
-      <div class="summary-item"><div class="summary-dot" style="background:#059669"></div><span class="s-count" id="sum-manter">0</span><span class="s-label">Manter</span></div>
-      <div class="summary-item"><div class="summary-dot" style="background:var(--teal-dark)"></div><span class="s-count" id="sum-priorizar">0</span><span class="s-label">Priorizar</span></div>
-      <div class="summary-item"><div class="summary-dot" style="background:var(--amber)"></div><span class="s-count" id="sum-adiar">0</span><span class="s-label">Adiar</span></div>
-      <div class="summary-item"><div class="summary-dot" style="background:var(--red)"></div><span class="s-count" id="sum-cancelar">0</span><span class="s-label">Cancelar</span></div>
-      <div class="summary-item"><div class="summary-dot" style="background:var(--gray-600)"></div><span class="s-count" id="sum-reavaliar">0</span><span class="s-label">Reavaliar</span></div>
-      <div class="summary-item" style="background:var(--navy);"><span class="s-count" style="color:var(--teal);" id="sum-pending">21</span><span class="s-label" style="color:var(--gray-300);">Pendentes</span></div>
-    </div>
-  </div>
-
-</div>
+</div></div>
+<div class="stats"><div class="stats-in" id="stats-bar"></div></div>
+<div class="filters"><div class="filters-in">
+  <span class="f-label">Prioridade:</span>
+  <span class="chip on" data-prio="all" onclick="setPrio(this)">Todas</span>
+  <span class="chip" data-prio="Urgente" onclick="setPrio(this)">Urgente</span>
+  <span class="chip" data-prio="Importante" onclick="setPrio(this)">Importante</span>
+  <span class="chip" data-prio="Média" onclick="setPrio(this)">Média</span>
+  <span class="f-sep"></span>
+  <span class="label-toggle" id="label-toggle" onclick="toggleLabelDrawer()"><span class="f-label" style="margin:0;color:inherit">Rótulos</span><span class="arrow">▼</span></span>
+  <div class="search-box"><input type="text" id="search-input" placeholder="Buscar card..." oninput="applyFilters()"></div>
+</div><div style="max-width:1900px;margin:0 auto;padding:0 1.5rem"><div class="label-drawer" id="label-drawer"></div></div></div>
+<div class="board" id="board"></div>
+<div class="summary-bar" id="summary-bar"><div class="summary-in" id="summary-in"></div></div>
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)"><div class="modal" id="modal-content"></div></div>
+<div class="confirm-overlay" id="confirm-overlay"></div>
+<div class="confirm-toast" id="confirm-toast" style="display:none"><p id="confirm-msg"></p><div class="cb"><button class="btn btn-cancel" onclick="hideConfirm()">Cancelar</button><button class="btn" style="background:var(--red);color:var(--white)" onclick="confirmDeleteAction()">Excluir</button></div></div>
 
 <script>
-const CARDS_DATA = [
-  // ── Em Execução ──
-  {
-    id: "DI-625", bucket: "exec", priority: "media",
-    title: "Análise de Crédito Serasa para Segurados D&O",
-    desc: "Incorporar a consulta automatizada de crédito via Serasa no fluxo de cadastro de segurados de D&O, reduzindo o risco de inadimplência e fortalecendo a governança na aceitação.",
-    tags: ["Segurado", "Negócio"]
-  },
-  {
-    id: "DI-629", bucket: "exec", priority: "media",
-    title: "Controle de Frequência de Consulta Serasa",
-    desc: "Implementar regra de negócio que evite consultas duplicadas ou excessivas ao Serasa para Tomadores e Segurados, otimizando custos e garantindo conformidade.",
-    tags: ["Segurado", "Negócio"]
-  },
-  {
-    id: "DI-630", bucket: "exec", priority: "media",
-    title: "Novo Formulário de Cadastro para RCG",
-    desc: "Criar formulário específico para o produto Responsabilidade Civil Geral (RCG), permitindo captura de dados adequados ao perfil de risco desse segmento.",
-    tags: ["Negócio"]
-  },
-
-  // ── Priorizado ──
-  {
-    id: "DI-589", bucket: "prio", priority: "urgente",
-    title: "Integração dos Canais de Comunicação com Corretores",
-    desc: "Conectar os meios de comunicação (e-mail, telefone) com os dados de contato dos corretores, eliminando lacunas de informação e melhorando o relacionamento comercial. Aguardando liberação de API pelo I4PRO.",
-    tags: ["Comercial", "Integração"]
-  },
-  {
-    id: "DI-532", bucket: "prio", priority: "urgente",
-    title: "Cadastro Simplificado de Contatos Vinculados a Corretores",
-    desc: "Permitir o registro rápido de pessoas (físicas ou jurídicas) como contatos associados a corretoras, agilizando a gestão de relacionamento e a operação comercial.",
-    tags: ["Negócio", "Comercial"]
-  },
-  {
-    id: "DI-574", bucket: "prio", priority: "urgente",
-    title: "Bloqueio de Cadastro para Registros Inativos",
-    desc: "Impedir que registros com status diferente de \"Ativo\" sejam incluídos em novos cadastros, evitando inconsistências operacionais e retrabalho.",
-    tags: ["Qualidade de Dados"]
-  },
-  {
-    id: "DI-583", bucket: "prio", priority: "importante",
-    title: "Otimização do Fluxo de Finalização de Cadastro de Corretores",
-    desc: "Simplificar e agilizar as etapas finais do cadastro de corretores na plataforma, reduzindo o tempo de ativação e melhorando a experiência do usuário.",
-    tags: ["Negócio", "Experiência"]
-  },
-  {
-    id: "DI-587", bucket: "prio", priority: "importante",
-    title: "Correção de Duplicidade no Fluxo de Cadastro de Corretores",
-    desc: "Resolver o incidente em que corretores com cadastro já ativo conseguem iniciar um novo processo de cadastro, causando duplicidade e confusão operacional.",
-    tags: ["Comercial", "Incidente"]
-  },
-  {
-    id: "DI-577", bucket: "prio", priority: "media",
-    title: "Filtro Padrão de Registros Ativos em Todas as Pesquisas",
-    desc: "Aplicar automaticamente o filtro de status \"Ativo\" em todas as consultas do sistema, garantindo que apenas dados vigentes sejam exibidos por padrão.",
-    tags: ["Qualidade de Dados"]
-  },
-  {
-    id: "DI-307", bucket: "prio", priority: "media",
-    title: "Padronização do Identificador I4PRO na Base de Pessoas",
-    desc: "Converter o campo de identificação I4PRO para formato numérico inteiro, melhorando a integridade dos dados e a performance das integrações.",
-    tags: ["Integração", "Dados"]
-  },
-  {
-    id: "DI-576", bucket: "prio", priority: "media",
-    title: "Vinculação Automática de Corretores e Contatos ao Tomador",
-    desc: "Criar lógica de negócio para associar automaticamente corretores e seus contatos aos respectivos tomadores, reduzindo etapas manuais e erros de vínculo.",
-    tags: ["Tomador", "Corretor"]
-  },
-
-  // ── Backlog ──
-  {
-    id: "DI-443", bucket: "back", priority: "importante",
-    title: "Rotina Anual de Atualização de Dados com a Receita Federal",
-    desc: "Implementar processo automatizado de sincronização anual dos dados cadastrais de pessoas com a Receita Federal, assegurando conformidade regulatória e atualidade das informações.",
-    tags: ["Regulatório", "Compliance"]
-  },
-  {
-    id: "DI-584", bucket: "back", priority: "importante",
-    title: "Melhoria na Comunicação de Boas-Vindas ao Corretor",
-    desc: "Aprimorar os e-mails de pré-cadastro e contato inicial enviados aos corretores, tornando a comunicação mais profissional e fortalecendo o primeiro contato comercial.",
-    tags: ["Comercial", "Comunicação"]
-  },
-  {
-    id: "DI-590", bucket: "back", priority: "importante",
-    title: "Cadastro de Pessoas do Tipo Ressegurador",
-    desc: "Criar interface dedicada ao cadastro de resseguradores no sistema, permitindo a gestão adequada desse tipo de parceiro estratégico no ecossistema de seguros.",
-    tags: ["Negócio", "Ressegurador"]
-  },
-  {
-    id: "DI-595", bucket: "back", priority: "media",
-    title: "Sincronização da Base de Tomadores entre I4PRO e Reborn",
-    desc: "Garantir a consistência dos dados de tomadores entre os sistemas I4PRO e Reborn através de sincronização automatizada, eliminando divergências cadastrais.",
-    tags: ["Integração", "Dados"]
-  },
-
-  // ── Refinamento ──
-  {
-    id: "DI-592", bucket: "ref", priority: "importante",
-    title: "Painel de Gestão de Controle de Acesso (RBAC)",
-    desc: "Construir interface administrativa para gerenciamento de perfis e permissões de acesso ao sistema, centralizando a governança de segurança da informação.",
-    tags: ["Governança", "Segurança"]
-  },
-  {
-    id: "DI-588", bucket: "ref", priority: "urgente",
-    title: "Avaliação de Crédito Serasa em Todos os Formulários de Segurados",
-    desc: "Expandir a funcionalidade de consulta de crédito Serasa para todos os formulários de cadastro de segurados, padronizando a análise de risco em toda a operação.",
-    tags: ["Segurado", "Risco"]
-  },
-  {
-    id: "DI-253", bucket: "ref", priority: "media",
-    title: "Integração com Base de Pessoas Expostas Politicamente (PEP-CGU)",
-    desc: "Automatizar a consulta e atualização dos dados de PEP junto à CGU, garantindo conformidade com as exigências regulatórias de prevenção à lavagem de dinheiro.",
-    tags: ["Regulatório", "Compliance"]
-  },
-  {
-    id: "DI-591", bucket: "ref", priority: "importante",
-    title: "Cadastro de Tomador Externo via Portal do Corretor",
-    desc: "Permitir que corretores realizem o cadastro de tomadores diretamente pelo portal, dando mais autonomia à rede de distribuição e acelerando o processo comercial.",
-    tags: ["Comercial", "Portal do Corretor"]
-  },
-  {
-    id: "DI-636", bucket: "ref", priority: "importante",
-    title: "Gestão de Carteira de Executivos Comerciais",
-    desc: "Criar painel de gestão para acompanhamento e distribuição de carteiras entre os executivos comerciais (produtores), melhorando a visibilidade e o controle da operação.",
-    tags: ["Comercial", "Gestão"]
-  },
-  {
-    id: "DI-473", bucket: "ref", priority: "media",
-    title: "Provisionamento Automático de Acesso para Corretores",
-    desc: "Automatizar a criação de perfil de acesso (PC-GESTOR) no momento da ativação do corretor no Reborn, eliminando etapas manuais e acelerando o onboarding.",
-    tags: ["Portal do Corretor", "Automação"]
-  },
+const CARDS=[
+{id:"IMP-TOM",bucket:"Em Produção",priority:"Urgente",progress:"Concluída",title:"Formulário de Cadastro de Tomador (Interno) em Produção",desc:"Formulário de cadastro interno de tomadores já implantado no ambiente de produção, disponível para uso operacional pela área comercial.",tags:["Negócio","Comercial","Reborn"]},
+{id:"IMP-ARQ",bucket:"Em Produção",priority:"Média",progress:"Concluída",title:"Melhorias na Plataforma e Arquitetura Comercial em Produção",desc:"Conjunto de melhorias arquiteturais voltadas ao módulo comercial, já implantadas em produção, otimizando performance e estabilidade.",tags:["Comercial","Reborn"]},
+{id:"DI-630",bucket:"Em Execução (Desenvolvimento)",priority:"Importante",progress:"Em andamento",title:"Novo Formulário de Cadastro para Seguro RCG",desc:"Criação de formulário específico para o produto Responsabilidade Civil Geral (RCG), permitindo captura adequada de dados conforme o perfil de risco desse segmento.",tags:["Segurado","RCG","Negócio","Reborn"]},
+{id:"DI-625",bucket:"Em Execução (Desenvolvimento)",priority:"Importante",progress:"Em andamento",title:"Análise de Crédito Serasa para Segurados D&O",desc:"Incorporação da consulta automatizada de crédito via Serasa no fluxo de cadastro de segurados D&O, fortalecendo a governança na aceitação de riscos de Financial Lines.",tags:["Segurado","Negócio","Financial Lines (D&O)","Reborn"]},
+{id:"DI-629",bucket:"Em Execução (Desenvolvimento)",priority:"Urgente",progress:"Em andamento",title:"Controle de Frequência e Regra de Consulta Serasa",desc:"Inclusão de regra de consulta ao Serasa: usuário poderá realizar apenas 1 consulta por CNPJ. Após consulta, resultado ficará vinculado ao cadastro. Abrange Segurados, Corretores e Garantia.",tags:["Segurado","Corretor","Negócio","Comercial","Reborn"]},
+{id:"REL-SEM",bucket:"Em Execução (Desenvolvimento)",priority:"Urgente",progress:"Em andamento",title:"Reporte Semanal de Status da Squad",desc:"Rotina de acompanhamento e comunicação semanal do progresso das entregas do time Reborn.",tags:["Reborn"]},
+{id:"TREIN-FL",bucket:"Em Execução (Desenvolvimento)",priority:"Urgente",progress:"Concluída",title:"Treinamento Financial Lines — Cadastro de Segurado D&O/E&O",desc:"Capacitação da equipe de Financial Lines no uso do formulário de cadastro de segurado para os produtos D&O e E&O.",tags:["Reborn"]},
+{id:"REL-SEM2",bucket:"Em Execução (Desenvolvimento)",priority:"Urgente",progress:"Não iniciado",title:"Reporte Semanal de Status (Próximo Ciclo)",desc:"Preparação do próximo ciclo de acompanhamento semanal do progresso da squad.",tags:["Reborn"]},
+{id:"DI-595",bucket:"Priorizado",priority:"Urgente",progress:"Não iniciado",title:"Sincronização Bidirecional de Tomadores entre I4PRO e Reborn",desc:"Integração bidirecional entre os sistemas I4PRO e Reborn para sincronização de dados de tomadores, incluindo diligências SERPRO e SERASA, garantindo consistência cadastral e agilidade na subscrição.",tags:["Tomador","Negócio","Comercial","Subscrição","Reborn"]},
+{id:"DI-589",bucket:"Priorizado",priority:"Urgente",progress:"Não iniciado",title:"Integração de Canais de Comunicação com Contatos dos Corretores",desc:"Conectar os meios de comunicação (e-mail, telefone) com os dados de contato dos corretores, eliminando lacunas de informação. Aguardando liberação de API pelo I4PRO.",tags:["Comercial","Reborn"]},
+{id:"DI-532",bucket:"Priorizado",priority:"Urgente",progress:"Não iniciado",title:"Cadastro Simplificado de Contatos Vinculados a Corretores",desc:"Permitir o registro rápido de pessoas (físicas ou jurídicas) como contatos associados às corretoras, agilizando a gestão de relacionamento e a operação comercial.",tags:["Negócio","Comercial","Reborn"]},
+{id:"DI-574",bucket:"Priorizado",priority:"Urgente",progress:"Não iniciado",title:"Bloqueio de Cadastro para Registros Inativos",desc:"Impedir que registros com status diferente de \"Ativo\" sejam incluídos em novos cadastros, evitando inconsistências operacionais e retrabalho.",tags:["Corretor","Comercial","Reborn"]},
+{id:"DISC-GAR",bucket:"Priorizado",priority:"Urgente",progress:"Não iniciado",title:"Discovery do Processo de Garantia (Raia 1)",desc:"Mapeamento e discovery do fluxo de garantia para tomadores, definindo requisitos iniciais do processo de subscrição na primeira raia.",tags:["Tomador","Subscrição","Reborn"]},
+{id:"DI-583",bucket:"Priorizado",priority:"Importante",progress:"Não iniciado",title:"Otimização do Fluxo de Finalização de Cadastro de Corretores",desc:"Simplificar as etapas finais do cadastro de corretores, permitindo devolução de cadastros incompletos com indicação clara das pendências documentais, reduzindo retrabalho.",tags:["Corretor","Negócio","Comercial","Reborn"]},
+{id:"DI-577",bucket:"Priorizado",priority:"Média",progress:"Concluída",title:"Filtro Padrão de Registros Ativos em Pesquisas",desc:"Aplicar automaticamente o filtro de status \"Ativo\" em todas as consultas, garantindo que apenas dados vigentes sejam exibidos por padrão.",tags:["Reborn"]},
+{id:"DI-307",bucket:"Priorizado",priority:"Média",progress:"Concluída",title:"Padronização do Identificador I4PRO na Base de Pessoas",desc:"Conversão do campo de identificação I4PRO para formato numérico, melhorando integridade de dados e performance nas integrações.",tags:["Reborn"]},
+{id:"DI-576",bucket:"Priorizado",priority:"Média",progress:"Concluída",title:"Vinculação Automática de Corretores e Contatos ao Tomador",desc:"Lógica de negócio para associar automaticamente corretores e contatos aos tomadores, reduzindo etapas manuais e erros de vínculo.",tags:["Tomador","Corretor","Reborn"]},
+{id:"DI-443",bucket:"Backlog",priority:"Urgente",progress:"Não iniciado",title:"Rotina Anual de Atualização Cadastral com a Receita Federal",desc:"Processo automatizado de sincronização anual dos dados cadastrais de todas as entidades (tomadores, corretores, segurados) com a Receita Federal, assegurando conformidade regulatória.",tags:["Negócio","Reborn"]},
+{id:"DI-584",bucket:"Backlog",priority:"Importante",progress:"Não iniciado",title:"Melhoria na Comunicação de Boas-Vindas ao Corretor",desc:"Aprimorar os e-mails de pré-cadastro e contato inicial enviados aos corretores, profissionalizando o primeiro contato comercial via Portal do Corretor.",tags:["Corretor","Negócio","Comercial","Reborn","Portal do Corretor"]},
+{id:"DI-590",bucket:"Backlog",priority:"Importante",progress:"Não iniciado",title:"Cadastro de Pessoas do Tipo Ressegurador",desc:"Interface dedicada ao cadastro de resseguradores no sistema, permitindo gestão adequada desse tipo de parceiro estratégico.",tags:["Negócio","Ressegurador","Reborn"]},
+{id:"DI-592",bucket:"Refinamento Negócio/Técnico",priority:"Importante",progress:"Não iniciado",title:"Painel de Gestão de Controle de Acesso (RBAC)",desc:"Interface administrativa para gerenciamento de perfis e permissões de acesso ao sistema, centralizando a governança de segurança da informação.",tags:["Reborn"]},
+{id:"DI-253",bucket:"Refinamento Negócio/Técnico",priority:"Média",progress:"Não iniciado",title:"Integração com Base de Pessoas Politicamente Expostas (PEP-CGU)",desc:"Automatizar a consulta e atualização de dados PEP junto à CGU, garantindo conformidade com exigências de prevenção à lavagem de dinheiro.",tags:["Tomador","Segurado","Corretor","Negócio","Comercial","Reborn"]},
+{id:"DI-591",bucket:"Refinamento Negócio/Técnico",priority:"Importante",progress:"Não iniciado",title:"Cadastro de Tomador Externo via Portal do Corretor",desc:"Permitir que corretores realizem o cadastro de tomadores diretamente pelo portal, dando mais autonomia à rede de distribuição.",tags:["Negócio","Comercial","Reborn","Portal do Corretor"]},
+{id:"DI-636",bucket:"Refinamento Negócio/Técnico",priority:"Importante",progress:"Não iniciado",title:"Gestão de Carteira de Executivos Comerciais (Produtores)",desc:"Painel para acompanhamento e distribuição de carteiras entre executivos comerciais, melhorando visibilidade e controle da operação.",tags:["Tomador","Corretor","Negócio","Comercial","Reborn"]},
+{id:"DI-473",bucket:"Refinamento Negócio/Técnico",priority:"Média",progress:"Não iniciado",title:"Provisionamento Automático de Acesso para Corretores",desc:"Automatizar a criação do perfil de acesso PC-GESTOR no momento da ativação do corretor, eliminando etapas manuais no onboarding.",tags:["Negócio","Comercial","Reborn","Portal do Corretor"]},
+{id:"DI-640",bucket:"Refinamento Negócio/Técnico",priority:"Importante",progress:"Não iniciado",title:"Integração com Planilha Padrão de Subscrição (Garantia)",desc:"Implementar integração via e-mail para disparo automático de planilha padrão no formato esperado pelo processo de subscrição de garantia, automatizando o fluxo entre cadastro e análise.",tags:["Tomador","Comercial","Reborn","Subscrição"]},
+{id:"DI-587",bucket:"Incidente",priority:"Importante",progress:"Não iniciado",title:"Corretor com Cadastro Ativo Iniciando Novo Cadastro",desc:"Corretor já cadastrado desde 2015, com cadastro ativo, conseguiu iniciar novo processo de cadastro, causando duplicidade e confusão operacional. Incidente recorrente que precisa de correção definitiva.",tags:["Comercial","Reborn","Incidente"]},
+{id:"DI-582",bucket:"Incidente",priority:"Importante",progress:"Não iniciado",title:"Cadastros Concluídos Retornando ao Status 'Aguardando Análise'",desc:"Cadastros já concluídos estão retornando indevidamente ao status 'Aguardando análise da Austral', causando retrabalho e confusão na operação. Problema recorrente que impacta a produtividade.",tags:["Corretor","Comercial","Reborn","Incidente"]},
+{id:"DI-586",bucket:"Incidente",priority:"Média",progress:"Não iniciado",title:"Regra de Contato Principal no Cadastro de Tomadores",desc:"Definir e implementar regra de negócio para identificação do contato principal vinculado ao tomador, resolvendo inconsistências no fluxo de cadastro.",tags:["Tomador","Comercial","Reborn","Incidente"]},
 ];
 
-// State
-const directions = {};
-
-const BUCKETS = [
-  { key: "exec", label: "Em Execução (Desenvolvimento)", color: "#00C9B7", countId: "count-exec" },
-  { key: "prio", label: "Priorizado", color: "#0A1F3F", countId: "count-prio" },
-  { key: "back", label: "Backlog", color: "#2D6A4F", countId: "count-back" },
-  { key: "ref",  label: "Refinamento Negócio/Técnico", color: "#9CA3AF", countId: "count-ref" },
+let BUCKET_ORDER=[
+  {key:"Refinamento Negócio/Técnico",label:"Refinamento",color:"#9CA3AF"},
+  {key:"Backlog",label:"Backlog",color:"#8B5CF6"},
+  {key:"Priorizado",label:"Priorizado",color:"#0A1F3F"},
+  {key:"Em Execução (Desenvolvimento)",label:"Em Execução",color:"#00C9B7"},
+  {key:"Incidente",label:"Incidente",color:"#F97316"},
+  {key:"Em Produção",label:"Em Produção",color:"#10B981"},
 ];
+const FILTER_LABELS=["Comercial","Corretor","Financial Lines (D&O)","Incidente","Negócio","Portal do Corretor","RCG","Reborn","Ressegurador","Segurado","Subscrição","Tomador"];
+const PRIORITIES=["Urgente","Importante","Média"];
+const PROGRESSES=["Não iniciado","Em andamento","Concluída"];
+const DIRECTIONS=["Manter","Priorizar","Adiar","Cancelar","Reavaliar"];
+const DIR_COLORS={manter:"#059669",priorizar:"#009E90",adiar:"#F59E0B",cancelar:"#EF4444",reavaliar:"#6B7280"};
 
-const DIRECTIONS = ["Manter", "Priorizar", "Adiar", "Cancelar", "Reavaliar"];
+let cardDirections={},activePrio="all",activeLabels=new Set(),searchQuery="",labelsOpen=false,collapsedCols=new Set(),newCardCounter=1;
+let pendingDeleteId=null;
 
-function renderBoard() {
-  const board = document.getElementById("board");
-  const summaryHTML = board.querySelector('.summary-panel').outerHTML;
-  board.innerHTML = summaryHTML;
+function renderLabelFilters(){document.getElementById("label-drawer").innerHTML=FILTER_LABELS.map(l=>`<span class="chip${activeLabels.has(l)?' on-teal':''}" data-label="${l}" onclick="toggleLabel(this)">${l}</span>`).join('')}
+function toggleLabelDrawer(){labelsOpen=!labelsOpen;document.getElementById("label-drawer").classList.toggle("open",labelsOpen);document.getElementById("label-toggle").classList.toggle("open",labelsOpen)}
+function renderStats(){const el=document.getElementById("stats-bar");let h='';BUCKET_ORDER.forEach((b,i)=>{const cnt=CARDS.filter(c=>c.bucket===b.key).length;if(i>0)h+='<div class="stat-div"></div>';h+=`<div class="stat"><div class="stat-dot" style="background:${b.color}"></div><span class="sl">${b.label}</span><span class="sc">${cnt}</span></div>`});h+='<div class="stat-div"></div>';h+=`<div class="stat"><span class="sl" style="font-weight:700;color:var(--g700)">Total</span><span class="sc" style="color:var(--teal-d)">${CARDS.length}</span></div>`;el.innerHTML=h}
 
-  BUCKETS.forEach(b => {
-    const cards = CARDS_DATA.filter(c => c.bucket === b.key);
-    if (cards.length === 0) return;
+function renderBoard(){
+  const board=document.getElementById("board");board.innerHTML='';
+  BUCKET_ORDER.forEach(b=>{
+    const cards=CARDS.filter(c=>c.bucket===b.key),vis=cards.filter(cardVisible),isC=collapsedCols.has(b.key);
+    const col=document.createElement("div");col.className="col"+(isC?" collapsed":"");col.dataset.bucket=b.key;col.draggable=true;
+    col.addEventListener("dragstart",onColDragStart);col.addEventListener("dragend",onColDragEnd);col.addEventListener("dragover",onColDragOver);col.addEventListener("drop",onColDrop);
+    if(isC)col.addEventListener("click",(e)=>{if(!e.target.closest('.col-cards')&&!e.target.closest('.dir-btn')&&!e.target.closest('.card-delete')){collapsedCols.delete(b.key);renderBoard()}});
+    col.innerHTML=`<div class="col-head"><div class="col-dot" style="background:${b.color}"></div><div class="col-title">${b.label}</div><div class="col-count" style="background:${b.color}">${vis.length}</div><div class="col-toggle" title="${isC?'Expandir':'Recolher'}" onclick="event.stopPropagation();toggleCol('${b.key}')">◂</div></div><div class="col-cards" data-bucket="${b.key}"></div>`;
+    if(!isC){const ce=col.querySelector(".col-cards");ce.addEventListener("dragover",onCardDragOver);ce.addEventListener("dragleave",onCardDragLeave);ce.addEventListener("drop",onCardDrop);vis.forEach(c=>ce.appendChild(createCardEl(c)))}
+    board.appendChild(col);
+  });updateSummary();
+}
+function toggleCol(k){if(collapsedCols.has(k))collapsedCols.delete(k);else collapsedCols.add(k);renderBoard()}
+function cardVisible(c){if(activePrio!=="all"&&c.priority!==activePrio)return false;if(activeLabels.size>0&&!c.tags.some(t=>activeLabels.has(t)))return false;if(searchQuery){const q=searchQuery.toLowerCase();if(!c.title.toLowerCase().includes(q)&&!c.id.toLowerCase().includes(q)&&!c.desc.toLowerCase().includes(q)&&!c.tags.some(t=>t.toLowerCase().includes(q)))return false}return true}
 
-    const section = document.createElement("div");
-    section.className = "bucket-section";
-    section.dataset.bucket = `bucket-${b.key}`;
-
-    section.innerHTML = `
-      <div class="bucket-header">
-        <div class="bucket-indicator" style="background:${b.color}"></div>
-        <span class="bucket-title">${b.label}</span>
-        <span class="bucket-count" style="background:${b.color}">${cards.length}</span>
-      </div>
-      <div class="cards-grid">
-        ${cards.map(c => renderCard(c, b.color)).join('')}
-      </div>
-    `;
-
-    board.appendChild(section);
-  });
-
-  applyFilters();
+function createCardEl(c){
+  const div=document.createElement("div");div.className="card";div.draggable=true;div.dataset.id=c.id;div.dataset.type="card";
+  div.addEventListener("dragstart",onCardDragStart);div.addEventListener("dragend",onCardDragEnd);
+  div.addEventListener("click",(e)=>{if(!e.target.classList.contains("dir-btn")&&!e.target.classList.contains("card-delete"))openEditForm(c.id)});
+  const pc=c.priority==="Urgente"?"prio-urgente":c.priority==="Importante"?"prio-importante":"prio-media";
+  const pgc=c.progress==="Em andamento"?"var(--teal)":c.progress==="Concluída"?"var(--green)":"var(--g400)";
+  const dir=cardDirections[c.id]||null;
+  div.innerHTML=`
+    <div class="card-top"><span class="card-id">${c.id}</span><div class="card-top-right"><button class="card-delete" title="Excluir card" onclick="event.stopPropagation();askDelete('${c.id}')">✕</button><span class="prio ${pc}">${c.priority}</span></div></div>
+    <div class="card-title">${c.title}</div>
+    <div class="card-desc">${c.desc}</div>
+    <div class="card-tags">${c.tags.map(t=>`<span class="tag${t==='Incidente'?' tag-incident':''}">${t}</span>`).join('')}</div>
+    <div class="card-progress"><div class="prog-dot" style="background:${pgc}"></div><span class="prog-label">${c.progress}</span></div>
+    <div class="dir-area"><span class="dir-label">Direcionamento</span>${DIRECTIONS.map(d=>{const dk=d.toLowerCase();const s=dir===dk?`sel d-${dk}`:'';return`<button class="dir-btn ${s}" data-dir="${dk}" data-card="${c.id}" onclick="event.stopPropagation();setDir('${c.id}','${dk}',this)">${d}</button>`}).join('')}</div>`;
+  return div;
 }
 
-function renderCard(c) {
-  const prioClass = c.priority;
-  const prioLabel = c.priority === 'media' ? 'Média' : c.priority.charAt(0).toUpperCase() + c.priority.slice(1);
-  const currentDir = directions[c.id] || null;
+// ── Delete ──
+function askDelete(id){const c=CARDS.find(x=>x.id===id);if(!c)return;pendingDeleteId=id;document.getElementById("confirm-msg").textContent=`Excluir "${c.title}"?`;document.getElementById("confirm-toast").style.display="block";document.getElementById("confirm-overlay").classList.add("show")}
+function hideConfirm(){pendingDeleteId=null;document.getElementById("confirm-toast").style.display="none";document.getElementById("confirm-overlay").classList.remove("show")}
+function confirmDeleteAction(){if(!pendingDeleteId)return;const idx=CARDS.findIndex(c=>c.id===pendingDeleteId);if(idx>-1){CARDS.splice(idx,1);delete cardDirections[pendingDeleteId]}hideConfirm();document.getElementById("modal-overlay").classList.remove("show");renderBoard();renderStats()}
 
-  return `
-    <div class="card priority-${prioClass}" data-id="${c.id}" data-priority="${c.priority}" data-bucket="${c.bucket}">
-      <div class="card-top">
-        <span class="card-id">${c.id}</span>
-        <span class="priority-badge ${prioClass}">${prioLabel}</span>
-      </div>
-      <div class="card-title">${c.title}</div>
-      <div class="card-desc">${c.desc}</div>
-      <div class="card-tags">
-        ${c.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-      </div>
-      <div class="direction-area">
-        <span class="direction-label">Direcionamento:</span>
-        ${DIRECTIONS.map(d => {
-          const dk = d.toLowerCase();
-          const sel = currentDir === dk ? `selected dir-${dk}` : '';
-          return `<button class="direction-btn ${sel}" data-dir="${dk}" data-card="${c.id}" onclick="setDirection('${c.id}','${dk}',this)">${d}</button>`;
-        }).join('')}
-      </div>
-    </div>
-  `;
+// ── Card Drag ──
+let draggedCardId=null;
+function onCardDragStart(e){e.stopPropagation();draggedCardId=e.currentTarget.dataset.id;e.currentTarget.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/card",draggedCardId)}
+function onCardDragEnd(e){e.currentTarget.classList.remove("dragging");document.querySelectorAll(".col-cards").forEach(el=>el.classList.remove("drag-over"));document.querySelectorAll(".drop-placeholder").forEach(el=>el.remove());draggedCardId=null}
+function onCardDragOver(e){if(!draggedCardId)return;e.preventDefault();e.stopPropagation();e.dataTransfer.dropEffect="move";const col=e.currentTarget;col.classList.add("drag-over");let ph=col.querySelector(".drop-placeholder");if(!ph){ph=document.createElement("div");ph.className="drop-placeholder"}const af=getDragAfter(col,e.clientY);if(af)col.insertBefore(ph,af);else col.appendChild(ph)}
+function onCardDragLeave(e){if(!e.currentTarget.contains(e.relatedTarget)){e.currentTarget.classList.remove("drag-over");e.currentTarget.querySelectorAll(".drop-placeholder").forEach(el=>el.remove())}}
+function onCardDrop(e){if(!draggedCardId)return;e.preventDefault();e.stopPropagation();const col=e.currentTarget;col.classList.remove("drag-over");col.querySelectorAll(".drop-placeholder").forEach(el=>el.remove());const nb=col.dataset.bucket;const card=CARDS.find(c=>c.id===draggedCardId);if(card){card.bucket=nb;renderBoard();renderStats()}}
+function getDragAfter(ct,y){const els=[...ct.querySelectorAll(".card:not(.dragging)")];let cl=null,co=Number.NEGATIVE_INFINITY;els.forEach(ch=>{const b=ch.getBoundingClientRect();const o=y-b.top-b.height/2;if(o<0&&o>co){co=o;cl=ch}});return cl}
+
+// ── Col Drag ──
+let draggedColKey=null;
+function onColDragStart(e){if(draggedCardId)return;if(e.target.closest('.card')){e.preventDefault();return}draggedColKey=e.currentTarget.dataset.bucket;e.currentTarget.classList.add("col-dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/col",draggedColKey)}
+function onColDragEnd(e){e.currentTarget.classList.remove("col-dragging");document.querySelectorAll(".col-drop-placeholder").forEach(el=>el.remove());draggedColKey=null}
+function onColDragOver(e){if(!draggedColKey||draggedCardId)return;e.preventDefault();e.stopPropagation();const board=document.getElementById("board");const target=e.currentTarget;if(target.dataset.bucket===draggedColKey)return;let ph=board.querySelector(".col-drop-placeholder");if(!ph){ph=document.createElement("div");ph.className="col-drop-placeholder"}const rect=target.getBoundingClientRect();if(e.clientX<rect.left+rect.width/2)board.insertBefore(ph,target);else{const nx=target.nextElementSibling;if(nx)board.insertBefore(ph,nx);else board.appendChild(ph)}}
+function onColDrop(e){if(!draggedColKey||draggedCardId)return;e.preventDefault();e.stopPropagation();document.querySelectorAll(".col-drop-placeholder").forEach(el=>el.remove());const target=e.currentTarget;if(target.dataset.bucket===draggedColKey)return;const fi=BUCKET_ORDER.findIndex(b=>b.key===draggedColKey);let ti=BUCKET_ORDER.findIndex(b=>b.key===target.dataset.bucket);if(fi===-1||ti===-1)return;const[mv]=BUCKET_ORDER.splice(fi,1);if(fi<ti)ti--;const rect=target.getBoundingClientRect();if(e.clientX>=rect.left+rect.width/2)ti++;BUCKET_ORDER.splice(ti,0,mv);renderBoard();renderStats()}
+
+// ── Directions ──
+function setDir(cid,dir,btn){if(cardDirections[cid]===dir)delete cardDirections[cid];else cardDirections[cid]=dir;const card=btn.closest(".card");card.querySelectorAll(".dir-btn").forEach(b=>{const d=b.dataset.dir;b.className="dir-btn"+(cardDirections[cid]===d?` sel d-${d}`:"")});updateSummary()}
+function updateSummary(){const counts={};DIRECTIONS.forEach(d=>counts[d.toLowerCase()]=0);Object.values(cardDirections).forEach(d=>counts[d]++);const tot=Object.values(cardDirections).length,pend=CARDS.length-tot;const bar=document.getElementById("summary-bar"),inn=document.getElementById("summary-in");bar.classList.toggle("visible",tot>0);let h='';DIRECTIONS.forEach((d,i)=>{const dk=d.toLowerCase();if(i>0)h+='<div class="sum-sep"></div>';h+=`<div class="sum-item"><div class="sum-dot" style="background:${DIR_COLORS[dk]}"></div><span class="sum-count">${counts[dk]}</span><span class="sum-label">${d}</span></div>`});h+='<div class="sum-sep"></div>';h+=`<div class="sum-item"><span class="sum-count" style="color:var(--g400)">${pend}</span><span class="sum-label">Pendentes</span></div>`;inn.innerHTML=h}
+
+// ── Filters ──
+function setPrio(chip){document.querySelectorAll("[data-prio]").forEach(c=>c.classList.remove("on"));chip.classList.add("on");activePrio=chip.dataset.prio;renderBoard()}
+function toggleLabel(chip){const l=chip.dataset.label;if(activeLabels.has(l))activeLabels.delete(l);else activeLabels.add(l);chip.classList.toggle("on-teal");renderBoard()}
+function applyFilters(){searchQuery=document.getElementById("search-input").value;renderBoard()}
+function resetAll(){location.reload()}
+function closeModal(e){if(e.target===e.currentTarget)e.currentTarget.classList.remove("show")}
+
+// ── Edit Form (click card) ──
+let editFormTags=new Set();
+function openEditForm(cardId){
+  const c=CARDS.find(x=>x.id===cardId);if(!c)return;
+  editFormTags=new Set(c.tags);
+  const overlay=document.getElementById("modal-overlay"),content=document.getElementById("modal-content");
+  const bucket=BUCKET_ORDER.find(b=>b.key===c.bucket);
+  content.innerHTML=`
+    <button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('show')">&times;</button>
+    <div class="form-title">Editar Card <span class="form-title-badge">${c.id}</span></div>
+    <div class="form-row"><label class="form-label">ID</label><input class="form-input" id="e-id" value="${c.id}"></div>
+    <div class="form-row"><label class="form-label">Título</label><input class="form-input" id="e-title" value="${esc(c.title)}"></div>
+    <div class="form-row"><label class="form-label">Descrição</label><textarea class="form-textarea" id="e-desc">${esc(c.desc)}</textarea></div>
+    <div class="form-row"><label class="form-label">Coluna (Bucket)</label><select class="form-select" id="e-bucket">${BUCKET_ORDER.map(b=>`<option value="${b.key}"${b.key===c.bucket?' selected':''}>${b.label}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Prioridade</label><select class="form-select" id="e-prio">${PRIORITIES.map(p=>`<option value="${p}"${p===c.priority?' selected':''}>${p}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Progresso</label><select class="form-select" id="e-prog">${PROGRESSES.map(p=>`<option value="${p}"${p===c.progress?' selected':''}>${p}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Rótulos</label><div class="form-tags-wrap" id="e-tags">${FILTER_LABELS.map(t=>`<span class="form-tag${editFormTags.has(t)?' sel':''}" data-tag="${t}" onclick="toggleEditTag(this)">${t}</span>`).join('')}</div></div>
+    <div class="form-actions">
+      <button class="btn btn-del-modal" onclick="askDelete('${c.id}')">Excluir</button>
+      <button class="btn btn-cancel" onclick="document.getElementById('modal-overlay').classList.remove('show')">Cancelar</button>
+      <button class="btn btn-save" onclick="saveEdit('${c.id}')">Salvar</button>
+    </div>`;
+  overlay.classList.add("show");
 }
-
-function setDirection(cardId, dir, btn) {
-  if (directions[cardId] === dir) {
-    delete directions[cardId];
-  } else {
-    directions[cardId] = dir;
-  }
-  // Update buttons in this card
-  const card = btn.closest('.card');
-  card.querySelectorAll('.direction-btn').forEach(b => {
-    const bDir = b.dataset.dir;
-    b.className = 'direction-btn' + (directions[cardId] === bDir ? ` selected dir-${bDir}` : '');
-  });
-  updateSummary();
+function toggleEditTag(el){const t=el.dataset.tag;if(editFormTags.has(t)){editFormTags.delete(t);el.classList.remove("sel")}else{editFormTags.add(t);el.classList.add("sel")}}
+function saveEdit(origId){
+  const c=CARDS.find(x=>x.id===origId);if(!c)return;
+  const newId=document.getElementById("e-id").value.trim()||origId;
+  const title=document.getElementById("e-title").value.trim();
+  if(!title){alert("Informe o título.");return}
+  // Update direction key if id changed
+  if(newId!==origId&&cardDirections[origId]){cardDirections[newId]=cardDirections[origId];delete cardDirections[origId]}
+  c.id=newId;c.title=title;c.desc=document.getElementById("e-desc").value.trim()||"Sem descrição.";
+  c.bucket=document.getElementById("e-bucket").value;c.priority=document.getElementById("e-prio").value;
+  c.progress=document.getElementById("e-prog").value;c.tags=[...editFormTags];
+  document.getElementById("modal-overlay").classList.remove("show");
+  renderBoard();renderStats();
 }
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
-function updateSummary() {
-  const counts = { manter: 0, priorizar: 0, adiar: 0, cancelar: 0, reavaliar: 0 };
-  Object.values(directions).forEach(d => { if (counts[d] !== undefined) counts[d]++; });
-  const pending = CARDS_DATA.length - Object.keys(directions).length;
-
-  document.getElementById('sum-manter').textContent = counts.manter;
-  document.getElementById('sum-priorizar').textContent = counts.priorizar;
-  document.getElementById('sum-adiar').textContent = counts.adiar;
-  document.getElementById('sum-cancelar').textContent = counts.cancelar;
-  document.getElementById('sum-reavaliar').textContent = counts.reavaliar;
-  document.getElementById('sum-pending').textContent = pending;
+// ── New Card Form ──
+let formSelectedTags=new Set();
+function openNewCardForm(){
+  formSelectedTags=new Set();
+  const overlay=document.getElementById("modal-overlay"),content=document.getElementById("modal-content");
+  content.innerHTML=`
+    <button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('show')">&times;</button>
+    <div class="form-title">Novo Card</div>
+    <div class="form-row"><label class="form-label">ID</label><input class="form-input" id="f-id" placeholder="Ex: DI-700"></div>
+    <div class="form-row"><label class="form-label">Título</label><input class="form-input" id="f-title" placeholder="Título executivo do card"></div>
+    <div class="form-row"><label class="form-label">Descrição</label><textarea class="form-textarea" id="f-desc" placeholder="Descrição em linguagem de negócio"></textarea></div>
+    <div class="form-row"><label class="form-label">Coluna (Bucket)</label><select class="form-select" id="f-bucket">${BUCKET_ORDER.map(b=>`<option value="${b.key}">${b.label}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Prioridade</label><select class="form-select" id="f-prio">${PRIORITIES.map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Progresso</label><select class="form-select" id="f-prog">${PROGRESSES.map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Rótulos</label><div class="form-tags-wrap" id="f-tags">${FILTER_LABELS.map(t=>`<span class="form-tag" data-tag="${t}" onclick="toggleFormTag(this)">${t}</span>`).join('')}</div></div>
+    <div class="form-actions"><button class="btn btn-cancel" onclick="document.getElementById('modal-overlay').classList.remove('show')">Cancelar</button><button class="btn btn-save" onclick="saveNewCard()">Salvar Card</button></div>`;
+  overlay.classList.add("show");
 }
+function toggleFormTag(el){const t=el.dataset.tag;if(formSelectedTags.has(t)){formSelectedTags.delete(t);el.classList.remove("sel")}else{formSelectedTags.add(t);el.classList.add("sel")}}
+function saveNewCard(){const id=document.getElementById("f-id").value.trim()||`NEW-${newCardCounter++}`;const title=document.getElementById("f-title").value.trim();if(!title){alert("Informe o título.");return}CARDS.push({id,bucket:document.getElementById("f-bucket").value,priority:document.getElementById("f-prio").value,progress:document.getElementById("f-prog").value,title,desc:document.getElementById("f-desc").value.trim()||"Sem descrição.",tags:[...formSelectedTags]});document.getElementById("modal-overlay").classList.remove("show");renderBoard();renderStats()}
 
-// Filters
-let activeBucket = 'all';
-let activePrio = null;
+// ── Export ──
+function exportSummary(){let txt="BACKLOG REBORN — RESUMO DE DIRECIONAMENTO\n"+"=".repeat(50)+"\nData: "+new Date().toLocaleDateString("pt-BR")+"\n\n";BUCKET_ORDER.forEach(b=>{const cards=CARDS.filter(c=>c.bucket===b.key);if(!cards.length)return;txt+=`■ ${b.key.toUpperCase()} (${cards.length})\n`;cards.forEach(c=>{const dir=cardDirections[c.id]?` → ${cardDirections[c.id].toUpperCase()}`:" → (pendente)";txt+=`  [${c.id}] ${c.title} [${c.priority}]${dir}\n`});txt+="\n"});txt+="\n── RESUMO POR DIRECIONAMENTO ──\n";DIRECTIONS.forEach(d=>{txt+=`${d}: ${CARDS.filter(c=>cardDirections[c.id]===d.toLowerCase()).length}\n`});txt+=`Pendentes: ${CARDS.length-Object.keys(cardDirections).length}\n`;const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain;charset=utf-8"}));a.download="backlog_reborn_direcionamento.txt";a.click()}
 
-function toggleFilter(chip) {
-  document.querySelectorAll('.filter-chip[data-filter]').forEach(c => c.classList.remove('active'));
-  chip.classList.add('active');
-  activeBucket = chip.dataset.filter;
-  applyFilters();
-}
-
-function togglePrio(chip) {
-  if (chip.classList.contains('active')) {
-    chip.classList.remove('active');
-    activePrio = null;
-  } else {
-    document.querySelectorAll('.filter-chip[data-prio]').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    activePrio = chip.dataset.prio;
-  }
-  applyFilters();
-}
-
-function applyFilters() {
-  document.querySelectorAll('.bucket-section').forEach(section => {
-    const bk = section.dataset.bucket;
-    const showBucket = activeBucket === 'all' || bk === activeBucket;
-    section.classList.toggle('hidden', !showBucket);
-
-    if (showBucket) {
-      section.querySelectorAll('.card').forEach(card => {
-        const showPrio = !activePrio || card.dataset.priority === activePrio;
-        card.style.display = showPrio ? '' : 'none';
-      });
-    }
-  });
-}
-
-function resetAll() {
-  Object.keys(directions).forEach(k => delete directions[k]);
-  activeBucket = 'all';
-  activePrio = null;
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  document.querySelector('.filter-chip[data-filter="all"]').classList.add('active');
-  renderBoard();
-  updateSummary();
-}
-
-function exportSummary() {
-  let text = "BACKLOG REBORN — RESUMO DE DIRECIONAMENTO\n";
-  text += "=" .repeat(50) + "\n\n";
-
-  DIRECTIONS.forEach(d => {
-    const dk = d.toLowerCase();
-    const items = CARDS_DATA.filter(c => directions[c.id] === dk);
-    if (items.length === 0) return;
-    text += `▸ ${d.toUpperCase()} (${items.length})\n`;
-    items.forEach(c => {
-      text += `  [${c.id}] ${c.title}\n`;
-    });
-    text += "\n";
-  });
-
-  const pending = CARDS_DATA.filter(c => !directions[c.id]);
-  if (pending.length > 0) {
-    text += `▸ SEM DIRECIONAMENTO (${pending.length})\n`;
-    pending.forEach(c => {
-      text += `  [${c.id}] ${c.title}\n`;
-    });
-  }
-
-  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "backlog_reborn_direcionamento.txt";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-// Init
-renderBoard();
-updateSummary();
+renderLabelFilters();renderStats();renderBoard();
 </script>
-
 </body>
 </html>
