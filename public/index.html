@@ -67,7 +67,7 @@ html{font-size:14px}body{font-family:var(--font-b);background:var(--off);color:v
 <div class="hdr"><div class="hdr-in">
   <div class="brand"><div class="brand-bar"></div><h1>AUSTRAL <span>SEGURADORA</span> — Backlog Reborn</h1></div>
   <div class="hdr-right">
-    <div class="save-indicator" id="save-ind"><div class="dot"></div>Salvo</div>
+    <div class="save-indicator" id="save-ind"><div class="dot"></div><span class="stxt">Salvo</span></div>
     <button class="btn btn-add" onclick="openNewCardForm()">+ Novo Card</button>
     <button class="btn btn-primary" onclick="exportCSV()">⬇ CSV</button>
   </div>
@@ -92,10 +92,11 @@ html{font-size:14px}body{font-family:var(--font-b);background:var(--off);color:v
 <script>
 // ═══════════════════════════════════════
 // PERSISTENCE ENGINE
-// Dual: localStorage (instant) + API (async)
+// localStorage (instant) + Vercel KV API (async)
+// API is source of truth on load; localStorage is fallback
 // ═══════════════════════════════════════
-const DB_KEY="backlog_reborn_db_v2";
-const API_URL="/api/db"; // Vercel API route
+const DB_KEY="backlog_reborn_db_v3";
+const API_URL="/api/db";
 
 const FILTER_LABELS=["Comercial","Corretor","Financial Lines (D&O)","Incidente","Negócio","Portal do Corretor","RCG","Reborn","Ressegurador","Segurado","Subscrição","Tomador"];
 const PRIORITIES=["Urgente","Importante","Média"];
@@ -103,21 +104,73 @@ const PROGRESSES=["Não iniciado","Em andamento","Concluída"];
 const DIRECTIONS=["Manter","Priorizar","Adiar","Cancelar","Reavaliar"];
 const DIR_COLORS={manter:"#059669",priorizar:"#009E90",adiar:"#F59E0B",cancelar:"#EF4444",reavaliar:"#6B7280"};
 
-// Default DB embedded (fallback if no localStorage and no API)
 const DEFAULT_DB={"version":"1.0","lastUpdated":"","cards":[{"id":"IMP-TOM","bucket":"Em Produção","priority":"Urgente","progress":"Concluída","title":"Formulário de Cadastro de Tomador (Interno) em Produção","desc":"Formulário de cadastro interno de tomadores já implantado em produção.","tags":["Negócio","Comercial","Reborn"],"direction":null},{"id":"IMP-ARQ","bucket":"Em Produção","priority":"Média","progress":"Concluída","title":"Melhorias Plataforma e Arquitetura Comercial em Produção","desc":"Melhorias arquiteturais voltadas ao módulo comercial, em produção.","tags":["Comercial","Reborn"],"direction":null},{"id":"DI-630","bucket":"Em Execução (Desenvolvimento)","priority":"Importante","progress":"Em andamento","title":"Novo Formulário de Cadastro para Seguro RCG","desc":"Formulário específico para RCG.","tags":["Segurado","RCG","Negócio","Reborn"],"direction":null},{"id":"DI-625","bucket":"Em Execução (Desenvolvimento)","priority":"Importante","progress":"Em andamento","title":"Análise de Crédito Serasa para Segurados D&O","desc":"Consulta Serasa no cadastro de segurados D&O.","tags":["Segurado","Negócio","Financial Lines (D&O)","Reborn"],"direction":null},{"id":"DI-629","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Em andamento","title":"Controle de Frequência e Regra de Consulta Serasa","desc":"Apenas 1 consulta por CNPJ. Resultado vinculado ao cadastro.","tags":["Segurado","Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"REL-SEM","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Em andamento","title":"Reporte Semanal de Status","desc":"Acompanhamento semanal das entregas.","tags":["Reborn"],"direction":null},{"id":"TREIN-FL","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Concluída","title":"Treinamento Financial Lines — D&O/E&O","desc":"Capacitação no formulário D&O e E&O.","tags":["Reborn"],"direction":null},{"id":"REL-SEM2","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Não iniciado","title":"Reporte Semanal (Próximo Ciclo)","desc":"Próximo ciclo semanal.","tags":["Reborn"],"direction":null},{"id":"DI-595","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Sincronização Bidirecional Tomadores I4PRO x Reborn","desc":"Integração bidirecional para sincronização de tomadores.","tags":["Tomador","Negócio","Comercial","Subscrição","Reborn"],"direction":null},{"id":"DI-589","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Integração Canais de Comunicação com Corretores","desc":"Conectar meios de comunicação com corretores. Aguardando API I4PRO.","tags":["Comercial","Reborn"],"direction":null},{"id":"DI-532","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Cadastro Simplificado Contatos de Corretores","desc":"Registro rápido de contatos vinculados às corretoras.","tags":["Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-574","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Bloqueio de Cadastro para Registros Inativos","desc":"Impedir inclusão de registros com status diferente de Ativo.","tags":["Corretor","Comercial","Reborn"],"direction":null},{"id":"DISC-GAR","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Discovery Processo de Garantia (Raia 1)","desc":"Mapeamento do fluxo de garantia para tomadores.","tags":["Tomador","Subscrição","Reborn"],"direction":null},{"id":"DI-583","bucket":"Priorizado","priority":"Importante","progress":"Não iniciado","title":"Otimização Finalização Cadastro Corretores","desc":"Simplificar etapas finais do cadastro de corretores.","tags":["Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-577","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Filtro Padrão de Registros Ativos","desc":"Filtro automático de status Ativo.","tags":["Reborn"],"direction":null},{"id":"DI-307","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Padronização Identificador I4PRO","desc":"Conversão do campo para formato numérico.","tags":["Reborn"],"direction":null},{"id":"DI-576","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Vinculação Automática Corretores/Contatos ao Tomador","desc":"Associar automaticamente corretores e contatos aos tomadores.","tags":["Tomador","Corretor","Reborn"],"direction":null},{"id":"DI-443","bucket":"Backlog","priority":"Urgente","progress":"Não iniciado","title":"Rotina Anual Atualização Receita Federal","desc":"Sincronização anual de dados com a Receita Federal.","tags":["Negócio","Reborn"],"direction":null},{"id":"DI-584","bucket":"Backlog","priority":"Importante","progress":"Não iniciado","title":"Melhoria Comunicação Boas-Vindas Corretor","desc":"Aprimorar e-mails de pré-cadastro.","tags":["Corretor","Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null},{"id":"DI-590","bucket":"Backlog","priority":"Importante","progress":"Não iniciado","title":"Cadastro de Ressegurador","desc":"Interface dedicada ao cadastro de resseguradores.","tags":["Negócio","Ressegurador","Reborn"],"direction":null},{"id":"DI-592","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Painel Controle de Acesso (RBAC)","desc":"Gerenciamento de perfis e permissões.","tags":["Reborn"],"direction":null},{"id":"DI-253","bucket":"Refinamento Negócio/Técnico","priority":"Média","progress":"Não iniciado","title":"Integração Base PEP-CGU","desc":"Consulta e atualização de dados PEP.","tags":["Tomador","Segurado","Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-591","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Cadastro Tomador Externo via Portal","desc":"Cadastro de tomadores pelo portal do corretor.","tags":["Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null},{"id":"DI-636","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Gestão Carteira Executivos (Produtores)","desc":"Acompanhamento de carteiras entre executivos.","tags":["Tomador","Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-473","bucket":"Refinamento Negócio/Técnico","priority":"Média","progress":"Não iniciado","title":"Provisionamento Automático Acesso Corretores","desc":"Criação automática perfil PC-GESTOR.","tags":["Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null},{"id":"DI-640","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Integração Planilha Subscrição (Garantia)","desc":"Disparo automático de planilha padrão para subscrição.","tags":["Tomador","Comercial","Reborn","Subscrição"],"direction":null},{"id":"DI-587","bucket":"Incidente","priority":"Importante","progress":"Não iniciado","title":"Corretor Ativo Iniciando Novo Cadastro","desc":"Corretor com cadastro ativo iniciou novo processo.","tags":["Comercial","Reborn","Incidente"],"direction":null},{"id":"DI-582","bucket":"Incidente","priority":"Importante","progress":"Não iniciado","title":"Cadastros Retornando a 'Aguardando Análise'","desc":"Cadastros concluídos retornando ao status anterior.","tags":["Corretor","Comercial","Reborn","Incidente"],"direction":null},{"id":"DI-586","bucket":"Incidente","priority":"Média","progress":"Não iniciado","title":"Regra Contato Principal Tomadores","desc":"Regra para identificação do contato principal.","tags":["Tomador","Comercial","Reborn","Incidente"],"direction":null}],"config":{"bucketOrder":[{"key":"Refinamento Negócio/Técnico","label":"Refinamento","color":"#9CA3AF"},{"key":"Backlog","label":"Backlog","color":"#8B5CF6"},{"key":"Priorizado","label":"Priorizado","color":"#0A1F3F"},{"key":"Em Execução (Desenvolvimento)","label":"Em Execução","color":"#00C9B7"},{"key":"Incidente","label":"Incidente","color":"#F97316"},{"key":"Em Produção","label":"Em Produção","color":"#10B981"}],"collapsedColumns":[]}};
 
 // ── Persistence ──
 let DB=null;
-function loadDB(){try{const r=localStorage.getItem(DB_KEY);if(r)return JSON.parse(r)}catch(e){}return JSON.parse(JSON.stringify(DEFAULT_DB))}
-function persist(){DB.lastUpdated=new Date().toISOString();localStorage.setItem(DB_KEY,JSON.stringify(DB));flashSave();syncAPI()}
-let _syncTimer=null;
-function syncAPI(){clearTimeout(_syncTimer);_syncTimer=setTimeout(()=>{fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(DB)}).catch(()=>{})},500)}
-function flashSave(){const el=document.getElementById("save-ind");el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),1500)}
+let _saveQueue=null;
+let _apiOk=false; // track if API is reachable
 
-// Try loading from API first, fallback to localStorage
+function persist(){
+  DB.lastUpdated=new Date().toISOString();
+  // 1) Always save to localStorage immediately
+  try{localStorage.setItem(DB_KEY,JSON.stringify(DB))}catch(e){}
+  // 2) Debounced save to API
+  clearTimeout(_saveQueue);
+  _saveQueue=setTimeout(syncToAPI,300);
+  flashSave();
+}
+
+async function syncToAPI(){
+  try{
+    const r=await fetch(API_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(DB)
+    });
+    if(!r.ok){
+      const err=await r.json().catch(()=>({}));
+      console.error('API save failed:',r.status,err);
+      flashError();
+      return;
+    }
+    const result=await r.json();
+    _apiOk=true;
+    console.log('API saved:',result.lastUpdated,'cards:',result.cardsCount);
+  }catch(e){
+    console.error('API unreachable:',e.message);
+    // Silently fall back to localStorage-only
+  }
+}
+
+function flashSave(){const el=document.getElementById("save-ind");el.querySelector('.dot').style.background='var(--teal)';el.querySelector('.stxt').textContent='Salvo';el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),1500)}
+function flashError(){const el=document.getElementById("save-ind");el.querySelector('.dot').style.background='var(--red)';el.querySelector('.stxt').textContent='Erro API';el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),3000)}
+
 async function initDB(){
-  try{const r=await fetch(API_URL);if(r.ok){const d=await r.json();if(d&&d.cards){DB=d;localStorage.setItem(DB_KEY,JSON.stringify(DB));fullRender();return}}}catch(e){}
-  DB=loadDB();fullRender();
+  // 1) Try API first (source of truth when available)
+  try{
+    const r=await fetch(API_URL,{cache:'no-store'});
+    if(r.ok){
+      const d=await r.json();
+      if(d&&d.cards&&d.cards.length>0){
+        DB=d;
+        _apiOk=true;
+        try{localStorage.setItem(DB_KEY,JSON.stringify(DB))}catch(e){}
+        console.log('Loaded from API:',d.cards.length,'cards');
+        fullRender();
+        return;
+      }
+    }
+  }catch(e){console.log('API not available, using localStorage')}
+  // 2) Fallback: localStorage
+  try{
+    const raw=localStorage.getItem(DB_KEY);
+    if(raw){DB=JSON.parse(raw);console.log('Loaded from localStorage');fullRender();return}
+  }catch(e){}
+  // 3) Last resort: embedded default
+  DB=JSON.parse(JSON.stringify(DEFAULT_DB));
+  console.log('Loaded default data');
+  fullRender();
 }
 
 // ── Accessors ──
