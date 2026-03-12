@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backlog Reborn — Painel Executivo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--teal:#00C9B7;--teal-d:#009E90;--navy:#0A1F3F;--lime:#C5D93E;--white:#FFF;--off:#F4F6FA;--g50:#F9FAFB;--g100:#F3F4F6;--g200:#E5E7EB;--g300:#D1D5DB;--g400:#9CA3AF;--g500:#6B7280;--g600:#4B5563;--g700:#374151;--g800:#1F2937;--red:#EF4444;--red-bg:#FEF2F2;--red-b:#FECACA;--amber:#F59E0B;--amber-bg:#FFFBEB;--amber-b:#FDE68A;--blue:#3B82F6;--blue-bg:#EFF6FF;--blue-b:#BFDBFE;--green:#10B981;--orange:#F97316;--orange-bg:#FFF7ED;--orange-b:#FED7AA;--font-d:'Plus Jakarta Sans',sans-serif;--font-b:'DM Sans',sans-serif;--rad:10px;--rad-sm:6px;--shadow-md:0 4px 16px rgba(10,31,63,.1);--shadow-drag:0 12px 36px rgba(10,31,63,.18)}
+html{font-size:14px}body{font-family:var(--font-b);background:var(--off);color:var(--g700);min-height:100vh;overflow-x:hidden}
+.hdr{background:var(--navy);position:sticky;top:0;z-index:200}.hdr-in{max-width:1900px;margin:0 auto;padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.7rem}.brand-bar{width:4px;height:24px;background:var(--teal);border-radius:2px}.brand h1{font-family:var(--font-d);font-size:1rem;font-weight:800;color:var(--white)}.brand h1 span{color:var(--teal);font-weight:600}
+.hdr-right{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.btn{padding:.45rem .9rem;border-radius:var(--rad-sm);font-family:var(--font-b);font-weight:600;font-size:.72rem;cursor:pointer;transition:all .2s;border:none;letter-spacing:.02em}
+.btn-primary{background:var(--teal);color:var(--navy)}.btn-primary:hover{background:var(--lime)}
+.btn-ghost{background:transparent;color:var(--g400);border:1px solid var(--g600)}.btn-ghost:hover{color:var(--white);border-color:var(--g400)}
+.btn-add{background:var(--lime);color:var(--navy);font-weight:700}.btn-add:hover{background:var(--teal)}
+.save-indicator{font-size:.63rem;color:var(--teal);font-weight:600;opacity:0;transition:opacity .3s;display:flex;align-items:center;gap:.25rem}
+.save-indicator.show{opacity:1}.save-indicator .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.stats{background:var(--white);border-bottom:1px solid var(--g200)}.stats-in{max-width:1900px;margin:0 auto;padding:.6rem 1.5rem;display:flex;align-items:center;gap:1.3rem;overflow-x:auto}
+.stat{display:flex;align-items:center;gap:.4rem;white-space:nowrap}.stat-dot{width:8px;height:8px;border-radius:50%}.stat .sl{font-size:.7rem;color:var(--g500);font-weight:500}.stat .sc{font-family:var(--font-d);font-weight:800;font-size:.88rem;color:var(--g800)}.stat-div{width:1px;height:20px;background:var(--g200)}
+.filters{background:var(--white);border-bottom:1px solid var(--g200);position:sticky;top:50px;z-index:150}.filters-in{max-width:1900px;margin:0 auto;padding:.5rem 1.5rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.f-label{font-size:.66rem;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-right:.1rem}.f-sep{width:1px;height:20px;background:var(--g200);margin:0 .35rem}
+.chip{padding:.25rem .6rem;border-radius:14px;font-size:.68rem;font-weight:600;border:1.5px solid var(--g200);background:var(--white);color:var(--g600);cursor:pointer;transition:all .18s;user-select:none;white-space:nowrap}.chip:hover{border-color:var(--teal);color:var(--teal-d)}.chip.on{background:var(--navy);color:var(--white);border-color:var(--navy)}.chip.on-teal{background:var(--teal);color:var(--navy);border-color:var(--teal)}
+.label-toggle{display:flex;align-items:center;gap:.3rem;cursor:pointer;padding:.25rem .6rem;border-radius:14px;font-size:.68rem;font-weight:600;color:var(--teal-d);border:1.5px solid var(--teal);background:rgba(0,201,183,.06);transition:all .2s;user-select:none}.label-toggle:hover{background:rgba(0,201,183,.12)}.label-toggle .arrow{transition:transform .25s;display:inline-block;font-size:.6rem}.label-toggle.open .arrow{transform:rotate(180deg)}
+.label-drawer{display:flex;gap:.3rem;flex-wrap:wrap;max-height:0;overflow:hidden;transition:max-height .3s,opacity .3s,padding .3s;opacity:0;padding:0}.label-drawer.open{max-height:200px;opacity:1;padding:.4rem 0}
+.search-box{display:flex;align-items:center;gap:.4rem;margin-left:auto}.search-box input{padding:.3rem .65rem;border-radius:14px;border:1.5px solid var(--g200);font-size:.7rem;font-family:var(--font-b);color:var(--g700);background:var(--g50);width:170px;outline:none;transition:border .2s}.search-box input:focus{border-color:var(--teal)}
+.board{max-width:1900px;margin:0 auto;padding:.85rem 1.5rem 5rem;display:flex;gap:.75rem;overflow-x:auto;min-height:calc(100vh - 155px);align-items:flex-start}
+.col{min-width:52px;max-width:290px;flex:1 0 260px;background:var(--g50);border-radius:var(--rad);border:1px solid var(--g200);display:flex;flex-direction:column;max-height:calc(100vh - 165px);transition:min-width .3s,flex .3s,max-width .3s}.col.collapsed{min-width:52px;max-width:52px;flex:0 0 52px;cursor:pointer;overflow:hidden}.col.col-dragging{opacity:.45;border:2px dashed var(--teal)}
+.col-head{padding:.6rem .7rem .45rem;display:flex;align-items:center;gap:.4rem;border-bottom:1px solid var(--g200);position:sticky;top:0;background:var(--g50);border-radius:var(--rad) var(--rad) 0 0;z-index:10;cursor:grab}.col-head:active{cursor:grabbing}
+.col-dot{width:9px;height:9px;border-radius:50%}.col-title{font-family:var(--font-d);font-weight:700;font-size:.74rem;color:var(--g800);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.col-title-input{font-family:var(--font-d);font-weight:700;font-size:.74rem;color:var(--g800);border:1px solid var(--teal);border-radius:4px;padding:.1rem .3rem;background:var(--white);outline:none;width:100%}
+.col-count{font-family:var(--font-d);font-weight:800;font-size:.66rem;color:var(--white);padding:.08rem .4rem;border-radius:10px;min-width:20px;text-align:center}
+.col-toggle{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--g200);background:var(--white);color:var(--g500);cursor:pointer;font-size:.6rem;display:flex;align-items:center;justify-content:center;transition:all .2s}.col-toggle:hover{border-color:var(--teal);color:var(--teal-d)}
+.col.collapsed .col-head{flex-direction:column;padding:.5rem .25rem;gap:.5rem;border-bottom:none}.col.collapsed .col-title{writing-mode:vertical-lr;text-orientation:mixed;transform:rotate(180deg);font-size:.7rem;overflow:visible}.col.collapsed .col-cards{display:none}.col.collapsed .col-toggle{transform:rotate(180deg)}.col.collapsed .col-count{margin:0}
+.col-cards{padding:.4rem;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.45rem;min-height:50px;transition:background .2s}.col-cards.drag-over{background:rgba(0,201,183,.08);border-radius:0 0 var(--rad) var(--rad)}
+.card{background:var(--white);border:1px solid var(--g200);border-radius:var(--rad-sm);padding:.6rem .7rem;cursor:grab;transition:all .2s;position:relative}.card:active{cursor:grabbing}.card:hover{box-shadow:var(--shadow-md);border-color:var(--g300)}.card.dragging{opacity:.35;transform:scale(.96)}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:.4rem;margin-bottom:.3rem}.card-id{font-size:.58rem;font-weight:700;color:var(--g400);font-family:'SF Mono','Fira Code',monospace}.card-top-right{display:flex;align-items:center;gap:.25rem}
+.card-delete{width:18px;height:18px;border-radius:50%;border:none;background:transparent;color:var(--g300);cursor:pointer;font-size:.65rem;display:flex;align-items:center;justify-content:center;transition:all .2s;opacity:0}.card:hover .card-delete{opacity:1}.card-delete:hover{background:var(--red-bg);color:var(--red)}
+.prio{font-size:.54rem;font-weight:700;padding:.1rem .35rem;border-radius:3px;text-transform:uppercase;letter-spacing:.04em}.prio-urgente{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}.prio-importante{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}.prio-media{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
+.card-title{font-family:var(--font-d);font-weight:700;font-size:.72rem;color:var(--g800);line-height:1.35;margin-bottom:.25rem}.card-desc{font-size:.65rem;color:var(--g500);line-height:1.5;margin-bottom:.35rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-tags{display:flex;flex-wrap:wrap;gap:.15rem;margin-bottom:.35rem}.tag{font-size:.53rem;font-weight:500;color:var(--g500);background:var(--g100);padding:.07rem .3rem;border-radius:3px}.tag.tag-incident{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-b);font-weight:600}
+.card-progress{display:flex;align-items:center;gap:.25rem}.prog-dot{width:5px;height:5px;border-radius:50%}.prog-label{font-size:.58rem;color:var(--g400);font-weight:500}
+.dir-area{border-top:1px solid var(--g100);padding-top:.45rem;margin-top:.1rem;display:flex;align-items:center;gap:.2rem;flex-wrap:wrap}.dir-label{font-size:.56rem;font-weight:600;color:var(--g400);text-transform:uppercase;width:100%;margin-bottom:.12rem}
+.dir-btn{font-size:.56rem;font-weight:600;padding:.18rem .4rem;border-radius:4px;border:1.5px solid var(--g200);background:var(--white);color:var(--g500);cursor:pointer;transition:all .18s}.dir-btn:hover{border-color:var(--teal);color:var(--teal-d);background:#F0FDFB}
+.dir-btn.sel{color:var(--white)}.dir-btn.sel.d-manter{background:#059669;border-color:#059669}.dir-btn.sel.d-priorizar{background:var(--teal-d);border-color:var(--teal-d)}.dir-btn.sel.d-adiar{background:var(--amber);border-color:var(--amber);color:var(--g800)}.dir-btn.sel.d-cancelar{background:var(--red);border-color:var(--red)}.dir-btn.sel.d-reavaliar{background:var(--g600);border-color:var(--g600)}
+.drop-placeholder{border:2px dashed var(--teal);border-radius:var(--rad-sm);background:rgba(0,201,183,.04);min-height:40px}
+.col-drop-zone{width:6px;flex-shrink:0;align-self:stretch;border-radius:4px;transition:all .2s}.col-drop-zone.active{width:260px;background:rgba(0,201,183,.08);border:2px dashed var(--teal);border-radius:var(--rad)}
+.summary-bar{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--teal);padding:.5rem 1.5rem;z-index:200;transform:translateY(100%);transition:transform .3s}.summary-bar.visible{transform:translateY(0)}.summary-in{max-width:1900px;margin:0 auto;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}.sum-item{display:flex;align-items:center;gap:.3rem}.sum-dot{width:7px;height:7px;border-radius:50%}.sum-count{font-family:var(--font-d);font-weight:800;font-size:.9rem;color:var(--white)}.sum-label{font-size:.66rem;color:var(--g400);font-weight:500}.sum-sep{width:1px;height:18px;background:var(--g600)}
+.modal-overlay{position:fixed;inset:0;background:rgba(10,31,63,.5);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}.modal-overlay.show{display:flex}
+.modal{background:var(--white);border-radius:var(--rad);width:95%;max-width:560px;max-height:90vh;overflow-y:auto;padding:1.5rem;box-shadow:var(--shadow-drag);position:relative}
+.modal-close{position:absolute;top:.7rem;right:.7rem;width:26px;height:26px;border-radius:50%;border:none;background:var(--g100);color:var(--g500);cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;z-index:5}.modal-close:hover{background:var(--g200);color:var(--g800)}
+.form-title{font-family:var(--font-d);font-weight:800;font-size:1rem;color:var(--g800);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}.form-title-badge{font-size:.65rem;font-weight:600;padding:.15rem .5rem;border-radius:10px;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
+.form-row{margin-bottom:.8rem}.form-label{display:block;font-size:.68rem;font-weight:600;color:var(--g600);margin-bottom:.2rem;text-transform:uppercase;letter-spacing:.04em}
+.form-input,.form-select,.form-textarea{width:100%;padding:.4rem .6rem;border:1.5px solid var(--g200);border-radius:var(--rad-sm);font-family:var(--font-b);font-size:.78rem;color:var(--g700);background:var(--g50);outline:none;transition:border .2s}.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--teal)}.form-textarea{min-height:65px;resize:vertical}
+.form-tags-wrap{display:flex;flex-wrap:wrap;gap:.25rem}.form-tag{padding:.22rem .5rem;border-radius:14px;font-size:.64rem;font-weight:600;border:1.5px solid var(--g200);background:var(--white);color:var(--g600);cursor:pointer;transition:all .18s;user-select:none}.form-tag.sel{background:var(--teal);color:var(--navy);border-color:var(--teal)}
+.form-actions{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.1rem;flex-wrap:wrap}.btn-cancel{background:var(--g100);color:var(--g600);border:1px solid var(--g200)}.btn-cancel:hover{background:var(--g200)}.btn-save{background:var(--teal);color:var(--navy);font-weight:700}.btn-save:hover{background:var(--lime)}.btn-del-modal{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b);margin-right:auto}.btn-del-modal:hover{background:var(--red);color:var(--white)}
+.col-cards::-webkit-scrollbar{width:4px}.col-cards::-webkit-scrollbar-track{background:transparent}.col-cards::-webkit-scrollbar-thumb{background:var(--g300);border-radius:4px}
+.confirm-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--white);border:1px solid var(--g200);border-radius:var(--rad);padding:1.2rem 1.5rem;box-shadow:var(--shadow-drag);z-index:400;text-align:center;min-width:280px;display:none}.confirm-toast p{font-size:.85rem;color:var(--g700);margin-bottom:1rem;font-weight:500}.confirm-toast .cb{display:flex;gap:.5rem;justify-content:center}
+.confirm-overlay{position:fixed;inset:0;background:rgba(10,31,63,.3);z-index:399;display:none}.confirm-overlay.show{display:block}
+@media(max-width:900px){.board{flex-direction:column;align-items:stretch}.col,.col.collapsed{min-width:100%;max-width:100%;max-height:none;flex:1 0 auto}.col.collapsed .col-head{flex-direction:row}.col.collapsed .col-title{writing-mode:horizontal-tb;transform:none}.col.collapsed .col-cards{display:none}.hdr-in,.stats-in,.filters-in,.board{padding-left:1rem;padding-right:1rem}}
+</style>
+</head>
+<body>
+<div class="hdr"><div class="hdr-in">
+  <div class="brand"><div class="brand-bar"></div><h1>AUSTRAL <span>SEGURADORA</span> — Backlog Reborn</h1></div>
+  <div class="hdr-right">
+    <div class="save-indicator" id="save-ind"><div class="dot"></div>Salvo</div>
+    <button class="btn btn-add" onclick="openNewCardForm()">+ Novo Card</button>
+    <button class="btn btn-primary" onclick="exportCSV()">⬇ CSV</button>
+  </div>
+</div></div>
+<div class="stats"><div class="stats-in" id="stats-bar"></div></div>
+<div class="filters"><div class="filters-in">
+  <span class="f-label">Prioridade:</span>
+  <span class="chip on" data-prio="all" onclick="setPrio(this)">Todas</span>
+  <span class="chip" data-prio="Urgente" onclick="setPrio(this)">Urgente</span>
+  <span class="chip" data-prio="Importante" onclick="setPrio(this)">Importante</span>
+  <span class="chip" data-prio="Média" onclick="setPrio(this)">Média</span>
+  <span class="f-sep"></span>
+  <span class="label-toggle" id="label-toggle" onclick="toggleLabelDrawer()"><span class="f-label" style="margin:0;color:inherit">Rótulos</span><span class="arrow">▼</span></span>
+  <div class="search-box"><input type="text" id="search-input" placeholder="Buscar..." oninput="applyFilters()"></div>
+</div><div style="max-width:1900px;margin:0 auto;padding:0 1.5rem"><div class="label-drawer" id="label-drawer"></div></div></div>
+<div class="board" id="board"></div>
+<div class="summary-bar" id="summary-bar"><div class="summary-in" id="summary-in"></div></div>
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)"><div class="modal" id="modal-content"></div></div>
+<div class="confirm-overlay" id="confirm-overlay"></div>
+<div class="confirm-toast" id="confirm-toast"><p id="confirm-msg"></p><div class="cb"><button class="btn btn-cancel" onclick="hideConfirm()">Cancelar</button><button class="btn" style="background:var(--red);color:var(--white)" onclick="confirmDeleteAction()">Excluir</button></div></div>
+
+<script>
+// ═══════════════════════════════════════
+// PERSISTENCE ENGINE
+// Dual: localStorage (instant) + API (async)
+// ═══════════════════════════════════════
+const DB_KEY="backlog_reborn_db_v2";
+const API_URL="/api/db"; // Vercel API route
+
+const FILTER_LABELS=["Comercial","Corretor","Financial Lines (D&O)","Incidente","Negócio","Portal do Corretor","RCG","Reborn","Ressegurador","Segurado","Subscrição","Tomador"];
+const PRIORITIES=["Urgente","Importante","Média"];
+const PROGRESSES=["Não iniciado","Em andamento","Concluída"];
+const DIRECTIONS=["Manter","Priorizar","Adiar","Cancelar","Reavaliar"];
+const DIR_COLORS={manter:"#059669",priorizar:"#009E90",adiar:"#F59E0B",cancelar:"#EF4444",reavaliar:"#6B7280"};
+
+// Default DB embedded (fallback if no localStorage and no API)
+const DEFAULT_DB={"version":"1.0","lastUpdated":"","cards":[{"id":"IMP-TOM","bucket":"Em Produção","priority":"Urgente","progress":"Concluída","title":"Formulário de Cadastro de Tomador (Interno) em Produção","desc":"Formulário de cadastro interno de tomadores já implantado em produção.","tags":["Negócio","Comercial","Reborn"],"direction":null},{"id":"IMP-ARQ","bucket":"Em Produção","priority":"Média","progress":"Concluída","title":"Melhorias Plataforma e Arquitetura Comercial em Produção","desc":"Melhorias arquiteturais voltadas ao módulo comercial, em produção.","tags":["Comercial","Reborn"],"direction":null},{"id":"DI-630","bucket":"Em Execução (Desenvolvimento)","priority":"Importante","progress":"Em andamento","title":"Novo Formulário de Cadastro para Seguro RCG","desc":"Formulário específico para RCG.","tags":["Segurado","RCG","Negócio","Reborn"],"direction":null},{"id":"DI-625","bucket":"Em Execução (Desenvolvimento)","priority":"Importante","progress":"Em andamento","title":"Análise de Crédito Serasa para Segurados D&O","desc":"Consulta Serasa no cadastro de segurados D&O.","tags":["Segurado","Negócio","Financial Lines (D&O)","Reborn"],"direction":null},{"id":"DI-629","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Em andamento","title":"Controle de Frequência e Regra de Consulta Serasa","desc":"Apenas 1 consulta por CNPJ. Resultado vinculado ao cadastro.","tags":["Segurado","Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"REL-SEM","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Em andamento","title":"Reporte Semanal de Status","desc":"Acompanhamento semanal das entregas.","tags":["Reborn"],"direction":null},{"id":"TREIN-FL","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Concluída","title":"Treinamento Financial Lines — D&O/E&O","desc":"Capacitação no formulário D&O e E&O.","tags":["Reborn"],"direction":null},{"id":"REL-SEM2","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Não iniciado","title":"Reporte Semanal (Próximo Ciclo)","desc":"Próximo ciclo semanal.","tags":["Reborn"],"direction":null},{"id":"DI-595","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Sincronização Bidirecional Tomadores I4PRO x Reborn","desc":"Integração bidirecional para sincronização de tomadores.","tags":["Tomador","Negócio","Comercial","Subscrição","Reborn"],"direction":null},{"id":"DI-589","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Integração Canais de Comunicação com Corretores","desc":"Conectar meios de comunicação com corretores. Aguardando API I4PRO.","tags":["Comercial","Reborn"],"direction":null},{"id":"DI-532","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Cadastro Simplificado Contatos de Corretores","desc":"Registro rápido de contatos vinculados às corretoras.","tags":["Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-574","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Bloqueio de Cadastro para Registros Inativos","desc":"Impedir inclusão de registros com status diferente de Ativo.","tags":["Corretor","Comercial","Reborn"],"direction":null},{"id":"DISC-GAR","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Discovery Processo de Garantia (Raia 1)","desc":"Mapeamento do fluxo de garantia para tomadores.","tags":["Tomador","Subscrição","Reborn"],"direction":null},{"id":"DI-583","bucket":"Priorizado","priority":"Importante","progress":"Não iniciado","title":"Otimização Finalização Cadastro Corretores","desc":"Simplificar etapas finais do cadastro de corretores.","tags":["Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-577","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Filtro Padrão de Registros Ativos","desc":"Filtro automático de status Ativo.","tags":["Reborn"],"direction":null},{"id":"DI-307","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Padronização Identificador I4PRO","desc":"Conversão do campo para formato numérico.","tags":["Reborn"],"direction":null},{"id":"DI-576","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Vinculação Automática Corretores/Contatos ao Tomador","desc":"Associar automaticamente corretores e contatos aos tomadores.","tags":["Tomador","Corretor","Reborn"],"direction":null},{"id":"DI-443","bucket":"Backlog","priority":"Urgente","progress":"Não iniciado","title":"Rotina Anual Atualização Receita Federal","desc":"Sincronização anual de dados com a Receita Federal.","tags":["Negócio","Reborn"],"direction":null},{"id":"DI-584","bucket":"Backlog","priority":"Importante","progress":"Não iniciado","title":"Melhoria Comunicação Boas-Vindas Corretor","desc":"Aprimorar e-mails de pré-cadastro.","tags":["Corretor","Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null},{"id":"DI-590","bucket":"Backlog","priority":"Importante","progress":"Não iniciado","title":"Cadastro de Ressegurador","desc":"Interface dedicada ao cadastro de resseguradores.","tags":["Negócio","Ressegurador","Reborn"],"direction":null},{"id":"DI-592","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Painel Controle de Acesso (RBAC)","desc":"Gerenciamento de perfis e permissões.","tags":["Reborn"],"direction":null},{"id":"DI-253","bucket":"Refinamento Negócio/Técnico","priority":"Média","progress":"Não iniciado","title":"Integração Base PEP-CGU","desc":"Consulta e atualização de dados PEP.","tags":["Tomador","Segurado","Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-591","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Cadastro Tomador Externo via Portal","desc":"Cadastro de tomadores pelo portal do corretor.","tags":["Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null},{"id":"DI-636","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Gestão Carteira Executivos (Produtores)","desc":"Acompanhamento de carteiras entre executivos.","tags":["Tomador","Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-473","bucket":"Refinamento Negócio/Técnico","priority":"Média","progress":"Não iniciado","title":"Provisionamento Automático Acesso Corretores","desc":"Criação automática perfil PC-GESTOR.","tags":["Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null},{"id":"DI-640","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Integração Planilha Subscrição (Garantia)","desc":"Disparo automático de planilha padrão para subscrição.","tags":["Tomador","Comercial","Reborn","Subscrição"],"direction":null},{"id":"DI-587","bucket":"Incidente","priority":"Importante","progress":"Não iniciado","title":"Corretor Ativo Iniciando Novo Cadastro","desc":"Corretor com cadastro ativo iniciou novo processo.","tags":["Comercial","Reborn","Incidente"],"direction":null},{"id":"DI-582","bucket":"Incidente","priority":"Importante","progress":"Não iniciado","title":"Cadastros Retornando a 'Aguardando Análise'","desc":"Cadastros concluídos retornando ao status anterior.","tags":["Corretor","Comercial","Reborn","Incidente"],"direction":null},{"id":"DI-586","bucket":"Incidente","priority":"Média","progress":"Não iniciado","title":"Regra Contato Principal Tomadores","desc":"Regra para identificação do contato principal.","tags":["Tomador","Comercial","Reborn","Incidente"],"direction":null}],"config":{"bucketOrder":[{"key":"Refinamento Negócio/Técnico","label":"Refinamento","color":"#9CA3AF"},{"key":"Backlog","label":"Backlog","color":"#8B5CF6"},{"key":"Priorizado","label":"Priorizado","color":"#0A1F3F"},{"key":"Em Execução (Desenvolvimento)","label":"Em Execução","color":"#00C9B7"},{"key":"Incidente","label":"Incidente","color":"#F97316"},{"key":"Em Produção","label":"Em Produção","color":"#10B981"}],"collapsedColumns":[]}};
+
+// ── Persistence ──
+let DB=null;
+function loadDB(){try{const r=localStorage.getItem(DB_KEY);if(r)return JSON.parse(r)}catch(e){}return JSON.parse(JSON.stringify(DEFAULT_DB))}
+function persist(){DB.lastUpdated=new Date().toISOString();localStorage.setItem(DB_KEY,JSON.stringify(DB));flashSave();syncAPI()}
+let _syncTimer=null;
+function syncAPI(){clearTimeout(_syncTimer);_syncTimer=setTimeout(()=>{fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(DB)}).catch(()=>{})},500)}
+function flashSave(){const el=document.getElementById("save-ind");el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),1500)}
+
+// Try loading from API first, fallback to localStorage
+async function initDB(){
+  try{const r=await fetch(API_URL);if(r.ok){const d=await r.json();if(d&&d.cards){DB=d;localStorage.setItem(DB_KEY,JSON.stringify(DB));fullRender();return}}}catch(e){}
+  DB=loadDB();fullRender();
+}
+
+// ── Accessors ──
+function gc(){return DB.cards}
+function gb(){return DB.config.bucketOrder}
+function gcol(){return new Set(DB.config.collapsedColumns||[])}
+
+let activePrio="all",activeLabels=new Set(),searchQuery="",labelsOpen=false,pendingDeleteId=null,ncCounter=100;
+
+// ══════════════════
+// RENDER
+// ══════════════════
+function fullRender(){renderLabelFilters();renderStats();renderBoard()}
+function renderLabelFilters(){document.getElementById("label-drawer").innerHTML=FILTER_LABELS.map(l=>`<span class="chip${activeLabels.has(l)?' on-teal':''}" data-label="${l}" onclick="toggleLabel(this)">${l}</span>`).join('')}
+function toggleLabelDrawer(){labelsOpen=!labelsOpen;document.getElementById("label-drawer").classList.toggle("open",labelsOpen);document.getElementById("label-toggle").classList.toggle("open",labelsOpen)}
+function renderStats(){const el=document.getElementById("stats-bar");let h='';gb().forEach((b,i)=>{const n=gc().filter(c=>c.bucket===b.key).length;if(i>0)h+='<div class="stat-div"></div>';h+=`<div class="stat"><div class="stat-dot" style="background:${b.color}"></div><span class="sl">${b.label}</span><span class="sc">${n}</span></div>`});h+='<div class="stat-div"></div>';h+=`<div class="stat"><span class="sl" style="font-weight:700;color:var(--g700)">Total</span><span class="sc" style="color:var(--teal-d)">${gc().length}</span></div>`;el.innerHTML=h}
+
+function renderBoard(){
+  const board=document.getElementById("board");board.innerHTML='';const cols=gcol();
+  gb().forEach((b,idx)=>{
+    // Drop zone before each column
+    const dz=document.createElement("div");dz.className="col-drop-zone";dz.dataset.pos=String(idx);
+    dz.addEventListener("dragover",(e)=>{if(!dragColK)return;e.preventDefault();dz.classList.add("active")});
+    dz.addEventListener("dragleave",()=>dz.classList.remove("active"));
+    dz.addEventListener("drop",(e)=>{e.preventDefault();dz.classList.remove("active");dropColAt(parseInt(dz.dataset.pos))});
+    board.appendChild(dz);
+
+    const cards=gc().filter(c=>c.bucket===b.key),vis=cards.filter(cv),isC=cols.has(b.key);
+    const col=document.createElement("div");col.className="col"+(isC?" collapsed":"");col.dataset.bucket=b.key;col.dataset.idx=String(idx);
+    col.draggable=true;
+    col.addEventListener("dragstart",colDS);col.addEventListener("dragend",colDE);
+    if(isC)col.addEventListener("click",(e)=>{if(!e.target.closest('.col-cards')&&!e.target.closest('.dir-btn')&&!e.target.closest('.card-delete'))toggleCC(b.key)});
+    col.innerHTML=`<div class="col-head"><div class="col-dot" style="background:${b.color}"></div><div class="col-title" ondblclick="editCT(this,'${b.key}')">${b.label}</div><div class="col-count" style="background:${b.color}">${vis.length}</div><div class="col-toggle" title="${isC?'Expandir':'Recolher'}" onclick="event.stopPropagation();toggleCC('${b.key}')">◂</div></div><div class="col-cards" data-bucket="${b.key}"></div>`;
+    if(!isC){const ce=col.querySelector(".col-cards");ce.addEventListener("dragover",cDO);ce.addEventListener("dragleave",cDL);ce.addEventListener("drop",cDR);vis.forEach(c=>ce.appendChild(mkC(c)))}
+    board.appendChild(col);
+  });
+  // Final drop zone
+  const dzf=document.createElement("div");dzf.className="col-drop-zone";dzf.dataset.pos=String(gb().length);
+  dzf.addEventListener("dragover",(e)=>{if(!dragColK)return;e.preventDefault();dzf.classList.add("active")});
+  dzf.addEventListener("dragleave",()=>dzf.classList.remove("active"));
+  dzf.addEventListener("drop",(e)=>{e.preventDefault();dzf.classList.remove("active");dropColAt(parseInt(dzf.dataset.pos))});
+  board.appendChild(dzf);
+  updateSummary();
+}
+
+function editCT(el,key){const b=gb().find(x=>x.key===key);if(!b)return;const inp=document.createElement("input");inp.className="col-title-input";inp.value=b.label;el.replaceWith(inp);inp.focus();inp.select();function sv(){b.label=inp.value.trim()||b.label;persist();fullRender()}inp.addEventListener("blur",sv);inp.addEventListener("keydown",(e)=>{if(e.key==="Enter")sv();if(e.key==="Escape"){inp.value=b.label;sv()}})}
+function toggleCC(key){const s=gcol();if(s.has(key))s.delete(key);else s.add(key);DB.config.collapsedColumns=[...s];persist();renderBoard()}
+function cv(c){if(activePrio!=="all"&&c.priority!==activePrio)return false;if(activeLabels.size>0&&!c.tags.some(t=>activeLabels.has(t)))return false;if(searchQuery){const q=searchQuery.toLowerCase();if(!c.title.toLowerCase().includes(q)&&!c.id.toLowerCase().includes(q)&&!c.desc.toLowerCase().includes(q)&&!c.tags.some(t=>t.toLowerCase().includes(q)))return false}return true}
+
+function mkC(c){
+  const d=document.createElement("div");d.className="card";d.draggable=true;d.dataset.id=c.id;d.dataset.type="card";
+  d.addEventListener("dragstart",cDS);d.addEventListener("dragend",cDE);
+  d.addEventListener("click",(e)=>{if(!e.target.classList.contains("dir-btn")&&!e.target.classList.contains("card-delete"))openEdit(c.id)});
+  const pc=c.priority==="Urgente"?"prio-urgente":c.priority==="Importante"?"prio-importante":"prio-media";
+  const pgc=c.progress==="Em andamento"?"var(--teal)":c.progress==="Concluída"?"var(--green)":"var(--g400)";
+  const dir=c.direction||null;
+  d.innerHTML=`<div class="card-top"><span class="card-id">${c.id}</span><div class="card-top-right"><button class="card-delete" title="Excluir" onclick="event.stopPropagation();askDel('${c.id}')">✕</button><span class="prio ${pc}">${c.priority}</span></div></div><div class="card-title">${c.title}</div><div class="card-desc">${c.desc}</div><div class="card-tags">${c.tags.map(t=>`<span class="tag${t==='Incidente'?' tag-incident':''}">${t}</span>`).join('')}</div><div class="card-progress"><div class="prog-dot" style="background:${pgc}"></div><span class="prog-label">${c.progress}</span></div><div class="dir-area"><span class="dir-label">Direcionamento</span>${DIRECTIONS.map(x=>{const dk=x.toLowerCase();const s=dir===dk?`sel d-${dk}`:'';return`<button class="dir-btn ${s}" data-dir="${dk}" data-card="${c.id}" onclick="event.stopPropagation();setDir('${c.id}','${dk}',this)">${x}</button>`}).join('')}</div>`;
+  return d;
+}
+
+// ── Card Drag ──
+let dragCid=null;
+function cDS(e){e.stopPropagation();dragCid=e.currentTarget.dataset.id;e.currentTarget.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/card",dragCid)}
+function cDE(e){e.currentTarget.classList.remove("dragging");document.querySelectorAll(".col-cards").forEach(el=>el.classList.remove("drag-over"));document.querySelectorAll(".drop-placeholder").forEach(el=>el.remove());dragCid=null}
+function cDO(e){if(!dragCid)return;e.preventDefault();e.stopPropagation();const col=e.currentTarget;col.classList.add("drag-over");let ph=col.querySelector(".drop-placeholder");if(!ph){ph=document.createElement("div");ph.className="drop-placeholder"}const af=gDA(col,e.clientY);if(af)col.insertBefore(ph,af);else col.appendChild(ph)}
+function cDL(e){if(!e.currentTarget.contains(e.relatedTarget)){e.currentTarget.classList.remove("drag-over");e.currentTarget.querySelectorAll(".drop-placeholder").forEach(el=>el.remove())}}
+function cDR(e){if(!dragCid)return;e.preventDefault();e.stopPropagation();const col=e.currentTarget;col.classList.remove("drag-over");col.querySelectorAll(".drop-placeholder").forEach(el=>el.remove());const nb=col.dataset.bucket;const card=gc().find(c=>c.id===dragCid);if(card){card.bucket=nb;persist();renderBoard();renderStats()}}
+function gDA(ct,y){const els=[...ct.querySelectorAll(".card:not(.dragging)")];let cl=null,co=Number.NEGATIVE_INFINITY;els.forEach(ch=>{const b=ch.getBoundingClientRect();const o=y-b.top-b.height/2;if(o<0&&o>co){co=o;cl=ch}});return cl}
+
+// ── Column Drag (fixed) ──
+let dragColK=null;
+function colDS(e){if(dragCid)return;if(e.target.closest('.card')||e.target.closest('.col-toggle')||e.target.closest('.col-title-input')){e.preventDefault();return}
+  dragColK=e.currentTarget.dataset.bucket;e.currentTarget.classList.add("col-dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/col",dragColK)}
+function colDE(e){e.currentTarget.classList.remove("col-dragging");document.querySelectorAll(".col-drop-zone").forEach(z=>z.classList.remove("active"));dragColK=null}
+function dropColAt(targetPos){
+  if(!dragColK)return;
+  const bo=gb();const fromIdx=bo.findIndex(b=>b.key===dragColK);
+  if(fromIdx===-1)return;
+  const[moved]=bo.splice(fromIdx,1);
+  // Adjust target position after removal
+  let insertAt=targetPos>fromIdx?targetPos-1:targetPos;
+  if(insertAt<0)insertAt=0;if(insertAt>bo.length)insertAt=bo.length;
+  bo.splice(insertAt,0,moved);
+  persist();renderBoard();renderStats();
+}
+
+// ── Direction ──
+function setDir(cid,dir,btn){const c=gc().find(x=>x.id===cid);if(!c)return;c.direction=c.direction===dir?null:dir;persist();const card=btn.closest(".card");card.querySelectorAll(".dir-btn").forEach(b=>{const d=b.dataset.dir;b.className="dir-btn"+(c.direction===d?` sel d-${d}`:"")});updateSummary()}
+function updateSummary(){const cards=gc();const counts={};DIRECTIONS.forEach(d=>counts[d.toLowerCase()]=0);cards.forEach(c=>{if(c.direction)counts[c.direction]++});const tot=cards.filter(c=>c.direction).length;const bar=document.getElementById("summary-bar"),inn=document.getElementById("summary-in");bar.classList.toggle("visible",tot>0);let h='';DIRECTIONS.forEach((d,i)=>{const dk=d.toLowerCase();if(i>0)h+='<div class="sum-sep"></div>';h+=`<div class="sum-item"><div class="sum-dot" style="background:${DIR_COLORS[dk]}"></div><span class="sum-count">${counts[dk]}</span><span class="sum-label">${d}</span></div>`});h+='<div class="sum-sep"></div>';h+=`<div class="sum-item"><span class="sum-count" style="color:var(--g400)">${cards.length-tot}</span><span class="sum-label">Pendentes</span></div>`;inn.innerHTML=h}
+
+// ── Filters ──
+function setPrio(chip){document.querySelectorAll("[data-prio]").forEach(c=>c.classList.remove("on"));chip.classList.add("on");activePrio=chip.dataset.prio;renderBoard()}
+function toggleLabel(chip){const l=chip.dataset.label;if(activeLabels.has(l))activeLabels.delete(l);else activeLabels.add(l);chip.classList.toggle("on-teal");renderBoard()}
+function applyFilters(){searchQuery=document.getElementById("search-input").value;renderBoard()}
+function closeModal(e){if(e.target===e.currentTarget)e.currentTarget.classList.remove("show")}
+
+// ── Delete ──
+function askDel(id){const c=gc().find(x=>x.id===id);if(!c)return;pendingDeleteId=id;document.getElementById("confirm-msg").textContent=`Excluir "${c.title}"?`;document.getElementById("confirm-toast").style.display="block";document.getElementById("confirm-overlay").classList.add("show")}
+function hideConfirm(){pendingDeleteId=null;document.getElementById("confirm-toast").style.display="none";document.getElementById("confirm-overlay").classList.remove("show")}
+function confirmDeleteAction(){if(!pendingDeleteId)return;const idx=DB.cards.findIndex(c=>c.id===pendingDeleteId);if(idx>-1)DB.cards.splice(idx,1);persist();hideConfirm();document.getElementById("modal-overlay").classList.remove("show");fullRender()}
+
+// ── Edit ──
+let eTags=new Set();
+function openEdit(cid){
+  const c=gc().find(x=>x.id===cid);if(!c)return;eTags=new Set(c.tags);
+  const ct=document.getElementById("modal-content");
+  ct.innerHTML=`<button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('show')">&times;</button>
+    <div class="form-title">Editar <span class="form-title-badge">${c.id}</span></div>
+    <div class="form-row"><label class="form-label">ID</label><input class="form-input" id="e-id" value="${c.id}"></div>
+    <div class="form-row"><label class="form-label">Título</label><input class="form-input" id="e-title" value="${esc(c.title)}"></div>
+    <div class="form-row"><label class="form-label">Descrição</label><textarea class="form-textarea" id="e-desc">${esc(c.desc)}</textarea></div>
+    <div class="form-row"><label class="form-label">Coluna</label><select class="form-select" id="e-bucket">${gb().map(b=>`<option value="${b.key}"${b.key===c.bucket?' selected':''}>${b.label}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Prioridade</label><select class="form-select" id="e-prio">${PRIORITIES.map(p=>`<option value="${p}"${p===c.priority?' selected':''}>${p}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Progresso</label><select class="form-select" id="e-prog">${PROGRESSES.map(p=>`<option value="${p}"${p===c.progress?' selected':''}>${p}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Rótulos</label><div class="form-tags-wrap">${FILTER_LABELS.map(t=>`<span class="form-tag${eTags.has(t)?' sel':''}" data-tag="${t}" onclick="tE(this)">${t}</span>`).join('')}</div></div>
+    <div class="form-actions"><button class="btn btn-del-modal" onclick="askDel('${c.id}')">Excluir</button><button class="btn btn-cancel" onclick="document.getElementById('modal-overlay').classList.remove('show')">Cancelar</button><button class="btn btn-save" onclick="svEdit('${c.id}')">Salvar</button></div>`;
+  document.getElementById("modal-overlay").classList.add("show");
+}
+function tE(el){const t=el.dataset.tag;if(eTags.has(t)){eTags.delete(t);el.classList.remove("sel")}else{eTags.add(t);el.classList.add("sel")}}
+function svEdit(oid){const c=gc().find(x=>x.id===oid);if(!c)return;const title=document.getElementById("e-title").value.trim();if(!title){alert("Informe o título.");return}c.id=document.getElementById("e-id").value.trim()||oid;c.title=title;c.desc=document.getElementById("e-desc").value.trim()||"Sem descrição.";c.bucket=document.getElementById("e-bucket").value;c.priority=document.getElementById("e-prio").value;c.progress=document.getElementById("e-prog").value;c.tags=[...eTags];persist();document.getElementById("modal-overlay").classList.remove("show");fullRender()}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ── New Card ──
+let nTags=new Set();
+function openNewCardForm(){
+  nTags=new Set();const ct=document.getElementById("modal-content");
+  ct.innerHTML=`<button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('show')">&times;</button>
+    <div class="form-title">Novo Card</div>
+    <div class="form-row"><label class="form-label">ID</label><input class="form-input" id="f-id" placeholder="Ex: DI-700"></div>
+    <div class="form-row"><label class="form-label">Título</label><input class="form-input" id="f-title" placeholder="Título executivo"></div>
+    <div class="form-row"><label class="form-label">Descrição</label><textarea class="form-textarea" id="f-desc" placeholder="Descrição de negócio"></textarea></div>
+    <div class="form-row"><label class="form-label">Coluna</label><select class="form-select" id="f-bucket">${gb().map(b=>`<option value="${b.key}">${b.label}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Prioridade</label><select class="form-select" id="f-prio">${PRIORITIES.map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Progresso</label><select class="form-select" id="f-prog">${PROGRESSES.map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Rótulos</label><div class="form-tags-wrap">${FILTER_LABELS.map(t=>`<span class="form-tag" data-tag="${t}" onclick="tN(this)">${t}</span>`).join('')}</div></div>
+    <div class="form-actions"><button class="btn btn-cancel" onclick="document.getElementById('modal-overlay').classList.remove('show')">Cancelar</button><button class="btn btn-save" onclick="svNew()">Salvar</button></div>`;
+  document.getElementById("modal-overlay").classList.add("show");
+}
+function tN(el){const t=el.dataset.tag;if(nTags.has(t)){nTags.delete(t);el.classList.remove("sel")}else{nTags.add(t);el.classList.add("sel")}}
+function svNew(){const id=document.getElementById("f-id").value.trim()||`NEW-${ncCounter++}`;const title=document.getElementById("f-title").value.trim();if(!title){alert("Informe o título.");return}DB.cards.push({id,bucket:document.getElementById("f-bucket").value,priority:document.getElementById("f-prio").value,progress:document.getElementById("f-prog").value,title,desc:document.getElementById("f-desc").value.trim()||"Sem descrição.",tags:[...nTags],direction:null});persist();document.getElementById("modal-overlay").classList.remove("show");fullRender()}
+
+// ── Export CSV ──
+function exportCSV(){
+  const sep=";";const nl="\r\n";
+  const headers=["ID","Coluna","Prioridade","Progresso","Título","Descrição","Rótulos","Direcionamento"];
+  let csv=headers.join(sep)+nl;
+  gc().forEach(c=>{
+    const row=[c.id,c.bucket,c.priority,c.progress,'"'+c.title.replace(/"/g,'""')+'"','"'+c.desc.replace(/"/g,'""')+'"','"'+c.tags.join(", ")+'"',c.direction||""];
+    csv+=row.join(sep)+nl;
+  });
+  const bom="\uFEFF";
+  const blob=new Blob([bom+csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="backlog_reborn_export.csv";a.click();
+}
+
+// ── Init ──
+initDB();
+</script>
+</body>
+</html>
