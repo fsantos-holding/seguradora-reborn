@@ -1,51 +1,46 @@
-const fs = require('fs');
-const path = require('path');
+const { kv } = require("@vercel/kv");
+const fs = require("fs");
+const path = require("path");
 
-// In Vercel serverless, /tmp is writable. We use it as persistent-ish storage.
-// For true persistence, swap this for a real DB (e.g., Vercel KV, Supabase, etc.)
-const DB_PATH = path.join('/tmp', 'backlog_reborn_db.json');
-const SEED_PATH = path.join(__dirname, '..', 'data', 'db.json');
+const DB_KEY = "backlog_reborn_db";
 
-function getDB() {
+// Load seed data from data/db.json
+function getSeed() {
+  const seedPath = path.join(__dirname, "..", "data", "db.json");
+  return JSON.parse(fs.readFileSync(seedPath, "utf-8"));
+}
+
+module.exports = async (req, res) => {
+  // CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") return res.status(200).end();
+
   try {
-    if (fs.existsSync(DB_PATH)) {
-      return JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
-    }
-  } catch (e) {}
-  // First run: seed from data/db.json
-  const seed = JSON.parse(fs.readFileSync(SEED_PATH, 'utf-8'));
-  fs.writeFileSync(DB_PATH, JSON.stringify(seed, null, 2), 'utf-8');
-  return seed;
-}
-
-function saveDB(data) {
-  data.lastUpdated = new Date().toISOString();
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
-}
-
-module.exports = (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
-
-  if (req.method === 'GET') {
-    return res.status(200).json(getDB());
-  }
-
-  if (req.method === 'POST') {
-    try {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      if (!body || !body.cards || !body.config) {
-        return res.status(400).json({ error: 'Invalid DB structure' });
+    if (req.method === "GET") {
+      let data = await kv.get(DB_KEY);
+      if (!data) {
+        // First time: seed from db.json
+        data = getSeed();
+        await kv.set(DB_KEY, data);
       }
-      saveDB(body);
-      return res.status(200).json({ ok: true, lastUpdated: body.lastUpdated });
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
+      return res.status(200).json(data);
     }
-  }
 
-  res.status(405).json({ error: 'Method not allowed' });
+    if (req.method === "POST") {
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      if (!body || !body.cards || !body.config) {
+        return res.status(400).json({ error: "Estrutura JSON inválida. Necessário: cards e config." });
+      }
+      body.lastUpdated = new Date().toISOString();
+      await kv.set(DB_KEY, body);
+      return res.status(200).json({ ok: true, lastUpdated: body.lastUpdated });
+    }
+
+    return res.status(405).json({ error: "Method not allowed" });
+  } catch (err) {
+    console.error("DB API Error:", err);
+    return res.status(500).json({ error: err.message });
+  }
 };
