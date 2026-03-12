@@ -28,7 +28,11 @@ html{font-size:14px}body{font-family:var(--font-b);background:var(--off);color:v
 .label-drawer{display:flex;gap:.3rem;flex-wrap:wrap;max-height:0;overflow:hidden;transition:max-height .3s,opacity .3s,padding .3s;opacity:0;padding:0}.label-drawer.open{max-height:200px;opacity:1;padding:.4rem 0}
 .search-box{display:flex;align-items:center;gap:.4rem;margin-left:auto}.search-box input{padding:.3rem .65rem;border-radius:14px;border:1.5px solid var(--g200);font-size:.7rem;font-family:var(--font-b);color:var(--g700);background:var(--g50);width:170px;outline:none;transition:border .2s}.search-box input:focus{border-color:var(--teal)}
 .board{max-width:1900px;margin:0 auto;padding:.85rem 1.5rem 5rem;display:flex;gap:.75rem;overflow-x:auto;min-height:calc(100vh - 155px);align-items:flex-start}
-.col{min-width:52px;max-width:290px;flex:1 0 260px;background:var(--g50);border-radius:var(--rad);border:1px solid var(--g200);display:flex;flex-direction:column;max-height:calc(100vh - 165px);transition:min-width .3s,flex .3s,max-width .3s}.col.collapsed{min-width:52px;max-width:52px;flex:0 0 52px;cursor:pointer;overflow:hidden}.col.col-dragging{opacity:.45;border:2px dashed var(--teal)}
+.col{min-width:52px;max-width:290px;flex:1 0 260px;background:var(--g50);border-radius:var(--rad);border:1px solid var(--g200);display:flex;flex-direction:column;max-height:calc(100vh - 165px);transition:min-width .3s,flex .3s,max-width .3s,box-shadow .15s,border-color .15s;position:relative}
+.col.collapsed{min-width:52px;max-width:52px;flex:0 0 52px;cursor:pointer;overflow:hidden}
+.col.col-dragging{opacity:.4;border:2px dashed var(--g400)}
+.col.col-drop-left{border-left:3px solid var(--teal);box-shadow:-4px 0 12px rgba(0,201,183,.25)}
+.col.col-drop-right{border-right:3px solid var(--teal);box-shadow:4px 0 12px rgba(0,201,183,.25)}
 .col-head{padding:.6rem .7rem .45rem;display:flex;align-items:center;gap:.4rem;border-bottom:1px solid var(--g200);position:sticky;top:0;background:var(--g50);border-radius:var(--rad) var(--rad) 0 0;z-index:10;cursor:grab}.col-head:active{cursor:grabbing}
 .col-dot{width:9px;height:9px;border-radius:50%}.col-title{font-family:var(--font-d);font-weight:700;font-size:.74rem;color:var(--g800);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .col-title-input{font-family:var(--font-d);font-weight:700;font-size:.74rem;color:var(--g800);border:1px solid var(--teal);border-radius:4px;padding:.1rem .3rem;background:var(--white);outline:none;width:100%}
@@ -42,12 +46,13 @@ html{font-size:14px}body{font-family:var(--font-b);background:var(--off);color:v
 .prio{font-size:.54rem;font-weight:700;padding:.1rem .35rem;border-radius:3px;text-transform:uppercase;letter-spacing:.04em}.prio-urgente{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}.prio-importante{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}.prio-media{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
 .card-title{font-family:var(--font-d);font-weight:700;font-size:.72rem;color:var(--g800);line-height:1.35;margin-bottom:.25rem}.card-desc{font-size:.65rem;color:var(--g500);line-height:1.5;margin-bottom:.35rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .card-tags{display:flex;flex-wrap:wrap;gap:.15rem;margin-bottom:.35rem}.tag{font-size:.53rem;font-weight:500;color:var(--g500);background:var(--g100);padding:.07rem .3rem;border-radius:3px}.tag.tag-incident{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-b);font-weight:600}
+.card-footer{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .card-progress{display:flex;align-items:center;gap:.25rem}.prog-dot{width:5px;height:5px;border-radius:50%}.prog-label{font-size:.58rem;color:var(--g400);font-weight:500}
+.card-due{display:flex;align-items:center;gap:.2rem;font-size:.52rem;font-weight:600;color:var(--g400)}.card-due.overdue{color:var(--red)}.card-due.soon{color:var(--amber)}.card-due .due-icon{font-size:.55rem}
 .dir-area{border-top:1px solid var(--g100);padding-top:.45rem;margin-top:.1rem;display:flex;align-items:center;gap:.2rem;flex-wrap:wrap}.dir-label{font-size:.56rem;font-weight:600;color:var(--g400);text-transform:uppercase;width:100%;margin-bottom:.12rem}
 .dir-btn{font-size:.56rem;font-weight:600;padding:.18rem .4rem;border-radius:4px;border:1.5px solid var(--g200);background:var(--white);color:var(--g500);cursor:pointer;transition:all .18s}.dir-btn:hover{border-color:var(--teal);color:var(--teal-d);background:#F0FDFB}
 .dir-btn.sel{color:var(--white)}.dir-btn.sel.d-manter{background:#059669;border-color:#059669}.dir-btn.sel.d-priorizar{background:var(--teal-d);border-color:var(--teal-d)}.dir-btn.sel.d-adiar{background:var(--amber);border-color:var(--amber);color:var(--g800)}.dir-btn.sel.d-cancelar{background:var(--red);border-color:var(--red)}.dir-btn.sel.d-reavaliar{background:var(--g600);border-color:var(--g600)}
 .drop-placeholder{border:2px dashed var(--teal);border-radius:var(--rad-sm);background:rgba(0,201,183,.04);min-height:40px}
-.col-drop-zone{width:6px;flex-shrink:0;align-self:stretch;border-radius:4px;transition:all .2s}.col-drop-zone.active{width:260px;background:rgba(0,201,183,.08);border:2px dashed var(--teal);border-radius:var(--rad)}
 .summary-bar{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--teal);padding:.5rem 1.5rem;z-index:200;transform:translateY(100%);transition:transform .3s}.summary-bar.visible{transform:translateY(0)}.summary-in{max-width:1900px;margin:0 auto;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}.sum-item{display:flex;align-items:center;gap:.3rem}.sum-dot{width:7px;height:7px;border-radius:50%}.sum-count{font-family:var(--font-d);font-weight:800;font-size:.9rem;color:var(--white)}.sum-label{font-size:.66rem;color:var(--g400);font-weight:500}.sum-sep{width:1px;height:18px;background:var(--g600)}
 .modal-overlay{position:fixed;inset:0;background:rgba(10,31,63,.5);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}.modal-overlay.show{display:flex}
 .modal{background:var(--white);border-radius:var(--rad);width:95%;max-width:560px;max-height:90vh;overflow-y:auto;padding:1.5rem;box-shadow:var(--shadow-drag);position:relative}
@@ -55,6 +60,7 @@ html{font-size:14px}body{font-family:var(--font-b);background:var(--off);color:v
 .form-title{font-family:var(--font-d);font-weight:800;font-size:1rem;color:var(--g800);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}.form-title-badge{font-size:.65rem;font-weight:600;padding:.15rem .5rem;border-radius:10px;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b)}
 .form-row{margin-bottom:.8rem}.form-label{display:block;font-size:.68rem;font-weight:600;color:var(--g600);margin-bottom:.2rem;text-transform:uppercase;letter-spacing:.04em}
 .form-input,.form-select,.form-textarea{width:100%;padding:.4rem .6rem;border:1.5px solid var(--g200);border-radius:var(--rad-sm);font-family:var(--font-b);font-size:.78rem;color:var(--g700);background:var(--g50);outline:none;transition:border .2s}.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--teal)}.form-textarea{min-height:65px;resize:vertical}
+.form-row-inline{display:flex;gap:.6rem}.form-row-inline .form-row{flex:1}
 .form-tags-wrap{display:flex;flex-wrap:wrap;gap:.25rem}.form-tag{padding:.22rem .5rem;border-radius:14px;font-size:.64rem;font-weight:600;border:1.5px solid var(--g200);background:var(--white);color:var(--g600);cursor:pointer;transition:all .18s;user-select:none}.form-tag.sel{background:var(--teal);color:var(--navy);border-color:var(--teal)}
 .form-actions{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.1rem;flex-wrap:wrap}.btn-cancel{background:var(--g100);color:var(--g600);border:1px solid var(--g200)}.btn-cancel:hover{background:var(--g200)}.btn-save{background:var(--teal);color:var(--navy);font-weight:700}.btn-save:hover{background:var(--lime)}.btn-del-modal{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b);margin-right:auto}.btn-del-modal:hover{background:var(--red);color:var(--white)}
 .col-cards::-webkit-scrollbar{width:4px}.col-cards::-webkit-scrollbar-track{background:transparent}.col-cards::-webkit-scrollbar-thumb{background:var(--g300);border-radius:4px}
@@ -69,6 +75,7 @@ html{font-size:14px}body{font-family:var(--font-b);background:var(--off);color:v
   <div class="hdr-right">
     <div class="save-indicator" id="save-ind"><div class="dot"></div><span class="stxt">Salvo</span></div>
     <button class="btn btn-add" onclick="openNewCardForm()">+ Novo Card</button>
+    <label class="btn btn-ghost" style="cursor:pointer">⬆ CSV<input type="file" accept=".csv" style="display:none" onchange="importCSV(event)"></label>
     <button class="btn btn-primary" onclick="exportCSV()">⬇ CSV</button>
   </div>
 </div></div>
@@ -90,133 +97,56 @@ html{font-size:14px}body{font-family:var(--font-b);background:var(--off);color:v
 <div class="confirm-toast" id="confirm-toast"><p id="confirm-msg"></p><div class="cb"><button class="btn btn-cancel" onclick="hideConfirm()">Cancelar</button><button class="btn" style="background:var(--red);color:var(--white)" onclick="confirmDeleteAction()">Excluir</button></div></div>
 
 <script>
-// ═══════════════════════════════════════
-// PERSISTENCE ENGINE
-// localStorage (instant) + Vercel KV API (async)
-// API is source of truth on load; localStorage is fallback
-// ═══════════════════════════════════════
-const DB_KEY="backlog_reborn_db_v3";
-const API_URL="/api/db";
-
+const DB_KEY="backlog_reborn_db_v3",API_URL="/api/db";
 const FILTER_LABELS=["Comercial","Corretor","Financial Lines (D&O)","Incidente","Negócio","Portal do Corretor","RCG","Reborn","Ressegurador","Segurado","Subscrição","Tomador"];
-const PRIORITIES=["Urgente","Importante","Média"];
-const PROGRESSES=["Não iniciado","Em andamento","Concluída"];
+const PRIORITIES=["Urgente","Importante","Média"],PROGRESSES=["Não iniciado","Em andamento","Concluída"];
 const DIRECTIONS=["Manter","Priorizar","Adiar","Cancelar","Reavaliar"];
 const DIR_COLORS={manter:"#059669",priorizar:"#009E90",adiar:"#F59E0B",cancelar:"#EF4444",reavaliar:"#6B7280"};
+const DEFAULT_DB={"version":"2.0","lastUpdated":"","cards":[{"id":"IMP-TOM","bucket":"Em Produção","priority":"Urgente","progress":"Concluída","title":"Formulário Cadastro Tomador em Produção","desc":"Cadastro de tomadores implantado em produção.","tags":["Negócio","Comercial","Reborn"],"direction":null,"dueDate":null,"order":0},{"id":"IMP-ARQ","bucket":"Em Produção","priority":"Média","progress":"Concluída","title":"Melhorias Plataforma Comercial em Produção","desc":"Melhorias arquiteturais em produção.","tags":["Comercial","Reborn"],"direction":null,"dueDate":null,"order":1},{"id":"DI-630","bucket":"Em Execução (Desenvolvimento)","priority":"Importante","progress":"Em andamento","title":"Formulário Cadastro Seguro RCG","desc":"Formulário específico para RCG.","tags":["Segurado","RCG","Negócio","Reborn"],"direction":null,"dueDate":null,"order":0},{"id":"DI-625","bucket":"Em Execução (Desenvolvimento)","priority":"Importante","progress":"Em andamento","title":"Análise Crédito Serasa Segurados D&O","desc":"Consulta Serasa no cadastro D&O.","tags":["Segurado","Negócio","Financial Lines (D&O)","Reborn"],"direction":null,"dueDate":null,"order":1},{"id":"DI-629","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Em andamento","title":"Regra Consulta Serasa por CNPJ","desc":"1 consulta por CNPJ, resultado vinculado.","tags":["Segurado","Corretor","Negócio","Comercial","Reborn"],"direction":null,"dueDate":null,"order":2},{"id":"REL-SEM","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Em andamento","title":"Reporte Semanal","desc":"Acompanhamento semanal.","tags":["Reborn"],"direction":null,"dueDate":null,"order":3},{"id":"TREIN-FL","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Concluída","title":"Treinamento Financial Lines D&O/E&O","desc":"Capacitação D&O e E&O.","tags":["Reborn"],"direction":null,"dueDate":null,"order":4},{"id":"REL-SEM2","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Não iniciado","title":"Reporte Semanal (Próximo)","desc":"Próximo ciclo.","tags":["Reborn"],"direction":null,"dueDate":null,"order":5},{"id":"DI-595","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Sincronização Tomadores I4PRO x Reborn","desc":"Integração bidirecional tomadores.","tags":["Tomador","Negócio","Comercial","Subscrição","Reborn"],"direction":null,"dueDate":null,"order":0},{"id":"DI-589","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Integração Comunicação Corretores","desc":"Conectar meios de comunicação. Aguardando API.","tags":["Comercial","Reborn"],"direction":null,"dueDate":null,"order":1},{"id":"DI-532","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Cadastro Contatos Corretores","desc":"Registro rápido de contatos.","tags":["Negócio","Comercial","Reborn"],"direction":null,"dueDate":null,"order":2},{"id":"DI-574","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Bloqueio Cadastro Inativos","desc":"Impedir inclusão de inativos.","tags":["Corretor","Comercial","Reborn"],"direction":null,"dueDate":null,"order":3},{"id":"DISC-GAR","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Discovery Garantia (Raia 1)","desc":"Mapeamento fluxo garantia.","tags":["Tomador","Subscrição","Reborn"],"direction":null,"dueDate":null,"order":4},{"id":"DI-583","bucket":"Priorizado","priority":"Importante","progress":"Não iniciado","title":"Otimização Cadastro Corretores","desc":"Simplificar etapas finais.","tags":["Corretor","Negócio","Comercial","Reborn"],"direction":null,"dueDate":null,"order":5},{"id":"DI-577","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Filtro Registros Ativos","desc":"Filtro automático status Ativo.","tags":["Reborn"],"direction":null,"dueDate":null,"order":6},{"id":"DI-307","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Padronização I4PRO","desc":"Formato numérico.","tags":["Reborn"],"direction":null,"dueDate":null,"order":7},{"id":"DI-576","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Vinculação Corretores ao Tomador","desc":"Associar automaticamente.","tags":["Tomador","Corretor","Reborn"],"direction":null,"dueDate":null,"order":8},{"id":"DI-443","bucket":"Backlog","priority":"Urgente","progress":"Não iniciado","title":"Atualização Anual Receita Federal","desc":"Sincronização anual.","tags":["Negócio","Reborn"],"direction":null,"dueDate":null,"order":0},{"id":"DI-584","bucket":"Backlog","priority":"Importante","progress":"Não iniciado","title":"Comunicação Boas-Vindas Corretor","desc":"Aprimorar e-mails.","tags":["Corretor","Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null,"dueDate":null,"order":1},{"id":"DI-590","bucket":"Backlog","priority":"Importante","progress":"Não iniciado","title":"Cadastro Ressegurador","desc":"Interface cadastro resseguradores.","tags":["Negócio","Ressegurador","Reborn"],"direction":null,"dueDate":null,"order":2},{"id":"DI-592","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Controle de Acesso (RBAC)","desc":"Perfis e permissões.","tags":["Reborn"],"direction":null,"dueDate":null,"order":0},{"id":"DI-253","bucket":"Refinamento Negócio/Técnico","priority":"Média","progress":"Não iniciado","title":"Integração PEP-CGU","desc":"Dados PEP.","tags":["Tomador","Segurado","Corretor","Negócio","Comercial","Reborn"],"direction":null,"dueDate":null,"order":1},{"id":"DI-591","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Tomador Externo via Portal","desc":"Cadastro pelo portal.","tags":["Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null,"dueDate":null,"order":2},{"id":"DI-636","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Carteira Executivos (Produtores)","desc":"Acompanhamento carteiras.","tags":["Tomador","Corretor","Negócio","Comercial","Reborn"],"direction":null,"dueDate":null,"order":3},{"id":"DI-473","bucket":"Refinamento Negócio/Técnico","priority":"Média","progress":"Não iniciado","title":"Acesso Automático Corretores","desc":"Perfil PC-GESTOR.","tags":["Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null,"dueDate":null,"order":4},{"id":"DI-640","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Planilha Subscrição Garantia","desc":"Disparo automático planilha.","tags":["Tomador","Comercial","Reborn","Subscrição"],"direction":null,"dueDate":null,"order":5},{"id":"DI-587","bucket":"Incidente","priority":"Importante","progress":"Não iniciado","title":"Corretor Ativo Novo Cadastro","desc":"Duplicidade cadastral.","tags":["Comercial","Reborn","Incidente"],"direction":null,"dueDate":null,"order":0},{"id":"DI-582","bucket":"Incidente","priority":"Importante","progress":"Não iniciado","title":"Cadastros Retornando Status","desc":"Retorno indevido status.","tags":["Corretor","Comercial","Reborn","Incidente"],"direction":null,"dueDate":null,"order":1},{"id":"DI-586","bucket":"Incidente","priority":"Média","progress":"Não iniciado","title":"Regra Contato Principal","desc":"Contato principal tomador.","tags":["Tomador","Comercial","Reborn","Incidente"],"direction":null,"dueDate":null,"order":2}],"config":{"bucketOrder":[{"key":"Refinamento Negócio/Técnico","label":"Refinamento","color":"#9CA3AF"},{"key":"Backlog","label":"Backlog","color":"#8B5CF6"},{"key":"Priorizado","label":"Priorizado","color":"#0A1F3F"},{"key":"Em Execução (Desenvolvimento)","label":"Em Execução","color":"#00C9B7"},{"key":"Incidente","label":"Incidente","color":"#F97316"},{"key":"Em Produção","label":"Em Produção","color":"#10B981"}],"collapsedColumns":[]}};
 
-const DEFAULT_DB={"version":"1.0","lastUpdated":"","cards":[{"id":"IMP-TOM","bucket":"Em Produção","priority":"Urgente","progress":"Concluída","title":"Formulário de Cadastro de Tomador (Interno) em Produção","desc":"Formulário de cadastro interno de tomadores já implantado em produção.","tags":["Negócio","Comercial","Reborn"],"direction":null},{"id":"IMP-ARQ","bucket":"Em Produção","priority":"Média","progress":"Concluída","title":"Melhorias Plataforma e Arquitetura Comercial em Produção","desc":"Melhorias arquiteturais voltadas ao módulo comercial, em produção.","tags":["Comercial","Reborn"],"direction":null},{"id":"DI-630","bucket":"Em Execução (Desenvolvimento)","priority":"Importante","progress":"Em andamento","title":"Novo Formulário de Cadastro para Seguro RCG","desc":"Formulário específico para RCG.","tags":["Segurado","RCG","Negócio","Reborn"],"direction":null},{"id":"DI-625","bucket":"Em Execução (Desenvolvimento)","priority":"Importante","progress":"Em andamento","title":"Análise de Crédito Serasa para Segurados D&O","desc":"Consulta Serasa no cadastro de segurados D&O.","tags":["Segurado","Negócio","Financial Lines (D&O)","Reborn"],"direction":null},{"id":"DI-629","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Em andamento","title":"Controle de Frequência e Regra de Consulta Serasa","desc":"Apenas 1 consulta por CNPJ. Resultado vinculado ao cadastro.","tags":["Segurado","Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"REL-SEM","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Em andamento","title":"Reporte Semanal de Status","desc":"Acompanhamento semanal das entregas.","tags":["Reborn"],"direction":null},{"id":"TREIN-FL","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Concluída","title":"Treinamento Financial Lines — D&O/E&O","desc":"Capacitação no formulário D&O e E&O.","tags":["Reborn"],"direction":null},{"id":"REL-SEM2","bucket":"Em Execução (Desenvolvimento)","priority":"Urgente","progress":"Não iniciado","title":"Reporte Semanal (Próximo Ciclo)","desc":"Próximo ciclo semanal.","tags":["Reborn"],"direction":null},{"id":"DI-595","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Sincronização Bidirecional Tomadores I4PRO x Reborn","desc":"Integração bidirecional para sincronização de tomadores.","tags":["Tomador","Negócio","Comercial","Subscrição","Reborn"],"direction":null},{"id":"DI-589","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Integração Canais de Comunicação com Corretores","desc":"Conectar meios de comunicação com corretores. Aguardando API I4PRO.","tags":["Comercial","Reborn"],"direction":null},{"id":"DI-532","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Cadastro Simplificado Contatos de Corretores","desc":"Registro rápido de contatos vinculados às corretoras.","tags":["Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-574","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Bloqueio de Cadastro para Registros Inativos","desc":"Impedir inclusão de registros com status diferente de Ativo.","tags":["Corretor","Comercial","Reborn"],"direction":null},{"id":"DISC-GAR","bucket":"Priorizado","priority":"Urgente","progress":"Não iniciado","title":"Discovery Processo de Garantia (Raia 1)","desc":"Mapeamento do fluxo de garantia para tomadores.","tags":["Tomador","Subscrição","Reborn"],"direction":null},{"id":"DI-583","bucket":"Priorizado","priority":"Importante","progress":"Não iniciado","title":"Otimização Finalização Cadastro Corretores","desc":"Simplificar etapas finais do cadastro de corretores.","tags":["Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-577","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Filtro Padrão de Registros Ativos","desc":"Filtro automático de status Ativo.","tags":["Reborn"],"direction":null},{"id":"DI-307","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Padronização Identificador I4PRO","desc":"Conversão do campo para formato numérico.","tags":["Reborn"],"direction":null},{"id":"DI-576","bucket":"Priorizado","priority":"Média","progress":"Concluída","title":"Vinculação Automática Corretores/Contatos ao Tomador","desc":"Associar automaticamente corretores e contatos aos tomadores.","tags":["Tomador","Corretor","Reborn"],"direction":null},{"id":"DI-443","bucket":"Backlog","priority":"Urgente","progress":"Não iniciado","title":"Rotina Anual Atualização Receita Federal","desc":"Sincronização anual de dados com a Receita Federal.","tags":["Negócio","Reborn"],"direction":null},{"id":"DI-584","bucket":"Backlog","priority":"Importante","progress":"Não iniciado","title":"Melhoria Comunicação Boas-Vindas Corretor","desc":"Aprimorar e-mails de pré-cadastro.","tags":["Corretor","Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null},{"id":"DI-590","bucket":"Backlog","priority":"Importante","progress":"Não iniciado","title":"Cadastro de Ressegurador","desc":"Interface dedicada ao cadastro de resseguradores.","tags":["Negócio","Ressegurador","Reborn"],"direction":null},{"id":"DI-592","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Painel Controle de Acesso (RBAC)","desc":"Gerenciamento de perfis e permissões.","tags":["Reborn"],"direction":null},{"id":"DI-253","bucket":"Refinamento Negócio/Técnico","priority":"Média","progress":"Não iniciado","title":"Integração Base PEP-CGU","desc":"Consulta e atualização de dados PEP.","tags":["Tomador","Segurado","Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-591","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Cadastro Tomador Externo via Portal","desc":"Cadastro de tomadores pelo portal do corretor.","tags":["Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null},{"id":"DI-636","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Gestão Carteira Executivos (Produtores)","desc":"Acompanhamento de carteiras entre executivos.","tags":["Tomador","Corretor","Negócio","Comercial","Reborn"],"direction":null},{"id":"DI-473","bucket":"Refinamento Negócio/Técnico","priority":"Média","progress":"Não iniciado","title":"Provisionamento Automático Acesso Corretores","desc":"Criação automática perfil PC-GESTOR.","tags":["Negócio","Comercial","Reborn","Portal do Corretor"],"direction":null},{"id":"DI-640","bucket":"Refinamento Negócio/Técnico","priority":"Importante","progress":"Não iniciado","title":"Integração Planilha Subscrição (Garantia)","desc":"Disparo automático de planilha padrão para subscrição.","tags":["Tomador","Comercial","Reborn","Subscrição"],"direction":null},{"id":"DI-587","bucket":"Incidente","priority":"Importante","progress":"Não iniciado","title":"Corretor Ativo Iniciando Novo Cadastro","desc":"Corretor com cadastro ativo iniciou novo processo.","tags":["Comercial","Reborn","Incidente"],"direction":null},{"id":"DI-582","bucket":"Incidente","priority":"Importante","progress":"Não iniciado","title":"Cadastros Retornando a 'Aguardando Análise'","desc":"Cadastros concluídos retornando ao status anterior.","tags":["Corretor","Comercial","Reborn","Incidente"],"direction":null},{"id":"DI-586","bucket":"Incidente","priority":"Média","progress":"Não iniciado","title":"Regra Contato Principal Tomadores","desc":"Regra para identificação do contato principal.","tags":["Tomador","Comercial","Reborn","Incidente"],"direction":null}],"config":{"bucketOrder":[{"key":"Refinamento Negócio/Técnico","label":"Refinamento","color":"#9CA3AF"},{"key":"Backlog","label":"Backlog","color":"#8B5CF6"},{"key":"Priorizado","label":"Priorizado","color":"#0A1F3F"},{"key":"Em Execução (Desenvolvimento)","label":"Em Execução","color":"#00C9B7"},{"key":"Incidente","label":"Incidente","color":"#F97316"},{"key":"Em Produção","label":"Em Produção","color":"#10B981"}],"collapsedColumns":[]}};
-
-// ── Persistence ──
-let DB=null;
-let _saveQueue=null;
-let _apiOk=false; // track if API is reachable
-
-function persist(){
-  DB.lastUpdated=new Date().toISOString();
-  // 1) Always save to localStorage immediately
-  try{localStorage.setItem(DB_KEY,JSON.stringify(DB))}catch(e){}
-  // 2) Debounced save to API
-  clearTimeout(_saveQueue);
-  _saveQueue=setTimeout(syncToAPI,300);
-  flashSave();
-}
-
-async function syncToAPI(){
-  try{
-    const r=await fetch(API_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(DB)
-    });
-    if(!r.ok){
-      const err=await r.json().catch(()=>({}));
-      console.error('API save failed:',r.status,err);
-      flashError();
-      return;
-    }
-    const result=await r.json();
-    _apiOk=true;
-    console.log('API saved:',result.lastUpdated,'cards:',result.cardsCount);
-  }catch(e){
-    console.error('API unreachable:',e.message);
-    // Silently fall back to localStorage-only
-  }
-}
-
+let DB=null,_saveQ=null,_apiOk=false;
+function persist(){DB.lastUpdated=new Date().toISOString();try{localStorage.setItem(DB_KEY,JSON.stringify(DB))}catch(e){}clearTimeout(_saveQ);_saveQ=setTimeout(syncAPI,300);flashSave()}
+async function syncAPI(){try{const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(DB)});if(r.ok){_apiOk=true;console.log('Saved to API')}else{console.error('API fail:',r.status);flashError()}}catch(e){}}
 function flashSave(){const el=document.getElementById("save-ind");el.querySelector('.dot').style.background='var(--teal)';el.querySelector('.stxt').textContent='Salvo';el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),1500)}
 function flashError(){const el=document.getElementById("save-ind");el.querySelector('.dot').style.background='var(--red)';el.querySelector('.stxt').textContent='Erro API';el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),3000)}
-
-async function initDB(){
-  // 1) Try API first (source of truth when available)
-  try{
-    const r=await fetch(API_URL,{cache:'no-store'});
-    if(r.ok){
-      const d=await r.json();
-      if(d&&d.cards&&d.cards.length>0){
-        DB=d;
-        _apiOk=true;
-        try{localStorage.setItem(DB_KEY,JSON.stringify(DB))}catch(e){}
-        console.log('Loaded from API:',d.cards.length,'cards');
-        fullRender();
-        return;
-      }
-    }
-  }catch(e){console.log('API not available, using localStorage')}
-  // 2) Fallback: localStorage
-  try{
-    const raw=localStorage.getItem(DB_KEY);
-    if(raw){DB=JSON.parse(raw);console.log('Loaded from localStorage');fullRender();return}
-  }catch(e){}
-  // 3) Last resort: embedded default
-  DB=JSON.parse(JSON.stringify(DEFAULT_DB));
-  console.log('Loaded default data');
-  fullRender();
-}
-
-// ── Accessors ──
+async function initDB(){try{const r=await fetch(API_URL,{cache:'no-store'});if(r.ok){const d=await r.json();if(d&&d.cards&&d.cards.length>0){DB=d;_apiOk=true;try{localStorage.setItem(DB_KEY,JSON.stringify(DB))}catch(e){}ensureFields();fullRender();return}}}catch(e){}try{const raw=localStorage.getItem(DB_KEY);if(raw){DB=JSON.parse(raw);ensureFields();fullRender();return}}catch(e){}DB=JSON.parse(JSON.stringify(DEFAULT_DB));fullRender()}
+function ensureFields(){DB.cards.forEach((c,i)=>{if(c.order==null)c.order=i;if(c.dueDate===undefined)c.dueDate=null;if(c.direction===undefined)c.direction=null})}
 function gc(){return DB.cards}
 function gb(){return DB.config.bucketOrder}
 function gcol(){return new Set(DB.config.collapsedColumns||[])}
-
+function gcb(bk){return gc().filter(c=>c.bucket===bk).sort((a,b)=>(a.order||0)-(b.order||0))}
 let activePrio="all",activeLabels=new Set(),searchQuery="",labelsOpen=false,pendingDeleteId=null,ncCounter=100;
 
-// ══════════════════
-// RENDER
-// ══════════════════
 function fullRender(){renderLabelFilters();renderStats();renderBoard()}
 function renderLabelFilters(){document.getElementById("label-drawer").innerHTML=FILTER_LABELS.map(l=>`<span class="chip${activeLabels.has(l)?' on-teal':''}" data-label="${l}" onclick="toggleLabel(this)">${l}</span>`).join('')}
 function toggleLabelDrawer(){labelsOpen=!labelsOpen;document.getElementById("label-drawer").classList.toggle("open",labelsOpen);document.getElementById("label-toggle").classList.toggle("open",labelsOpen)}
 function renderStats(){const el=document.getElementById("stats-bar");let h='';gb().forEach((b,i)=>{const n=gc().filter(c=>c.bucket===b.key).length;if(i>0)h+='<div class="stat-div"></div>';h+=`<div class="stat"><div class="stat-dot" style="background:${b.color}"></div><span class="sl">${b.label}</span><span class="sc">${n}</span></div>`});h+='<div class="stat-div"></div>';h+=`<div class="stat"><span class="sl" style="font-weight:700;color:var(--g700)">Total</span><span class="sc" style="color:var(--teal-d)">${gc().length}</span></div>`;el.innerHTML=h}
+function daysRemaining(d){if(!d)return null;return Math.ceil((new Date(d+"T00:00:00")-new Date().setHours(0,0,0,0))/86400000)}
+function dueHtml(c){const dr=daysRemaining(c.dueDate);if(dr===null)return'';const cls=dr<0?'overdue':dr<=3?'soon':'';const txt=dr<0?`${Math.abs(dr)}d atraso`:dr===0?'Hoje':`${dr}d`;return`<span class="card-due ${cls}"><span class="due-icon">◷</span>${txt}</span>`}
 
 function renderBoard(){
   const board=document.getElementById("board");board.innerHTML='';const cols=gcol();
   gb().forEach((b,idx)=>{
-    // Drop zone before each column
-    const dz=document.createElement("div");dz.className="col-drop-zone";dz.dataset.pos=String(idx);
-    dz.addEventListener("dragover",(e)=>{if(!dragColK)return;e.preventDefault();dz.classList.add("active")});
-    dz.addEventListener("dragleave",()=>dz.classList.remove("active"));
-    dz.addEventListener("drop",(e)=>{e.preventDefault();dz.classList.remove("active");dropColAt(parseInt(dz.dataset.pos))});
-    board.appendChild(dz);
-
-    const cards=gc().filter(c=>c.bucket===b.key),vis=cards.filter(cv),isC=cols.has(b.key);
+    const allCards=gcb(b.key),vis=allCards.filter(cv),isC=cols.has(b.key);
     const col=document.createElement("div");col.className="col"+(isC?" collapsed":"");col.dataset.bucket=b.key;col.dataset.idx=String(idx);
-    col.draggable=true;
-    col.addEventListener("dragstart",colDS);col.addEventListener("dragend",colDE);
+    // Column header is the drag handle
     if(isC)col.addEventListener("click",(e)=>{if(!e.target.closest('.col-cards')&&!e.target.closest('.dir-btn')&&!e.target.closest('.card-delete'))toggleCC(b.key)});
-    col.innerHTML=`<div class="col-head"><div class="col-dot" style="background:${b.color}"></div><div class="col-title" ondblclick="editCT(this,'${b.key}')">${b.label}</div><div class="col-count" style="background:${b.color}">${vis.length}</div><div class="col-toggle" title="${isC?'Expandir':'Recolher'}" onclick="event.stopPropagation();toggleCC('${b.key}')">◂</div></div><div class="col-cards" data-bucket="${b.key}"></div>`;
+    col.innerHTML=`<div class="col-head" draggable="true" data-colkey="${b.key}"><div class="col-dot" style="background:${b.color}"></div><div class="col-title" ondblclick="editCT(this,'${b.key}')">${b.label}</div><div class="col-count" style="background:${b.color}">${vis.length}</div><div class="col-toggle" title="${isC?'Expandir':'Recolher'}" onclick="event.stopPropagation();toggleCC('${b.key}')">◂</div></div><div class="col-cards" data-bucket="${b.key}"></div>`;
+    // Column drag events on the header
+    const head=col.querySelector('.col-head');
+    head.addEventListener("dragstart",colDS);
+    head.addEventListener("dragend",colDE);
+    // Column as drop target (for column reorder)
+    col.addEventListener("dragover",colOverCol);
+    col.addEventListener("dragleave",colLeaveCol);
+    col.addEventListener("drop",colDropOnCol);
     if(!isC){const ce=col.querySelector(".col-cards");ce.addEventListener("dragover",cDO);ce.addEventListener("dragleave",cDL);ce.addEventListener("drop",cDR);vis.forEach(c=>ce.appendChild(mkC(c)))}
     board.appendChild(col);
   });
-  // Final drop zone
-  const dzf=document.createElement("div");dzf.className="col-drop-zone";dzf.dataset.pos=String(gb().length);
-  dzf.addEventListener("dragover",(e)=>{if(!dragColK)return;e.preventDefault();dzf.classList.add("active")});
-  dzf.addEventListener("dragleave",()=>dzf.classList.remove("active"));
-  dzf.addEventListener("drop",(e)=>{e.preventDefault();dzf.classList.remove("active");dropColAt(parseInt(dzf.dataset.pos))});
-  board.appendChild(dzf);
   updateSummary();
 }
 
-function editCT(el,key){const b=gb().find(x=>x.key===key);if(!b)return;const inp=document.createElement("input");inp.className="col-title-input";inp.value=b.label;el.replaceWith(inp);inp.focus();inp.select();function sv(){b.label=inp.value.trim()||b.label;persist();fullRender()}inp.addEventListener("blur",sv);inp.addEventListener("keydown",(e)=>{if(e.key==="Enter")sv();if(e.key==="Escape"){inp.value=b.label;sv()}})}
+function editCT(el,key){const b=gb().find(x=>x.key===key);if(!b)return;const inp=document.createElement("input");inp.className="col-title-input";inp.value=b.label;inp.draggable=false;el.replaceWith(inp);inp.focus();inp.select();function sv(){b.label=inp.value.trim()||b.label;persist();fullRender()}inp.addEventListener("blur",sv);inp.addEventListener("keydown",(e)=>{if(e.key==="Enter")sv();if(e.key==="Escape"){inp.value=b.label;sv()}})}
 function toggleCC(key){const s=gcol();if(s.has(key))s.delete(key);else s.add(key);DB.config.collapsedColumns=[...s];persist();renderBoard()}
 function cv(c){if(activePrio!=="all"&&c.priority!==activePrio)return false;if(activeLabels.size>0&&!c.tags.some(t=>activeLabels.has(t)))return false;if(searchQuery){const q=searchQuery.toLowerCase();if(!c.title.toLowerCase().includes(q)&&!c.id.toLowerCase().includes(q)&&!c.desc.toLowerCase().includes(q)&&!c.tags.some(t=>t.toLowerCase().includes(q)))return false}return true}
 
@@ -227,34 +157,103 @@ function mkC(c){
   const pc=c.priority==="Urgente"?"prio-urgente":c.priority==="Importante"?"prio-importante":"prio-media";
   const pgc=c.progress==="Em andamento"?"var(--teal)":c.progress==="Concluída"?"var(--green)":"var(--g400)";
   const dir=c.direction||null;
-  d.innerHTML=`<div class="card-top"><span class="card-id">${c.id}</span><div class="card-top-right"><button class="card-delete" title="Excluir" onclick="event.stopPropagation();askDel('${c.id}')">✕</button><span class="prio ${pc}">${c.priority}</span></div></div><div class="card-title">${c.title}</div><div class="card-desc">${c.desc}</div><div class="card-tags">${c.tags.map(t=>`<span class="tag${t==='Incidente'?' tag-incident':''}">${t}</span>`).join('')}</div><div class="card-progress"><div class="prog-dot" style="background:${pgc}"></div><span class="prog-label">${c.progress}</span></div><div class="dir-area"><span class="dir-label">Direcionamento</span>${DIRECTIONS.map(x=>{const dk=x.toLowerCase();const s=dir===dk?`sel d-${dk}`:'';return`<button class="dir-btn ${s}" data-dir="${dk}" data-card="${c.id}" onclick="event.stopPropagation();setDir('${c.id}','${dk}',this)">${x}</button>`}).join('')}</div>`;
+  d.innerHTML=`<div class="card-top"><span class="card-id">${c.id}</span><div class="card-top-right"><button class="card-delete" title="Excluir" onclick="event.stopPropagation();askDel('${c.id}')">✕</button><span class="prio ${pc}">${c.priority}</span></div></div><div class="card-title">${c.title}</div><div class="card-desc">${c.desc}</div><div class="card-tags">${c.tags.map(t=>`<span class="tag${t==='Incidente'?' tag-incident':''}">${t}</span>`).join('')}</div><div class="card-footer"><div class="card-progress"><div class="prog-dot" style="background:${pgc}"></div><span class="prog-label">${c.progress}</span></div>${dueHtml(c)}</div><div class="dir-area"><span class="dir-label">Direcionamento</span>${DIRECTIONS.map(x=>{const dk=x.toLowerCase();const s=dir===dk?`sel d-${dk}`:'';return`<button class="dir-btn ${s}" data-dir="${dk}" data-card="${c.id}" onclick="event.stopPropagation();setDir('${c.id}','${dk}',this)">${x}</button>`}).join('')}</div>`;
   return d;
 }
 
-// ── Card Drag ──
+// ════════════════════════════
+// CARD DRAG & DROP
+// ════════════════════════════
 let dragCid=null;
-function cDS(e){e.stopPropagation();dragCid=e.currentTarget.dataset.id;e.currentTarget.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/card",dragCid)}
+function cDS(e){e.stopPropagation();dragCid=e.currentTarget.dataset.id;e.currentTarget.classList.add("dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/card",dragCid);
+  // Store previous bucket
+  const card=gc().find(c=>c.id===dragCid);if(card)card._prevBucket=card.bucket;
+}
 function cDE(e){e.currentTarget.classList.remove("dragging");document.querySelectorAll(".col-cards").forEach(el=>el.classList.remove("drag-over"));document.querySelectorAll(".drop-placeholder").forEach(el=>el.remove());dragCid=null}
 function cDO(e){if(!dragCid)return;e.preventDefault();e.stopPropagation();const col=e.currentTarget;col.classList.add("drag-over");let ph=col.querySelector(".drop-placeholder");if(!ph){ph=document.createElement("div");ph.className="drop-placeholder"}const af=gDA(col,e.clientY);if(af)col.insertBefore(ph,af);else col.appendChild(ph)}
 function cDL(e){if(!e.currentTarget.contains(e.relatedTarget)){e.currentTarget.classList.remove("drag-over");e.currentTarget.querySelectorAll(".drop-placeholder").forEach(el=>el.remove())}}
-function cDR(e){if(!dragCid)return;e.preventDefault();e.stopPropagation();const col=e.currentTarget;col.classList.remove("drag-over");col.querySelectorAll(".drop-placeholder").forEach(el=>el.remove());const nb=col.dataset.bucket;const card=gc().find(c=>c.id===dragCid);if(card){card.bucket=nb;persist();renderBoard();renderStats()}}
+function cDR(e){
+  if(!dragCid)return;e.preventDefault();e.stopPropagation();
+  const colEl=e.currentTarget;colEl.classList.remove("drag-over");
+  const ph=colEl.querySelector(".drop-placeholder");
+  const newBucket=colEl.dataset.bucket;
+  const card=gc().find(c=>c.id===dragCid);
+  if(!card){if(ph)ph.remove();return}
+  let newIdx=0;
+  if(ph){let count=0;for(const ch of colEl.children){if(ch===ph)break;if(ch.classList&&ch.classList.contains("card")&&!ch.classList.contains("dragging"))count++}newIdx=count;ph.remove()}
+  else{newIdx=[...colEl.querySelectorAll(".card:not(.dragging)")].length}
+  card.bucket=newBucket;
+  const bucketCards=gcb(newBucket).filter(c=>c.id!==card.id);
+  bucketCards.splice(newIdx,0,card);
+  bucketCards.forEach((c,i)=>c.order=i);
+  persist();renderBoard();renderStats();
+}
 function gDA(ct,y){const els=[...ct.querySelectorAll(".card:not(.dragging)")];let cl=null,co=Number.NEGATIVE_INFINITY;els.forEach(ch=>{const b=ch.getBoundingClientRect();const o=y-b.top-b.height/2;if(o<0&&o>co){co=o;cl=ch}});return cl}
 
-// ── Column Drag (fixed) ──
+// ════════════════════════════
+// COLUMN DRAG & DROP
+// Drag starts from col-head, drop detected on col elements
+// ════════════════════════════
 let dragColK=null;
-function colDS(e){if(dragCid)return;if(e.target.closest('.card')||e.target.closest('.col-toggle')||e.target.closest('.col-title-input')){e.preventDefault();return}
-  dragColK=e.currentTarget.dataset.bucket;e.currentTarget.classList.add("col-dragging");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/col",dragColK)}
-function colDE(e){e.currentTarget.classList.remove("col-dragging");document.querySelectorAll(".col-drop-zone").forEach(z=>z.classList.remove("active"));dragColK=null}
-function dropColAt(targetPos){
+function colDS(e){
+  if(dragCid)return; // card drag in progress, ignore
+  if(e.target.closest('.col-toggle')||e.target.closest('.col-title-input')){e.preventDefault();return}
+  const colKey=e.currentTarget.dataset.colkey;
+  if(!colKey)return;
+  dragColK=colKey;
+  // Find parent col and style it
+  const colEl=e.currentTarget.closest('.col');
+  if(colEl)colEl.classList.add("col-dragging");
+  e.dataTransfer.effectAllowed="move";
+  e.dataTransfer.setData("text/col",colKey);
+}
+function colDE(e){
+  document.querySelectorAll(".col").forEach(c=>{c.classList.remove("col-dragging","col-drop-left","col-drop-right")});
+  dragColK=null;
+}
+function colOverCol(e){
+  if(!dragColK||dragCid)return;
+  e.preventDefault();
+  const col=e.currentTarget;
+  if(col.dataset.bucket===dragColK)return;
+  // Determine left or right half
+  const rect=col.getBoundingClientRect();
+  const isLeft=e.clientX<rect.left+rect.width/2;
+  // Clear all indicators
+  document.querySelectorAll(".col").forEach(c=>{c.classList.remove("col-drop-left","col-drop-right")});
+  col.classList.add(isLeft?"col-drop-left":"col-drop-right");
+}
+function colLeaveCol(e){
   if(!dragColK)return;
-  const bo=gb();const fromIdx=bo.findIndex(b=>b.key===dragColK);
-  if(fromIdx===-1)return;
+  if(!e.currentTarget.contains(e.relatedTarget)){
+    e.currentTarget.classList.remove("col-drop-left","col-drop-right");
+  }
+}
+function colDropOnCol(e){
+  if(!dragColK||dragCid)return;
+  e.preventDefault();e.stopPropagation();
+  const targetCol=e.currentTarget;
+  const targetKey=targetCol.dataset.bucket;
+  if(targetKey===dragColK){document.querySelectorAll(".col").forEach(c=>c.classList.remove("col-drop-left","col-drop-right"));dragColK=null;return}
+  const bo=gb();
+  const fromIdx=bo.findIndex(b=>b.key===dragColK);
+  const toIdx=bo.findIndex(b=>b.key===targetKey);
+  if(fromIdx===-1||toIdx===-1){dragColK=null;return}
+  const rect=targetCol.getBoundingClientRect();
+  const dropOnLeft=e.clientX<rect.left+rect.width/2;
+  // Remove dragged column
   const[moved]=bo.splice(fromIdx,1);
-  // Adjust target position after removal
-  let insertAt=targetPos>fromIdx?targetPos-1:targetPos;
-  if(insertAt<0)insertAt=0;if(insertAt>bo.length)insertAt=bo.length;
+  // Recalculate target index after removal
+  let newToIdx=bo.findIndex(b=>b.key===targetKey);
+  if(newToIdx===-1)newToIdx=bo.length;
+  // Insert before or after target
+  const insertAt=dropOnLeft?newToIdx:newToIdx+1;
   bo.splice(insertAt,0,moved);
-  persist();renderBoard();renderStats();
+  dragColK=null;
+  document.querySelectorAll(".col").forEach(c=>c.classList.remove("col-dragging","col-drop-left","col-drop-right"));
+  persist();
+  renderBoard();
+  renderStats();
 }
 
 // ── Direction ──
@@ -272,61 +271,50 @@ function askDel(id){const c=gc().find(x=>x.id===id);if(!c)return;pendingDeleteId
 function hideConfirm(){pendingDeleteId=null;document.getElementById("confirm-toast").style.display="none";document.getElementById("confirm-overlay").classList.remove("show")}
 function confirmDeleteAction(){if(!pendingDeleteId)return;const idx=DB.cards.findIndex(c=>c.id===pendingDeleteId);if(idx>-1)DB.cards.splice(idx,1);persist();hideConfirm();document.getElementById("modal-overlay").classList.remove("show");fullRender()}
 
-// ── Edit ──
+// ── Edit Form ──
 let eTags=new Set();
 function openEdit(cid){
   const c=gc().find(x=>x.id===cid);if(!c)return;eTags=new Set(c.tags);
-  const ct=document.getElementById("modal-content");
-  ct.innerHTML=`<button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('show')">&times;</button>
+  document.getElementById("modal-content").innerHTML=`<button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('show')">&times;</button>
     <div class="form-title">Editar <span class="form-title-badge">${c.id}</span></div>
     <div class="form-row"><label class="form-label">ID</label><input class="form-input" id="e-id" value="${c.id}"></div>
     <div class="form-row"><label class="form-label">Título</label><input class="form-input" id="e-title" value="${esc(c.title)}"></div>
     <div class="form-row"><label class="form-label">Descrição</label><textarea class="form-textarea" id="e-desc">${esc(c.desc)}</textarea></div>
-    <div class="form-row"><label class="form-label">Coluna</label><select class="form-select" id="e-bucket">${gb().map(b=>`<option value="${b.key}"${b.key===c.bucket?' selected':''}>${b.label}</option>`).join('')}</select></div>
-    <div class="form-row"><label class="form-label">Prioridade</label><select class="form-select" id="e-prio">${PRIORITIES.map(p=>`<option value="${p}"${p===c.priority?' selected':''}>${p}</option>`).join('')}</select></div>
-    <div class="form-row"><label class="form-label">Progresso</label><select class="form-select" id="e-prog">${PROGRESSES.map(p=>`<option value="${p}"${p===c.progress?' selected':''}>${p}</option>`).join('')}</select></div>
+    <div class="form-row-inline"><div class="form-row"><label class="form-label">Coluna</label><select class="form-select" id="e-bucket">${gb().map(b=>`<option value="${b.key}"${b.key===c.bucket?' selected':''}>${b.label}</option>`).join('')}</select></div><div class="form-row"><label class="form-label">Prioridade</label><select class="form-select" id="e-prio">${PRIORITIES.map(p=>`<option value="${p}"${p===c.priority?' selected':''}>${p}</option>`).join('')}</select></div></div>
+    <div class="form-row-inline"><div class="form-row"><label class="form-label">Progresso</label><select class="form-select" id="e-prog">${PROGRESSES.map(p=>`<option value="${p}"${p===c.progress?' selected':''}>${p}</option>`).join('')}</select></div><div class="form-row"><label class="form-label">Data de Conclusão</label><input class="form-input" type="date" id="e-due" value="${c.dueDate||''}"></div></div>
     <div class="form-row"><label class="form-label">Rótulos</label><div class="form-tags-wrap">${FILTER_LABELS.map(t=>`<span class="form-tag${eTags.has(t)?' sel':''}" data-tag="${t}" onclick="tE(this)">${t}</span>`).join('')}</div></div>
     <div class="form-actions"><button class="btn btn-del-modal" onclick="askDel('${c.id}')">Excluir</button><button class="btn btn-cancel" onclick="document.getElementById('modal-overlay').classList.remove('show')">Cancelar</button><button class="btn btn-save" onclick="svEdit('${c.id}')">Salvar</button></div>`;
   document.getElementById("modal-overlay").classList.add("show");
 }
 function tE(el){const t=el.dataset.tag;if(eTags.has(t)){eTags.delete(t);el.classList.remove("sel")}else{eTags.add(t);el.classList.add("sel")}}
-function svEdit(oid){const c=gc().find(x=>x.id===oid);if(!c)return;const title=document.getElementById("e-title").value.trim();if(!title){alert("Informe o título.");return}c.id=document.getElementById("e-id").value.trim()||oid;c.title=title;c.desc=document.getElementById("e-desc").value.trim()||"Sem descrição.";c.bucket=document.getElementById("e-bucket").value;c.priority=document.getElementById("e-prio").value;c.progress=document.getElementById("e-prog").value;c.tags=[...eTags];persist();document.getElementById("modal-overlay").classList.remove("show");fullRender()}
+function svEdit(oid){const c=gc().find(x=>x.id===oid);if(!c)return;const title=document.getElementById("e-title").value.trim();if(!title){alert("Informe o título.");return}c.id=document.getElementById("e-id").value.trim()||oid;c.title=title;c.desc=document.getElementById("e-desc").value.trim()||"Sem descrição.";c.bucket=document.getElementById("e-bucket").value;c.priority=document.getElementById("e-prio").value;c.progress=document.getElementById("e-prog").value;c.dueDate=document.getElementById("e-due").value||null;c.tags=[...eTags];persist();document.getElementById("modal-overlay").classList.remove("show");fullRender()}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 // ── New Card ──
 let nTags=new Set();
 function openNewCardForm(){
-  nTags=new Set();const ct=document.getElementById("modal-content");
-  ct.innerHTML=`<button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('show')">&times;</button>
+  nTags=new Set();
+  document.getElementById("modal-content").innerHTML=`<button class="modal-close" onclick="document.getElementById('modal-overlay').classList.remove('show')">&times;</button>
     <div class="form-title">Novo Card</div>
     <div class="form-row"><label class="form-label">ID</label><input class="form-input" id="f-id" placeholder="Ex: DI-700"></div>
     <div class="form-row"><label class="form-label">Título</label><input class="form-input" id="f-title" placeholder="Título executivo"></div>
-    <div class="form-row"><label class="form-label">Descrição</label><textarea class="form-textarea" id="f-desc" placeholder="Descrição de negócio"></textarea></div>
-    <div class="form-row"><label class="form-label">Coluna</label><select class="form-select" id="f-bucket">${gb().map(b=>`<option value="${b.key}">${b.label}</option>`).join('')}</select></div>
-    <div class="form-row"><label class="form-label">Prioridade</label><select class="form-select" id="f-prio">${PRIORITIES.map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div>
-    <div class="form-row"><label class="form-label">Progresso</label><select class="form-select" id="f-prog">${PROGRESSES.map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div>
+    <div class="form-row"><label class="form-label">Descrição</label><textarea class="form-textarea" id="f-desc" placeholder="Descrição"></textarea></div>
+    <div class="form-row-inline"><div class="form-row"><label class="form-label">Coluna</label><select class="form-select" id="f-bucket">${gb().map(b=>`<option value="${b.key}">${b.label}</option>`).join('')}</select></div><div class="form-row"><label class="form-label">Prioridade</label><select class="form-select" id="f-prio">${PRIORITIES.map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div></div>
+    <div class="form-row-inline"><div class="form-row"><label class="form-label">Progresso</label><select class="form-select" id="f-prog">${PROGRESSES.map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div><div class="form-row"><label class="form-label">Data de Conclusão</label><input class="form-input" type="date" id="f-due"></div></div>
     <div class="form-row"><label class="form-label">Rótulos</label><div class="form-tags-wrap">${FILTER_LABELS.map(t=>`<span class="form-tag" data-tag="${t}" onclick="tN(this)">${t}</span>`).join('')}</div></div>
     <div class="form-actions"><button class="btn btn-cancel" onclick="document.getElementById('modal-overlay').classList.remove('show')">Cancelar</button><button class="btn btn-save" onclick="svNew()">Salvar</button></div>`;
   document.getElementById("modal-overlay").classList.add("show");
 }
 function tN(el){const t=el.dataset.tag;if(nTags.has(t)){nTags.delete(t);el.classList.remove("sel")}else{nTags.add(t);el.classList.add("sel")}}
-function svNew(){const id=document.getElementById("f-id").value.trim()||`NEW-${ncCounter++}`;const title=document.getElementById("f-title").value.trim();if(!title){alert("Informe o título.");return}DB.cards.push({id,bucket:document.getElementById("f-bucket").value,priority:document.getElementById("f-prio").value,progress:document.getElementById("f-prog").value,title,desc:document.getElementById("f-desc").value.trim()||"Sem descrição.",tags:[...nTags],direction:null});persist();document.getElementById("modal-overlay").classList.remove("show");fullRender()}
+function svNew(){const id=document.getElementById("f-id").value.trim()||`NEW-${ncCounter++}`;const title=document.getElementById("f-title").value.trim();if(!title){alert("Informe o título.");return}const bk=document.getElementById("f-bucket").value;const maxOrd=gcb(bk).reduce((m,c)=>Math.max(m,c.order||0),0);DB.cards.push({id,bucket:bk,priority:document.getElementById("f-prio").value,progress:document.getElementById("f-prog").value,title,desc:document.getElementById("f-desc").value.trim()||"Sem descrição.",tags:[...nTags],direction:null,dueDate:document.getElementById("f-due").value||null,order:maxOrd+1});persist();document.getElementById("modal-overlay").classList.remove("show");fullRender()}
 
 // ── Export CSV ──
-function exportCSV(){
-  const sep=";";const nl="\r\n";
-  const headers=["ID","Coluna","Prioridade","Progresso","Título","Descrição","Rótulos","Direcionamento"];
-  let csv=headers.join(sep)+nl;
-  gc().forEach(c=>{
-    const row=[c.id,c.bucket,c.priority,c.progress,'"'+c.title.replace(/"/g,'""')+'"','"'+c.desc.replace(/"/g,'""')+'"','"'+c.tags.join(", ")+'"',c.direction||""];
-    csv+=row.join(sep)+nl;
-  });
-  const bom="\uFEFF";
-  const blob=new Blob([bom+csv],{type:"text/csv;charset=utf-8"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="backlog_reborn_export.csv";a.click();
-}
+function exportCSV(){const sep=";",nl="\r\n",hdr=["ID","Coluna","Prioridade","Progresso","Título","Descrição","Rótulos","Direcionamento","Data de Conclusão"];let csv=hdr.join(sep)+nl;gc().forEach(c=>{csv+=[c.id,c.bucket,c.priority,c.progress,'"'+c.title.replace(/"/g,'""')+'"','"'+(c.desc||'').replace(/"/g,'""')+'"','"'+c.tags.join(", ")+'"',c.direction||'',c.dueDate||''].join(sep)+nl});const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));a.download="backlog_reborn_export.csv";a.click()}
 
-// ── Init ──
+// ── Import CSV ──
+function importCSV(evt){const file=evt.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(e){const lines=e.target.result.split(/\r?\n/).filter(l=>l.trim());if(lines.length<2){alert("CSV vazio.");return}const hdr=pCSV(lines[0]);const idx={};hdr.forEach((h,i)=>{idx[h.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")]=i});const iT=idx["titulo"]??idx["título"]??-1;if(iT===-1){alert("Coluna 'Título' não encontrada.");return}const nc=[];for(let i=1;i<lines.length;i++){const c=pCSV(lines[i]);if(c.length<2)continue;const g=k=>c[k]!==undefined?c[k].trim():'';const tags=g(idx["rotulos"]??idx["rótulos"]??-1)?g(idx["rotulos"]??idx["rótulos"]??-1).split(/[;,]/).map(t=>t.trim()).filter(Boolean):[];nc.push({id:g(idx["id"]??-1)||`IMP-${i}`,bucket:g(idx["coluna"]??-1)||'Backlog',priority:g(idx["prioridade"]??-1)||'Média',progress:g(idx["progresso"]??-1)||'Não iniciado',title:g(iT),desc:g(idx["descricao"]??idx["descrição"]??-1)||'',tags,direction:g(idx["direcionamento"]??-1)||null,dueDate:g(idx["data de conclusao"]??idx["data de conclusão"]??idx["duedate"]??-1)||null,order:i-1})}if(!nc.length){alert("Nenhum card.");return}if(confirm(`Importar ${nc.length} cards? Substitui os atuais.`)){DB.cards=nc;const ek=new Set(gb().map(b=>b.key));const clrs=["#9CA3AF","#8B5CF6","#0A1F3F","#00C9B7","#F97316","#10B981","#EF4444","#3B82F6"];nc.forEach(c=>{if(!ek.has(c.bucket)){gb().push({key:c.bucket,label:c.bucket,color:clrs[gb().length%clrs.length]});ek.add(c.bucket)}});persist();fullRender()}evt.target.value=''};reader.readAsText(file,'UTF-8')}
+function pCSV(line){const r=[];let c='',q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(q){if(ch==='"'){if(i+1<line.length&&line[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}else{if(ch==='"')q=true;else if(ch===';'||ch===','){r.push(c);c=''}else c+=ch}}r.push(c);return r}
+
 initDB();
 </script>
 </body>
