@@ -1,51 +1,75 @@
-const fs = require('fs');
-const path = require('path');
+const { kv } = require("@vercel/kv");
+const fs = require("fs");
+const path = require("path");
 
-// In Vercel serverless, /tmp is writable. We use it as persistent-ish storage.
-// For true persistence, swap this for a real DB (e.g., Vercel KV, Supabase, etc.)
-const DB_PATH = path.join('/tmp', 'backlog_reborn_db.json');
-const SEED_PATH = path.join(__dirname, '..', 'data', 'db.json');
+const DB_KEY = "backlog_reborn_db_v2";
 
-function getDB() {
+function getSeed() {
+  const seedPath = path.join(__dirname, "..", "data", "db.json");
+  return JSON.parse(fs.readFileSync(seedPath, "utf-8"));
+}
+
+module.exports = async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+
+  if (req.method === "OPTIONS") return res.status(200).end();
+
   try {
-    if (fs.existsSync(DB_PATH)) {
-      return JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
-    }
-  } catch (e) {}
-  // First run: seed from data/db.json
-  const seed = JSON.parse(fs.readFileSync(SEED_PATH, 'utf-8'));
-  fs.writeFileSync(DB_PATH, JSON.stringify(seed, null, 2), 'utf-8');
-  return seed;
-}
+    if (req.method === "GET") {
+      // Read from KV - stored as JSON string
+      let raw = await kv.get(DB_KEY);
 
-function saveDB(data) {
-  data.lastUpdated = new Date().toISOString();
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
-}
-
-module.exports = (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
-
-  if (req.method === 'GET') {
-    return res.status(200).json(getDB());
-  }
-
-  if (req.method === 'POST') {
-    try {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      if (!body || !body.cards || !body.config) {
-        return res.status(400).json({ error: 'Invalid DB structure' });
+      if (!raw) {
+        // First time ever: seed from file
+        const seed = getSeed();
+        seed.lastUpdated = new Date().toISOString();
+        // Store as string to avoid KV serialization issues
+        await kv.set(DB_KEY, JSON.stringify(seed));
+        return res.status(200).json(seed);
       }
-      saveDB(body);
-      return res.status(200).json({ ok: true, lastUpdated: body.lastUpdated });
-    } catch (e) {
-      return res.status(500).json({ error: e.message });
-    }
-  }
 
-  res.status(405).json({ error: 'Method not allowed' });
+      // KV may return object or string depending on how it was stored
+      const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+      return res.status(200).json(data);
+    }
+
+    if (req.method === "POST") {
+      // Parse body
+      let body;
+      if (typeof req.body === "string") {
+        body = JSON.parse(req.body);
+      } else if (req.body && typeof req.body === "object") {
+        body = req.body;
+      } else {
+        return res.status(400).json({ error: "Body vazio ou inválido" });
+      }
+
+      if (!body.cards || !body.config) {
+        return res.status(400).json({ error: "Estrutura inválida: cards e config obrigatórios" });
+      }
+
+      body.lastUpdated = new Date().toISOString();
+
+      // Store as string to guarantee integrity
+      await kv.set(DB_KEY, JSON.stringify(body));
+
+      return res.status(200).json({
+        ok: true,
+        lastUpdated: body.lastUpdated,
+        cardsCount: body.cards.length
+      });
+    }
+
+    return res.status(405).json({ error: "Method not allowed" });
+
+  } catch (err) {
+    console.error("API /api/db error:", err);
+    return res.status(500).json({
+      error: err.message,
+      hint: "Verifique se o Vercel KV está conectado ao projeto (Storage → Connect)"
+    });
+  }
 };
