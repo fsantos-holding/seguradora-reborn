@@ -38,7 +38,7 @@
       {"key":"Backlog","label":"Backlog","color":"#8B5CF6"},
       {"key":"Priorizado","label":"Priorizado","color":"#0A1F3F"},
       {"key":"Em Execução (Desenvolvimento)","label":"Em Execução","color":"#00C9B7"},
-      {"key":"Incidente","label":"Incidente","color":"#F97316"},
+      {"key":"Incidente","label":"Incidente","color":"#EF4444"},
       {"key":"Em Execução (Desenvolvimento)","label":"Em Execução","color":"#3B82F6"},
       {"key":"Em Produção","label":"Em Produção","color":"#10B981"}
     ],
