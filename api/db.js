@@ -5,8 +5,24 @@ const path = require("path");
 const DB_KEY = "backlog_reborn_db_v3";
 
 function getSeed() {
-  const seedPath = path.join(__dirname, "..", "data", "db.json");
-  return JSON.parse(fs.readFileSync(seedPath, "utf-8"));
+  const dataDir = path.join(__dirname, "..", "data");
+  const jsonPath = path.join(dataDir, "db.json");
+  const jsPath = path.join(dataDir, "db.js");
+  const seedPath = fs.existsSync(jsonPath) ? jsonPath : jsPath;
+  const raw = fs.readFileSync(seedPath, "utf-8");
+  const seed = typeof raw === "string" ? JSON.parse(raw) : raw;
+  return normalizeCards(seed);
+}
+
+function normalizeCards(data) {
+  if (!data || !data.cards) return data;
+  data.cards = data.cards.map((c, i) => ({
+    ...c,
+    dueDate: c.dueDate ?? null,
+    order: c.order ?? i,
+    direction: c.direction ?? null,
+  }));
+  return data;
 }
 
 module.exports = async (req, res) => {
@@ -39,6 +55,7 @@ module.exports = async (req, res) => {
       if (!body.cards || !body.config)
         return res.status(400).json({ error: "cards e config obrigatórios" });
 
+      body = normalizeCards(body);
       body.lastUpdated = new Date().toISOString();
       await kv.set(DB_KEY, JSON.stringify(body));
       return res.status(200).json({ ok: true, lastUpdated: body.lastUpdated, cardsCount: body.cards.length });
