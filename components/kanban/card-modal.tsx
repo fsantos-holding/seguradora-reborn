@@ -88,7 +88,7 @@ export function CardModal({
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 w-7 h-7 rounded-full border-none bg-[var(--g100)] text-[var(--g500)] flex items-center justify-center text-sm hover:bg-[var(--g200)] hover:text-[var(--g800)]"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[var(--g200)] bg-[var(--g100)] text-[var(--g500)] flex items-center justify-center text-sm hover:bg-[var(--g200)] hover:text-[var(--g800)] transition-all duration-200"
         >
           ×
         </button>
@@ -202,19 +202,19 @@ export function CardModal({
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
+            <label className="block text-xs font-semibold text-[var(--g600)] mb-2 uppercase tracking-wide">
               Rótulos
             </label>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-2">
               {filterLabels.map((t) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() => toggleTag(t)}
-                  className={`px-2 py-1 rounded-full text-xs font-semibold border transition-all ${
+                  className={`btn-pill transition-all duration-200 ${
                     tags.has(t)
-                      ? "bg-[var(--teal)] text-[var(--navy)] border-[var(--teal)]"
-                      : "bg-white text-[var(--g600)] border-[var(--g200)] hover:border-[var(--teal)]"
+                      ? "bg-[var(--teal)] text-[var(--navy)] border-[var(--teal)] shadow-sm"
+                      : "bg-white text-[var(--g600)] border-[var(--g200)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] hover:bg-[rgba(0,201,183,0.04)]"
                   }`}
                 >
                   {t}
@@ -224,7 +224,7 @@ export function CardModal({
           </div>
         </div>
 
-        <div className="flex gap-2 justify-end mt-6 flex-wrap">
+        <div className="flex gap-3 justify-end mt-8 pt-6 border-t border-[var(--g100)] flex-wrap">
           {mode === "edit" && onDelete && (
             <button
               type="button"
@@ -234,7 +234,7 @@ export function CardModal({
                   onClose();
                 }
               }}
-              className="mr-auto px-3 py-2 rounded-md text-sm font-semibold bg-[var(--red-bg)] text-[var(--red)] border border-[var(--red-b)] hover:bg-[var(--red)] hover:text-white"
+              className="mr-auto btn-danger"
             >
               Excluir
             </button>
@@ -242,14 +242,14 @@ export function CardModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-3.5 py-2 rounded-md font-semibold text-sm bg-[var(--g100)] text-[var(--g600)] border border-[var(--g200)]"
+            className="btn-secondary"
           >
             Cancelar
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="px-3.5 py-2 rounded-md font-bold text-sm bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)]"
+            className="btn-primary"
           >
             Salvar
           </button>

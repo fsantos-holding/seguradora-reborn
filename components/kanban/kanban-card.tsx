@@ -118,11 +118,11 @@ export function KanbanCard({
           </span>
         )}
       </div>
-      <div className="border-t border-[var(--g100)] pt-2 mt-1">
-        <span className="text-[10px] font-semibold text-[var(--g400)] uppercase block mb-1">
+      <div className="border-t border-[var(--g100)] pt-2.5 mt-2">
+        <span className="text-[10px] font-semibold text-[var(--g400)] uppercase block mb-2">
           Direcionamento
         </span>
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {directions.map((d) => {
             const dk = d.toLowerCase();
             const sel = card.direction === dk;
@@ -130,7 +130,7 @@ export function KanbanCard({
               <button
                 key={d}
                 type="button"
-                className={`dir-btn text-[10px] font-semibold px-2 py-1 rounded border transition-all ${
+                className={`dir-btn text-[10px] font-semibold px-2.5 py-1.5 rounded-lg border transition-all duration-200 ${
                   sel
                     ? `text-white ${dk === "manter" ? "bg-[#059669] border-[#059669]" : dk === "priorizar" ? "bg-[var(--teal-d)] border-[var(--teal-d)]" : dk === "adiar" ? "bg-[var(--amber)] border-[var(--amber)] text-[var(--g800)]" : dk === "cancelar" ? "bg-[var(--red)] border-[var(--red)]" : "bg-[var(--g600)] border-[var(--g600)]"}`
                     : "bg-white text-[var(--g500)] border-[var(--g200)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] hover:bg-[#F0FDFB]"

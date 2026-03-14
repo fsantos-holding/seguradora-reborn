@@ -137,7 +137,7 @@ export default function UsersPage() {
           </h2>
           <button
             onClick={openNewModal}
-            className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)]"
+            className="btn-primary"
           >
             + Novo Usuário
           </button>
@@ -183,16 +183,16 @@ export default function UsersPage() {
                     </td>
                     <td className="px-4 py-3">
                       {u.id !== "admin" ? (
-                        <div className="flex gap-2">
+                        <div className="flex gap-3">
                           <button
                             onClick={() => openEditModal(u)}
-                            className="px-2 py-1 text-xs rounded-md border border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[var(--g100)] hover:border-[var(--teal)] hover:text-[var(--teal-d)]"
+                            className="btn-sm border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[var(--g100)] hover:border-[var(--teal)] hover:text-[var(--teal-d)]"
                           >
                             Editar
                           </button>
                           <button
                             onClick={() => deleteUser(u.id, u.name)}
-                            className="px-2 py-1 text-xs rounded-md border border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[#FEF2F2] hover:border-[#EF4444] hover:text-[#EF4444]"
+                            className="btn-sm border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[#FEF2F2] hover:border-[#EF4444] hover:text-[#EF4444]"
                           >
                             Excluir
                           </button>
@@ -263,16 +263,16 @@ export default function UsersPage() {
                 />
               </div>
             </div>
-            <div className="flex gap-2 justify-end mt-4">
+            <div className="flex gap-3 justify-end mt-6 pt-4 border-t border-[var(--g100)]">
               <button
                 onClick={() => setModalOpen(false)}
-                className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-[var(--g100)] text-[var(--g600)] border border-[var(--g200)]"
+                className="btn-secondary"
               >
                 Cancelar
               </button>
               <button
                 onClick={modalMode === "new" ? createUser : saveUser}
-                className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)]"
+                className="btn-primary"
               >
                 {modalMode === "new" ? "Criar" : "Salvar"}
               </button>

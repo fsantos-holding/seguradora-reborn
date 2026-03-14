@@ -53,7 +53,7 @@ export function MapaModal({ mapaProducao, onClose, onSave }: MapaModalProps) {
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 w-7 h-7 rounded-full border-none bg-[var(--g100)] text-[var(--g500)] flex items-center justify-center text-sm hover:bg-[var(--g200)]"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[var(--g200)] bg-[var(--g100)] text-[var(--g500)] flex items-center justify-center text-sm hover:bg-[var(--g200)] hover:text-[var(--g800)] transition-all duration-200"
         >
           ×
         </button>
@@ -117,18 +117,18 @@ export function MapaModal({ mapaProducao, onClose, onSave }: MapaModalProps) {
           </div>
         </div>
 
-        <div className="flex gap-2 justify-end">
+        <div className="flex gap-3 justify-end pt-4 border-t border-[var(--g100)]">
           <button
             type="button"
             onClick={onClose}
-            className="px-3.5 py-2 rounded-md font-semibold text-sm bg-[var(--g100)] text-[var(--g600)]"
+            className="btn-secondary"
           >
             Cancelar
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="px-3.5 py-2 rounded-md font-bold text-sm bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)]"
+            className="btn-primary"
           >
             Salvar
           </button>

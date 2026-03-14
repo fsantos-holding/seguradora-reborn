@@ -48,3 +48,90 @@
     min-height: 100vh;
   }
 }
+
+@layer components {
+  /* Botões primários - teal/navy */
+  .btn-primary {
+    @apply px-4 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 ease-out;
+    background: var(--teal);
+    color: var(--navy);
+    box-shadow: 0 1px 3px rgba(0, 201, 183, 0.25);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--lime);
+    box-shadow: 0 4px 12px rgba(0, 201, 183, 0.35);
+    transform: translateY(-1px);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 201, 183, 0.2);
+  }
+
+  /* Botões secundários / outline */
+  .btn-secondary {
+    @apply px-4 py-2.5 rounded-lg font-semibold text-sm border transition-all duration-200 ease-out;
+    background: var(--g100);
+    color: var(--g600);
+    border-color: var(--g200);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--g200);
+    border-color: var(--g300);
+    color: var(--g700);
+  }
+
+  /* Botões ghost / header */
+  .btn-ghost {
+    @apply px-4 py-2.5 rounded-lg font-semibold text-sm border transition-all duration-200 ease-out;
+    background: transparent;
+    color: var(--g400);
+    border-color: var(--g600);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    color: white;
+    border-color: var(--g400);
+  }
+
+  /* Botões pill (filtros, tags) */
+  .btn-pill {
+    @apply px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 ease-out;
+  }
+  .btn-pill:hover {
+    transform: translateY(-0.5px);
+  }
+
+  /* Botões de ação pequenos */
+  .btn-sm {
+    @apply px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 ease-out;
+  }
+  .btn-sm:hover {
+    transform: translateY(-0.5px);
+  }
+
+  /* Botão perigo (soft) */
+  .btn-danger {
+    @apply px-4 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 ease-out;
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid var(--red-b);
+  }
+  .btn-danger:hover:not(:disabled) {
+    background: var(--red);
+    color: white;
+    border-color: var(--red);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+  }
+
+  /* Botão perigo sólido (confirmar exclusão) */
+  .btn-danger-solid {
+    @apply px-4 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 ease-out;
+    background: var(--red);
+    color: white;
+    border: 1px solid var(--red);
+  }
+  .btn-danger-solid:hover:not(:disabled) {
+    background: #dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+    transform: translateY(-1px);
+  }
+}

@@ -127,7 +127,7 @@ export default function BoardsPage() {
             <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
               <button
                 onClick={openNewModal}
-                className="bg-[var(--g100)] border-2 border-dashed border-[var(--g200)] flex items-center justify-center min-h-[120px] text-[var(--g600)] font-semibold rounded-[var(--rad)] hover:bg-[rgba(0,201,183,0.08)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] transition-colors cursor-pointer"
+                className="bg-[var(--g100)] border-2 border-dashed border-[var(--g200)] flex items-center justify-center min-h-[120px] text-[var(--g600)] font-semibold rounded-[var(--rad)] hover:bg-[rgba(0,201,183,0.08)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] transition-all duration-200 cursor-pointer"
               >
                 + Novo Board
               </button>
@@ -146,13 +146,13 @@ export default function BoardsPage() {
                     </span>
                     {isBoardReborn ? (
                       isAdmin ? (
-                        <div className="mt-auto pt-2">
+                        <div className="mt-auto pt-3">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               deleteBoard(b.id, b.name);
                             }}
-                            className="px-2 py-1 text-xs rounded-md border border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[#FEF2F2] hover:border-[#EF4444] hover:text-[#EF4444] transition-colors"
+                            className="btn-sm border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[#FEF2F2] hover:border-[#EF4444] hover:text-[#EF4444]"
                           >
                             Excluir
                           </button>
@@ -161,13 +161,13 @@ export default function BoardsPage() {
                         <span className="text-xs text-[var(--g400)] italic">Board padrão</span>
                       )
                     ) : (
-                      <div className="mt-auto pt-2 flex gap-2">
+                      <div className="mt-auto pt-3 flex gap-3">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             openEditModal(b.id, b.name);
                           }}
-                          className="px-2 py-1 text-xs rounded-md border border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[var(--g100)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] transition-colors"
+                          className="btn-sm border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[var(--g100)] hover:border-[var(--teal)] hover:text-[var(--teal-d)]"
                         >
                           Renomear
                         </button>
@@ -176,7 +176,7 @@ export default function BoardsPage() {
                             e.stopPropagation();
                             deleteBoard(b.id, b.name);
                           }}
-                          className="px-2 py-1 text-xs rounded-md border border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[#FEF2F2] hover:border-[#EF4444] hover:text-[#EF4444] transition-colors"
+                          className="btn-sm border-[var(--g200)] bg-white text-[var(--g600)] hover:bg-[#FEF2F2] hover:border-[#EF4444] hover:text-[#EF4444]"
                         >
                           Excluir
                         </button>
@@ -220,16 +220,16 @@ export default function BoardsPage() {
                 autoFocus
               />
             </div>
-            <div className="flex gap-2 justify-end">
+            <div className="flex gap-3 justify-end pt-2">
               <button
                 onClick={() => setModalOpen(false)}
-                className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-[var(--g100)] text-[var(--g600)] border border-[var(--g200)] hover:bg-[var(--g200)]"
+                className="btn-secondary"
               >
                 Cancelar
               </button>
               <button
                 onClick={modalMode === "new" ? createBoard : saveBoardName}
-                className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)]"
+                className="btn-primary"
               >
                 {modalMode === "new" ? "Criar" : "Salvar"}
               </button>

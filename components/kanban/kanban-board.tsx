@@ -315,7 +315,7 @@ export function KanbanBoard({
   return (
     <>
       <div className="bg-white border-b border-[var(--g200)]">
-        <div className="max-w-[1900px] mx-auto px-6 py-2.5 flex items-center gap-5 overflow-x-auto flex-wrap">
+        <div className="max-w-[1900px] mx-auto px-6 py-4 flex items-center gap-6 overflow-x-auto flex-wrap">
           {buckets.map((b, i) => {
             const n = visibleCardsByBucket(b.key).length;
             return (
@@ -340,59 +340,61 @@ export function KanbanBoard({
         </div>
       </div>
 
-      <div className="bg-white border-b border-[var(--g200)] sticky top-[50px] z-[150]">
-        <div className="max-w-[1900px] mx-auto px-6 py-2 flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-semibold text-[var(--g400)] uppercase tracking-wider mr-1">
-            Prioridade:
+      <div className="bg-white border-b border-[var(--g200)] sticky top-[50px] z-[150] shadow-[0_2px_8px_rgba(10,31,63,0.04)]">
+        <div className="max-w-[1900px] mx-auto px-6 py-4 flex items-center gap-4 flex-wrap">
+          <span className="text-xs font-semibold text-[var(--g400)] uppercase tracking-wider">
+            Prioridade
           </span>
-          {["all", ...priorities].map((p) => (
-            <button
-              key={p}
-              onClick={() => setActivePrio(p)}
-              className={`px-2.5 py-1 rounded-full text-xs font-semibold border transition-all ${
-                activePrio === p
-                  ? "bg-[var(--navy)] text-white border-[var(--navy)]"
-                  : "bg-white text-[var(--g600)] border-[var(--g200)] hover:border-[var(--teal)] hover:text-[var(--teal-d)]"
-              }`}
-            >
-              {p === "all" ? "Todas" : p}
-            </button>
-          ))}
-          <div className="w-px h-5 bg-[var(--g200)] mx-2" />
+          <div className="flex items-center gap-2 flex-wrap">
+            {["all", ...priorities].map((p) => (
+              <button
+                key={p}
+                onClick={() => setActivePrio(p)}
+                className={`btn-pill transition-all duration-200 ${
+                  activePrio === p
+                    ? "bg-[var(--navy)] text-white border-[var(--navy)] shadow-sm"
+                    : "bg-white text-[var(--g600)] border-[var(--g200)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] hover:bg-[rgba(0,201,183,0.04)]"
+                }`}
+              >
+                {p === "all" ? "Todas" : p}
+              </button>
+            ))}
+          </div>
+          <div className="w-px h-6 bg-[var(--g200)]" />
           <button
             onClick={() => setLabelsOpen(!labelsOpen)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-[var(--teal)] bg-[rgba(0,201,183,0.06)] text-[var(--teal-d)] hover:bg-[rgba(0,201,183,0.12)] ${labelsOpen ? "open" : ""}`}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 border-[var(--teal)] bg-[rgba(0,201,183,0.06)] text-[var(--teal-d)] hover:bg-[rgba(0,201,183,0.12)] hover:shadow-sm ${labelsOpen ? "open" : ""}`}
           >
             <span>Rótulos</span>
-            <span className={`transition-transform ${labelsOpen ? "rotate-180" : ""}`}>▼</span>
+            <span className={`transition-transform duration-200 ${labelsOpen ? "rotate-180" : ""}`}>▼</span>
           </button>
-          <div className="w-px h-5 bg-[var(--g200)] mx-2" />
+          <div className="w-px h-6 bg-[var(--g200)]" />
           <button
             onClick={() => setMapaOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-[var(--g300)] bg-[var(--g50)] text-[var(--navy)] hover:bg-[var(--g100)] hover:border-[var(--teal)] hover:text-[var(--teal-d)]"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border border-[var(--g300)] bg-[var(--g50)] text-[var(--navy)] hover:bg-[var(--g100)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] transition-all duration-200"
           >
             Mapa de Produção
           </button>
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-3 ml-auto">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar..."
-              className="px-2.5 py-1.5 rounded-full border border-[var(--g200)] text-xs bg-[var(--g50)] w-[170px] focus:border-[var(--teal)] outline-none"
+              className="px-3 py-2 rounded-lg border border-[var(--g200)] text-sm bg-[var(--g50)] w-[180px] focus:border-[var(--teal)] focus:ring-2 focus:ring-[rgba(0,201,183,0.2)] outline-none transition-all duration-200"
             />
           </div>
         </div>
         {labelsOpen && (
-          <div className="max-w-[1900px] mx-auto px-6 py-2 flex gap-2 flex-wrap">
+          <div className="max-w-[1900px] mx-auto px-6 py-4 flex gap-3 flex-wrap border-t border-[var(--g100)]">
             {filterLabels.map((l) => (
               <button
                 key={l}
                 onClick={() => toggleLabel(l)}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold border transition-all ${
+                className={`btn-pill transition-all duration-200 ${
                   activeLabels.has(l)
-                    ? "bg-[var(--teal)] text-[var(--navy)] border-[var(--teal)]"
-                    : "bg-white text-[var(--g600)] border-[var(--g200)] hover:border-[var(--teal)] hover:text-[var(--teal-d)]"
+                    ? "bg-[var(--teal)] text-[var(--navy)] border-[var(--teal)] shadow-sm"
+                    : "bg-white text-[var(--g600)] border-[var(--g200)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] hover:bg-[rgba(0,201,183,0.04)]"
                 }`}
               >
                 {l}
@@ -409,6 +411,14 @@ export function KanbanBoard({
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
+          <button
+            type="button"
+            onClick={() => setAddColumnOpen(true)}
+            className="shrink-0 min-w-[44px] w-[44px] h-[80px] rounded-lg border border-dashed border-[var(--g300)] bg-[var(--g50)] flex items-center justify-center text-[var(--g400)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] hover:bg-[rgba(0,201,183,0.04)] transition-all cursor-pointer group opacity-80 hover:opacity-100"
+            title="Nova coluna"
+          >
+            <span className="text-lg font-light group-hover:scale-110 transition-transform">+</span>
+          </button>
           {buckets.map((b) => (
             <KanbanColumn
               key={b.key}
@@ -434,15 +444,6 @@ export function KanbanBoard({
               dirColors={DIR_COLORS}
             />
           ))}
-
-          <button
-            type="button"
-            onClick={() => setAddColumnOpen(true)}
-            className="shrink-0 min-w-[52px] w-[52px] h-[120px] rounded-[var(--rad)] border border-dashed border-[var(--g300)] bg-[var(--g50)] flex items-center justify-center text-[var(--g400)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] hover:bg-[rgba(0,201,183,0.04)] transition-all cursor-pointer group"
-            title="Adicionar coluna"
-          >
-            <span className="text-xl font-light group-hover:scale-110 transition-transform">+</span>
-          </button>
 
           <DragOverlay>
             {activeCard ? (
@@ -485,7 +486,7 @@ export function KanbanBoard({
         </div>
       )}
 
-      <div className="fixed top-14 right-6 flex gap-2 z-[200]">
+      <div className="fixed top-14 right-6 flex items-center gap-2 z-[200]">
         <button
           onClick={() => {
             if (buckets.length === 0) return;
@@ -503,14 +504,15 @@ export function KanbanBoard({
             });
             setModalMode("new");
           }}
-          className={`px-3.5 py-2 rounded-md font-bold text-sm ${buckets.length === 0 ? "bg-[var(--g200)] text-[var(--g500)] cursor-not-allowed" : "bg-[var(--lime)] text-[var(--navy)] hover:bg-[var(--teal)]"}`}
+          className={`btn-primary ${buckets.length === 0 ? "!bg-[var(--g200)] !text-[var(--g500)] cursor-not-allowed opacity-70" : ""}`}
           disabled={buckets.length === 0}
           title={buckets.length === 0 ? "Adicione uma coluna primeiro" : undefined}
         >
           + Novo Card
         </button>
-        <label className="px-3.5 py-2 rounded-md font-semibold text-sm bg-transparent text-[var(--g400)] border border-[var(--g600)] hover:text-white hover:border-[var(--g400)] cursor-pointer">
-          ⬆ CSV
+        <div className="w-px h-6 bg-[var(--g200)] mx-1" />
+        <label className="btn-secondary cursor-pointer inline-flex items-center justify-center gap-1.5 text-[var(--g600)] hover:text-[var(--g700)]">
+          Importar
           <input
             type="file"
             accept=".csv"
@@ -520,9 +522,9 @@ export function KanbanBoard({
         </label>
         <button
           onClick={handleExportCSV}
-          className="px-3.5 py-2 rounded-md font-semibold text-sm bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)]"
+          className="btn-secondary"
         >
-          ⬇ CSV
+          Exportar
         </button>
       </div>
 
@@ -581,16 +583,16 @@ export function KanbanBoard({
               className="w-full px-3 py-2 border border-[var(--g200)] rounded-lg text-sm mb-4 focus:border-[var(--teal)] outline-none"
               autoFocus
             />
-            <div className="flex gap-2 justify-end">
+            <div className="flex gap-3 justify-end pt-2">
               <button
                 onClick={() => { setAddColumnOpen(false); setNewColumnName(""); }}
-                className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-[var(--g100)] text-[var(--g600)] border border-[var(--g200)] hover:bg-[var(--g200)]"
+                className="btn-secondary"
               >
                 Cancelar
               </button>
               <button
                 onClick={addColumn}
-                className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)]"
+                className="btn-primary"
               >
                 Criar
               </button>
@@ -607,10 +609,10 @@ export function KanbanBoard({
                 ? `Excluir "${cards.find((c) => c.id === confirmDelete.id)?.title}"?`
                 : `Excluir a coluna "${confirmDelete.label}"?`}
             </p>
-            <div className="flex gap-2 justify-center">
+            <div className="flex gap-3 justify-center pt-2">
               <button
                 onClick={() => setConfirmDelete(null)}
-                className="px-3.5 py-2 rounded-md font-semibold text-sm bg-[var(--g100)] text-[var(--g600)] border border-[var(--g200)]"
+                className="btn-secondary"
               >
                 Cancelar
               </button>
@@ -626,7 +628,7 @@ export function KanbanBoard({
                   }
                   setConfirmDelete(null);
                 }}
-                className="px-3.5 py-2 rounded-md font-semibold text-sm bg-[var(--red)] text-white"
+                className="btn-danger-solid"
               >
                 Excluir
               </button>
