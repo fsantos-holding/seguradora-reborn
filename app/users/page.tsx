@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { Header } from "@/components/header";
+import { apiGet, apiPost, apiPut, apiDelete, ApiError } from "@/lib/api-client";
 
 interface UserRow {
   id: string;
@@ -40,12 +41,13 @@ export default function UsersPage() {
 
   async function loadUsers() {
     try {
-      const r = await fetch("/api/users", { headers: getHeaders() });
-      if (r.status === 401) router.replace("/login");
-      if (r.status === 403) router.replace("/boards");
-      const { users: list } = await r.json();
-      setUsers(list || []);
-    } catch {
+      const data = await apiGet<{ users: UserRow[] }>("/api/users", getHeaders());
+      setUsers(data.users ?? []);
+    } catch (e) {
+      if (e instanceof ApiError) {
+        if (e.status === 401) router.replace("/login");
+        else if (e.status === 403) router.replace("/boards");
+      }
       setUsers([]);
     } finally {
       setLoading(false);
@@ -82,22 +84,17 @@ export default function UsersPage() {
       setFormError("Senha deve ter pelo menos 4 caracteres.");
       return;
     }
-    const r = await fetch("/api/users", {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify({
+    try {
+      await apiPost("/api/users", {
         name: formName.trim(),
         email: formEmail.trim(),
         password: formPwd,
-      }),
-    });
-    const data = await r.json();
-    if (!r.ok) {
-      setFormError(data.error || "Erro ao criar.");
-      return;
+      }, getHeaders());
+      setModalOpen(false);
+      loadUsers();
+    } catch (e) {
+      setFormError(e instanceof ApiError ? (e.data as { error?: string })?.error ?? e.message : "Erro ao criar.");
     }
-    setModalOpen(false);
-    loadUsers();
   }
 
   async function saveUser() {
@@ -109,31 +106,23 @@ export default function UsersPage() {
     }
     const body: { name: string; password?: string } = { name: formName.trim() };
     if (formPwd.length >= 4) body.password = formPwd;
-    const r = await fetch(`/api/users/${editingId}`, {
-      method: "PUT",
-      headers: getHeaders(),
-      body: JSON.stringify(body),
-    });
-    const data = await r.json();
-    if (!r.ok) {
-      setFormError(data.error || "Erro ao salvar.");
-      return;
+    try {
+      await apiPut(`/api/users/${editingId}`, body, getHeaders());
+      setModalOpen(false);
+      loadUsers();
+    } catch (e) {
+      setFormError(e instanceof ApiError ? (e.data as { error?: string })?.error ?? e.message : "Erro ao salvar.");
     }
-    setModalOpen(false);
-    loadUsers();
   }
 
   async function deleteUser(id: string, name: string) {
     if (!confirm(`Excluir o usuário "${name}"? Esta ação não pode ser desfeita.`)) return;
-    const r = await fetch(`/api/users/${id}`, {
-      method: "DELETE",
-      headers: getHeaders(),
-    });
-    if (!r.ok) {
+    try {
+      await apiDelete(`/api/users/${id}`, getHeaders());
+      loadUsers();
+    } catch {
       alert("Erro ao excluir.");
-      return;
     }
-    loadUsers();
   }
 
   if (!user) return null;

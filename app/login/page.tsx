@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import { loginAction, registerAction } from "@/app/actions/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,7 +18,6 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
     const form = e.currentTarget;
     const userInput = (form.elements.namedItem("user") as HTMLInputElement).value.trim();
     const pwd = (form.elements.namedItem("password") as HTMLInputElement).value;
@@ -26,20 +26,16 @@ export default function LoginPage() {
       setError("Preencha usuário e senha.");
       return;
     }
+    setError("");
     setLoading(true);
     try {
-      const r = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: userInput, password: pwd }),
-      });
-      const data = await r.json();
-      if (!r.ok) {
-        setError(data.error || "Erro ao entrar.");
-        return;
+      const result = await loginAction(userInput, pwd);
+      if (result.ok) {
+        login(result.token, result.user, remember);
+        router.replace("/boards");
+      } else {
+        setError(result.error);
       }
-      login(data.token, data.user, remember);
-      router.replace("/boards");
     } catch {
       setError("Erro de conexão. Tente novamente.");
     } finally {
@@ -49,7 +45,6 @@ export default function LoginPage() {
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
     const form = e.currentTarget;
     const name = (form.elements.namedItem("name") as HTMLInputElement).value.trim();
     const email = (form.elements.namedItem("email") as HTMLInputElement).value.trim();
@@ -63,25 +58,26 @@ export default function LoginPage() {
       setError("Senha deve ter pelo menos 4 caracteres.");
       return;
     }
+    setError("");
     setLoading(true);
     try {
-      const r = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password: pwd }),
-      });
-      const data = await r.json();
-      if (!r.ok) {
-        setError(data.error || "Erro ao cadastrar.");
-        return;
+      const result = await registerAction(name, email, pwd);
+      if (result.ok) {
+        login(result.token, result.user, remember);
+        router.replace("/boards");
+      } else {
+        setError(result.error);
       }
-      login(data.token, data.user, remember);
-      router.replace("/boards");
     } catch {
       setError("Erro de conexão. Tente novamente.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const switchTab = (tab: "login" | "register") => {
+    setActiveTab(tab);
+    setError("");
   };
 
   if (!isChecked) {
@@ -91,6 +87,13 @@ export default function LoginPage() {
       </div>
     );
   }
+
+  const inputClass =
+    "w-full px-3 py-2.5 border border-[var(--g200)] rounded-lg text-[var(--g700)] focus:border-[var(--teal)] outline-none";
+  const labelClass =
+    "block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide";
+  const btnClass =
+    "w-full py-2.5 rounded-lg font-semibold bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)] disabled:opacity-60 disabled:cursor-not-allowed transition-colors";
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-[#f8fafc] to-[#eef2f6]">
@@ -105,7 +108,7 @@ export default function LoginPage() {
         <div className="flex gap-1 mb-6 bg-[var(--g100)] rounded-lg p-1">
           <button
             type="button"
-            onClick={() => { setActiveTab("login"); setError(""); }}
+            onClick={() => switchTab("login")}
             className={`flex-1 py-2 rounded-md font-semibold text-sm transition-all ${
               activeTab === "login"
                 ? "bg-white text-[var(--navy)] shadow-sm"
@@ -116,7 +119,7 @@ export default function LoginPage() {
           </button>
           <button
             type="button"
-            onClick={() => { setActiveTab("register"); setError(""); }}
+            onClick={() => switchTab("register")}
             className={`flex-1 py-2 rounded-md font-semibold text-sm transition-all ${
               activeTab === "register"
                 ? "bg-white text-[var(--navy)] shadow-sm"
@@ -128,44 +131,38 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <div className="bg-[#FEF2F2] text-[#B91C1C] p-3 rounded-lg text-sm mb-4">{error}</div>
+          <div className="bg-[#FEF2F2] text-[#B91C1C] p-3 rounded-lg text-sm mb-4">
+            {error}
+          </div>
         )}
 
         {activeTab === "login" && (
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-                Usuário ou E-mail
-              </label>
+              <label className={labelClass}>Usuário ou E-mail</label>
               <input
                 name="user"
                 type="text"
                 placeholder="Usuário ou e-mail"
                 autoComplete="username"
-                className="w-full px-3 py-2.5 border border-[var(--g200)] rounded-lg text-[var(--g700)] focus:border-[var(--teal)] outline-none"
+                className={inputClass}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-                Senha
-              </label>
+              <label className={labelClass}>Senha</label>
               <input
                 name="password"
                 type="password"
                 placeholder="••••••••"
                 autoComplete="current-password"
-                className="w-full px-3 py-2.5 border border-[var(--g200)] rounded-lg text-[var(--g700)] focus:border-[var(--teal)] outline-none"
+                className={inputClass}
               />
             </div>
             <label className="flex items-center gap-2 mb-4 cursor-pointer">
               <input name="remember" type="checkbox" defaultChecked className="w-4 h-4 accent-[var(--teal)]" />
               <span className="text-sm text-[var(--g600)]">Manter conectado (gravar no navegador)</span>
             </label>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 rounded-lg font-semibold bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-            >
+            <button type="submit" disabled={loading} className={btnClass}>
               Entrar
             </button>
           </form>
@@ -174,50 +171,40 @@ export default function LoginPage() {
         {activeTab === "register" && (
           <form onSubmit={handleRegister} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-                Nome
-              </label>
+              <label className={labelClass}>Nome</label>
               <input
                 name="name"
                 type="text"
                 placeholder="Seu nome completo"
                 autoComplete="name"
-                className="w-full px-3 py-2.5 border border-[var(--g200)] rounded-lg text-[var(--g700)] focus:border-[var(--teal)] outline-none"
+                className={inputClass}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-                E-mail
-              </label>
+              <label className={labelClass}>E-mail</label>
               <input
                 name="email"
                 type="email"
                 placeholder="seu@email.com"
                 autoComplete="email"
-                className="w-full px-3 py-2.5 border border-[var(--g200)] rounded-lg text-[var(--g700)] focus:border-[var(--teal)] outline-none"
+                className={inputClass}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-                Senha
-              </label>
+              <label className={labelClass}>Senha</label>
               <input
                 name="password"
                 type="password"
                 placeholder="Mínimo 4 caracteres"
                 autoComplete="new-password"
-                className="w-full px-3 py-2.5 border border-[var(--g200)] rounded-lg text-[var(--g700)] focus:border-[var(--teal)] outline-none"
+                className={inputClass}
               />
             </div>
             <label className="flex items-center gap-2 mb-4 cursor-pointer">
               <input name="remember" type="checkbox" defaultChecked className="w-4 h-4 accent-[var(--teal)]" />
               <span className="text-sm text-[var(--g600)]">Manter conectado após cadastro</span>
             </label>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 rounded-lg font-semibold bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-            >
+            <button type="submit" disabled={loading} className={btnClass}>
               Cadastrar
             </button>
           </form>

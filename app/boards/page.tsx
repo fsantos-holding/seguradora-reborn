@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
 import { Header } from "@/components/header";
+import { apiGet, apiPost, apiPut, apiDelete, ApiError } from "@/lib/api-client";
 
 interface Board {
   id: string;
@@ -34,15 +34,15 @@ export default function BoardsPage() {
 
   async function loadBoards() {
     try {
-      const r = await fetch("/api/boards", { headers: getHeaders() });
-      if (r.status === 401) {
+      const data = await apiGet<{ boards: Board[] }>("/api/boards", getHeaders());
+      const list = data.boards ?? [];
+      setBoards(list);
+      setEmpty(list.length === 0);
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 401) {
         router.replace("/login");
         return;
       }
-      const { boards: list } = await r.json();
-      setBoards(list || []);
-      setEmpty(!list || list.length === 0);
-    } catch {
       setBoards([]);
       setEmpty(true);
     } finally {
@@ -65,48 +65,36 @@ export default function BoardsPage() {
   }
 
   async function createBoard() {
-    const name = boardName.trim() || "Novo Board";
-    const r = await fetch("/api/boards", {
-      method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify({ name }),
-    });
-    if (!r.ok) {
+    try {
+      const name = boardName.trim() || "Novo Board";
+      const { board } = await apiPost<{ board: Board }>("/api/boards", { name }, getHeaders());
+      setModalOpen(false);
+      router.push(`/board/${board.id}`);
+    } catch {
       alert("Erro ao criar board.");
-      return;
     }
-    const { board } = await r.json();
-    setModalOpen(false);
-    router.push(`/board/${board.id}`);
   }
 
   async function saveBoardName() {
     if (!editingId) return;
-    const name = boardName.trim() || "Board";
-    const r = await fetch(`/api/boards/${editingId}`, {
-      method: "PUT",
-      headers: getHeaders(),
-      body: JSON.stringify({ name }),
-    });
-    if (!r.ok) {
+    try {
+      const name = boardName.trim() || "Board";
+      await apiPut(`/api/boards/${editingId}`, { name }, getHeaders());
+      setModalOpen(false);
+      loadBoards();
+    } catch {
       alert("Erro ao renomear.");
-      return;
     }
-    setModalOpen(false);
-    loadBoards();
   }
 
   async function deleteBoard(id: string, name: string) {
     if (!confirm(`Excluir o board "${name}"? Esta ação não pode ser desfeita.`)) return;
-    const r = await fetch(`/api/boards/${id}`, {
-      method: "DELETE",
-      headers: getHeaders(),
-    });
-    if (!r.ok) {
+    try {
+      await apiDelete(`/api/boards/${id}`, getHeaders());
+      loadBoards();
+    } catch {
       alert("Erro ao excluir.");
-      return;
     }
-    loadBoards();
   }
 
   function formatDate(s?: string) {
