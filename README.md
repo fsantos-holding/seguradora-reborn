@@ -1,59 +1,93 @@
-# Backlog Reborn — Painel Executivo Kanban
+# Backlog Reborn — Plataforma Kanban (Next.js)
+
+Aplicação de gestão de backlog em formato Kanban, migrada para **React + Next.js 15** com App Router para melhor performance e experiência de desenvolvimento.
 
 ## Estrutura do Projeto
 
 ```
 seguradora-reborn/
-├── api/
-│   └── db.js              # API serverless (usa Vercel KV / Redis)
+├── app/
+│   ├── api/                 # Route Handlers (auth, boards, users)
+│   ├── board/[id]/          # Página do Kanban
+│   ├── boards/              # Lista de boards
+│   ├── login/               # Login e cadastro
+│   ├── users/               # Administração de usuários (admin)
+│   ├── layout.tsx
+│   └── page.tsx             # Redirect para login ou boards
+├── components/
+│   ├── kanban/              # KanbanBoard, KanbanColumn, KanbanCard, modais
+│   └── header.tsx
+├── context/
+│   └── auth-context.tsx     # Autenticação JWT
+├── lib/
+│   ├── auth.ts              # JWT, hash de senha
+│   ├── kv-boards.ts         # CRUD boards (Vercel KV)
+│   └── kv-users.ts          # CRUD usuários (Vercel KV)
 ├── data/
-│   └── db.json             # Seed inicial do banco de dados
+│   └── db.json              # Seed inicial
 ├── public/
-│   └── index.html          # Frontend Kanban
-├── package.json            # Dependência: @vercel/kv
-├── vercel.json             # Roteamento
-└── README.md
+│   └── resumo-reborn.html   # Apresentação executiva (estática)
+├── package.json
+├── next.config.ts
+├── tailwind.config.ts
+└── vercel.json
 ```
 
-## Configuração Obrigatória: Vercel KV
+## Tecnologias
 
-O sistema usa **Vercel KV (Redis)** para persistir dados entre sessões e browsers.
+- **Next.js 15** (App Router)
+- **React 19**
+- **TypeScript**
+- **Tailwind CSS**
+- **@dnd-kit** (drag-and-drop)
+- **Vercel KV** (Redis)
+- **JWT** (autenticação)
 
-### Passo a passo:
+## Desenvolvimento
 
-1. Acesse o dashboard do Vercel → seu projeto `seguradora-reborn`
+```bash
+npm install
+npm run dev
+```
 
-2. Vá em **Storage** (menu lateral)
+Acesse [http://localhost:3000](http://localhost:3000).
 
-3. Clique **Create Database** → selecione **KV (Redis)**
+## Build e Deploy
 
-4. Nome: `backlog-reborn-kv` (ou qualquer nome)
+```bash
+npm run build
+npm start
+```
 
-5. Clique **Create** e depois **Connect to Project** → selecione `seguradora-reborn`
+Para deploy na Vercel: `vercel` ou push para o repositório conectado.
 
-6. O Vercel adiciona automaticamente as variáveis de ambiente:
-   - `KV_REST_API_URL`
-   - `KV_REST_API_TOKEN`
-   - `KV_REST_API_READ_ONLY_TOKEN`
-   - `KV_URL`
+## Configuração: Vercel KV
 
-7. Faça um **Redeploy** do projeto (Deployments → Redeploy)
+O sistema usa **Vercel KV (Redis)** para persistir dados.
 
-### Verificação:
+1. Dashboard Vercel → **Storage** → **Create Database** → **KV (Redis)**
+2. Conecte ao projeto `seguradora-reborn`
+3. Variáveis adicionadas automaticamente: `KV_REST_API_URL`, `KV_REST_API_TOKEN`, etc.
+4. Opcional: `JWT_SECRET` para produção
 
-Acesse `https://seguradora-reborn.vercel.app/api/db` — deve retornar o JSON com os cards.
+## Rotas
 
-## Persistência
+| Rota | Descrição |
+|------|-----------|
+| `/` | Redirect para login ou boards |
+| `/login` | Login e cadastro |
+| `/boards` | Lista de boards |
+| `/board/[id]` | Kanban do board |
+| `/users` | Administração de usuários (admin) |
+| `/resumo-reborn.html` | Apresentação executiva |
 
-| Camada | Velocidade | Escopo | Persistência |
-|--------|-----------|--------|-------------|
-| localStorage | Instantânea | Por browser | Local permanente |
-| Vercel KV (Redis) | ~100ms | Global | Servidor permanente |
+## Funcionalidades
 
-## Uso Local (sem Vercel)
-
-Abra `public/index.html` direto no browser. Funciona 100% via localStorage.
-
-## Exportação
-
-Botão CSV no header: separador `;`, UTF-8 com BOM (Excel-compatível).
+- Login/cadastro com JWT (localStorage ou sessionStorage)
+- CRUD de boards
+- Kanban com drag-and-drop entre colunas
+- Filtros por prioridade, rótulos e busca
+- Mapa de Produção (editável)
+- Import/export CSV (UTF-8 BOM, `;` separador)
+- Direcionamento (Manter, Priorizar, Adiar, Cancelar, Reavaliar)
+- Sincronização debounced (300ms) com API

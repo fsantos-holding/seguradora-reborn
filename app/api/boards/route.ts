@@ -1,0 +1,86 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getAuthFromRequest } from "@/lib/auth";
+import {
+  getBoardIds,
+  getBoard,
+  createBoard,
+  ensureBoardReborn,
+  getDefaultBoardData,
+  BOARD_REBORN_ID,
+} from "@/lib/kv-boards";
+import { ensureAdminUser } from "@/lib/kv-users";
+
+export async function GET(request: NextRequest) {
+  const payload = getAuthFromRequest(request);
+  if (!payload) {
+    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+  }
+
+  try {
+    await ensureAdminUser();
+    await ensureBoardReborn("admin", getDefaultBoardData);
+
+    const boardIds = await getBoardIds(payload.id, payload.isAdmin);
+    const boards = [];
+    for (const bid of boardIds) {
+      const b = await getBoard(bid);
+      if (b) boards.push({ id: b.id, name: b.name, ownerId: b.ownerId, lastUpdated: b.lastUpdated });
+    }
+    return NextResponse.json({ boards });
+  } catch (err) {
+    console.error("Boards API error:", err);
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Erro interno" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  const payload = getAuthFromRequest(request);
+  if (!payload) {
+    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+  }
+
+  try {
+    await ensureAdminUser();
+    await ensureBoardReborn("admin", getDefaultBoardData);
+
+    const body = await request.json();
+    const name = (body.name || "Novo Board").trim().slice(0, 100);
+
+    const boardReborn = await getBoard(BOARD_REBORN_ID);
+    const templateData = boardReborn
+      ? {
+          version: boardReborn.version || "2.0",
+          cards: boardReborn.cards || [],
+          config: boardReborn.config || { bucketOrder: [], collapsedColumns: [] },
+          mapaProducao: boardReborn.mapaProducao || [],
+        }
+      : getDefaultBoardData();
+
+    const board = await createBoard(payload.id, name, {
+      version: templateData.version,
+      cards: templateData.cards,
+      config: templateData.config as { bucketOrder: unknown[]; collapsedColumns?: string[] },
+      mapaProducao: templateData.mapaProducao,
+    });
+    return NextResponse.json(
+      {
+        board: {
+          id: board.id,
+          name: board.name,
+          ownerId: board.ownerId,
+          lastUpdated: board.lastUpdated,
+        },
+      },
+      { status: 201 }
+    );
+  } catch (err) {
+    console.error("Boards API error:", err);
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Erro interno" },
+      { status: 500 }
+    );
+  }
+}
