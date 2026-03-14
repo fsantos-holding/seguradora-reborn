@@ -1,4 +1,4 @@
-import { kv } from "@vercel/kv";
+import { getStore } from "./storage";
 
 const BOARDS_PREFIX = "reborn_boards:";
 const BOARD_PREFIX = "reborn_board:";
@@ -10,18 +10,19 @@ function userBoardsKey(userId: string) {
 }
 
 export async function getBoardIds(userId: string, isAdmin: boolean): Promise<string[]> {
+  const kv = await getStore();
   const ids = new Set<string>();
   if (isAdmin) {
     const { listUsers } = await import("./kv-users");
     const users = await listUsers();
     for (const u of users) {
-      const userIds = ((await kv.get(userBoardsKey(u.id))) as string[]) || [];
+      const userIds = ((await kv.get<string[]>(userBoardsKey(u.id))) as string[]) || [];
       userIds.forEach((id) => ids.add(id));
     }
     const boardReborn = await getBoard(BOARD_REBORN_ID);
     if (boardReborn) ids.add(BOARD_REBORN_ID);
   } else {
-    const userIds = ((await kv.get(userBoardsKey(userId))) as string[]) || [];
+    const userIds = ((await kv.get<string[]>(userBoardsKey(userId))) as string[]) || [];
     userIds.forEach((id) => ids.add(id));
   }
   return [...ids];
@@ -40,7 +41,8 @@ export interface BoardData {
 }
 
 export async function getBoard(boardId: string): Promise<BoardData | null> {
-  const raw = await kv.get(BOARD_PREFIX + boardId);
+  const kv = await getStore();
+  const raw = await kv.get<string>(BOARD_PREFIX + boardId);
   if (!raw) return null;
   return (typeof raw === "string" ? JSON.parse(raw) : raw) as BoardData;
 }
@@ -50,7 +52,8 @@ export async function createBoard(
   name: string,
   data: Partial<BoardData>
 ): Promise<BoardData> {
-  const counter = (((await kv.get(BOARD_COUNTER)) as number) || 0) + 1;
+  const kv = await getStore();
+  const counter = (((await kv.get<number>(BOARD_COUNTER)) as number) || 0) + 1;
   await kv.set(BOARD_COUNTER, counter);
   const boardId = "b_" + counter;
   const board: BoardData = {
@@ -62,7 +65,7 @@ export async function createBoard(
     lastUpdated: new Date().toISOString(),
   };
   await kv.set(BOARD_PREFIX + boardId, JSON.stringify(board));
-  const ids = ((await kv.get(userBoardsKey(userId))) as string[]) || [];
+  const ids = ((await kv.get<string[]>(userBoardsKey(userId))) as string[]) || [];
   ids.push(boardId);
   await kv.set(userBoardsKey(userId), ids);
   return board;
@@ -73,6 +76,7 @@ export async function updateBoard(boardId: string, updates: Partial<BoardData>):
   if (!board) return null;
   Object.assign(board, updates);
   board.lastUpdated = new Date().toISOString();
+  const kv = await getStore();
   await kv.set(BOARD_PREFIX + boardId, JSON.stringify(board));
   return board;
 }
@@ -82,8 +86,9 @@ export async function deleteBoard(boardId: string, userId: string, isAdmin: bool
   const board = await getBoard(boardId);
   if (!board) return false;
   if (board.ownerId !== userId && !isAdmin) return false;
+  const kv = await getStore();
   await kv.del(BOARD_PREFIX + boardId);
-  const ids = ((await kv.get(userBoardsKey(board.ownerId))) as string[]) || [];
+  const ids = ((await kv.get<string[]>(userBoardsKey(board.ownerId))) as string[]) || [];
   const filtered = ids.filter((id) => id !== boardId);
   await kv.set(userBoardsKey(board.ownerId), filtered);
   return true;
@@ -132,8 +137,9 @@ export async function ensureBoardReborn(
     createdAt: new Date().toISOString(),
     lastUpdated: new Date().toISOString(),
   };
+  const kv = await getStore();
   await kv.set(BOARD_PREFIX + BOARD_REBORN_ID, JSON.stringify(board));
-  const ids = ((await kv.get(userBoardsKey(adminId))) as string[]) || [];
+  const ids = ((await kv.get<string[]>(userBoardsKey(adminId))) as string[]) || [];
   if (!ids.includes(BOARD_REBORN_ID)) {
     ids.push(BOARD_REBORN_ID);
     await kv.set(userBoardsKey(adminId), ids);

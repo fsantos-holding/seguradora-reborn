@@ -1,4 +1,4 @@
-import { kv } from "@vercel/kv";
+import { getStore } from "./storage";
 import { hashPassword, verifyPassword } from "./auth";
 
 const USERS_KEY = "reborn_users";
@@ -32,10 +32,11 @@ function recreateAdminUser(): User {
 }
 
 async function persistAdminUser(admin: User): Promise<void> {
+  const kv = await getStore();
   await kv.set(USER_PREFIX + "admin", JSON.stringify(admin));
   await kv.set(USER_BY_USERNAME + "Admin".toLowerCase(), "admin");
   await kv.set(USER_BY_EMAIL + "admin@reborn.local".toLowerCase(), "admin");
-  const users = ((await kv.get(USERS_KEY)) as string[]) || [];
+  const users = ((await kv.get<string[]>(USERS_KEY)) as string[]) || [];
   if (!users.includes("admin")) {
     users.unshift("admin");
     await kv.set(USERS_KEY, users);
@@ -43,7 +44,8 @@ async function persistAdminUser(admin: User): Promise<void> {
 }
 
 export async function ensureAdminUser(): Promise<User | null> {
-  const raw = await kv.get(USER_PREFIX + "admin");
+  const kv = await getStore();
+  const raw = await kv.get<string>(USER_PREFIX + "admin");
   if (raw) {
     const existing = (typeof raw === "string" ? JSON.parse(raw) : raw) as User;
     const needsRecreate =
@@ -65,18 +67,21 @@ export async function ensureAdminUser(): Promise<User | null> {
 }
 
 export async function getUserById(id: string): Promise<User | null> {
-  const raw = await kv.get(USER_PREFIX + id);
+  const kv = await getStore();
+  const raw = await kv.get<string>(USER_PREFIX + id);
   if (!raw) return null;
   return (typeof raw === "string" ? JSON.parse(raw) : raw) as User;
 }
 
 export async function getUserByUsername(username: string): Promise<User | null> {
+  const kv = await getStore();
   const id = await kv.get<string>(USER_BY_USERNAME + (username || "").toLowerCase());
   if (!id) return null;
   return getUserById(id);
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
+  const kv = await getStore();
   const id = await kv.get<string>(USER_BY_EMAIL + (email || "").toLowerCase());
   if (!id) return null;
   return getUserById(id);
@@ -97,10 +102,11 @@ export async function createUser(user: {
     passwordHash: user.passwordHash,
     isAdmin: false,
   };
+  const kv = await getStore();
   await kv.set(USER_PREFIX + id, JSON.stringify(doc));
   await kv.set(USER_BY_USERNAME + user.username.toLowerCase(), id);
   await kv.set(USER_BY_EMAIL + user.email.toLowerCase(), id);
-  const users = ((await kv.get(USERS_KEY)) as string[]) || [];
+  const users = ((await kv.get<string[]>(USERS_KEY)) as string[]) || [];
   users.push(id);
   await kv.set(USERS_KEY, users);
   return doc;
@@ -109,6 +115,7 @@ export async function createUser(user: {
 export async function updateUser(id: string, updates: Partial<User>): Promise<User | null> {
   const user = await getUserById(id);
   if (!user) return null;
+  const kv = await getStore();
   if (updates.username !== undefined) {
     await kv.del(USER_BY_USERNAME + user.username.toLowerCase());
     user.username = updates.username;
@@ -127,7 +134,8 @@ export async function updateUser(id: string, updates: Partial<User>): Promise<Us
 
 export async function listUsers(): Promise<{ id: string; username: string; name: string; email: string; isAdmin: boolean }[]> {
   await ensureAdminUser();
-  const ids = ((await kv.get(USERS_KEY)) as string[]) || [];
+  const kv = await getStore();
+  const ids = ((await kv.get<string[]>(USERS_KEY)) as string[]) || [];
   const users = [];
   for (const id of ids) {
     const u = await getUserById(id);
@@ -139,9 +147,10 @@ export async function listUsers(): Promise<{ id: string; username: string; name:
 export async function deleteUser(id: string): Promise<void> {
   const user = await getUserById(id);
   if (!user) return;
+  const kv = await getStore();
   await kv.del(USER_PREFIX + id);
   await kv.del(USER_BY_EMAIL + (user.email || "").toLowerCase());
   await kv.del(USER_BY_USERNAME + (user.username || "").toLowerCase());
-  const users = ((await kv.get(USERS_KEY)) as string[]) || [];
+  const users = ((await kv.get<string[]>(USERS_KEY)) as string[]) || [];
   await kv.set(USERS_KEY, users.filter((u) => u !== id));
 }
