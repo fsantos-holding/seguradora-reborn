@@ -12,6 +12,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
+import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { KanbanColumn } from "./kanban-column";
 import { KanbanCard } from "./kanban-card";
 import { CardModal } from "./card-modal";
@@ -167,14 +168,57 @@ export function KanbanBoard({
 
   const handleDragStart = (e: DragStartEvent) => setActiveId(String(e.active.id));
 
+  const reorderColumns = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
+    updateDb((prev) => {
+      const newOrder = [...prev.config.bucketOrder];
+      const [removed] = newOrder.splice(fromIndex, 1);
+      newOrder.splice(toIndex, 0, removed);
+      return { ...prev, config: { ...prev.config, bucketOrder: newOrder } };
+    });
+  };
+
+  const parseSlotId = (id: string): { bucketKey: string; index: number } | null => {
+    if (!id.startsWith("slot-")) return null;
+    const rest = id.slice(5);
+    const lastDash = rest.lastIndexOf("-");
+    if (lastDash === -1) return null;
+    const bucketKey = rest.slice(0, lastDash);
+    const index = parseInt(rest.slice(lastDash + 1), 10);
+    if (isNaN(index) || index < 0) return null;
+    return { bucketKey, index };
+  };
+
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
     setActiveId(null);
     if (!over) return;
     const overId = String(over.id);
     const activeId = String(active.id);
+
+    // Coluna sendo arrastada
+    const colIndex = buckets.findIndex((b) => b.key === activeId);
+    if (colIndex >= 0) {
+      const overColIndex = buckets.findIndex((b) => b.key === overId);
+      if (overColIndex >= 0 && overColIndex !== colIndex) {
+        reorderColumns(colIndex, overColIndex);
+      }
+      return;
+    }
+
+    // Card sendo arrastado
     if (activeId.startsWith("card-")) {
       const cardId = activeId.replace("card-", "");
+      const slotInfo = parseSlotId(overId);
+      if (slotInfo) {
+        const card = cards.find((c) => c.id === cardId);
+        const sameBucket = card?.bucket === slotInfo.bucketKey;
+        const dragIndex = card ? getCardsByBucket(card.bucket).findIndex((c) => c.id === cardId) : -1;
+        let insertIndex = slotInfo.index;
+        if (sameBucket && dragIndex >= 0 && dragIndex < insertIndex) insertIndex--;
+        moveCard(cardId, slotInfo.bucketKey, insertIndex);
+        return;
+      }
       if (overId.startsWith("bucket-")) {
         const newBucket = overId.replace("bucket-", "");
         const bucketCards = getCardsByBucket(newBucket).filter((c) => c.id !== cardId);
@@ -419,35 +463,52 @@ export function KanbanBoard({
           >
             <span className="text-lg font-light group-hover:scale-110 transition-transform">+</span>
           </button>
-          {buckets.map((b) => (
-            <KanbanColumn
-              key={b.key}
-              bucket={b}
-              cards={visibleCardsByBucket(b.key)}
-              collapsed={collapsed.has(b.key)}
-              onToggleCollapse={() => toggleCollapsed(b.key)}
-              onEditCard={(c) => {
-                setModalCard(c);
-                setModalMode("edit");
-              }}
-              onDeleteCard={(id) => setConfirmDelete({ type: "card", id, label: "" })}
-              onDeleteColumn={buckets.length > 1 ? () => setConfirmDelete({ type: "bucket", id: b.key, label: b.label }) : undefined}
-              onSetDirection={(cardId, dir) => {
-                updateDb((prev) => ({
-                  ...prev,
-                  cards: prev.cards.map((c) =>
-                    c.id === cardId ? { ...c, direction: c.direction === dir ? null : dir } : c
-                  ),
-                }));
-              }}
-              directions={directions}
-              dirColors={DIR_COLORS}
-            />
-          ))}
+          <SortableContext items={buckets.map((b) => b.key)} strategy={horizontalListSortingStrategy}>
+            {buckets.map((b) => (
+              <KanbanColumn
+                key={b.key}
+                bucket={b}
+                cards={visibleCardsByBucket(b.key)}
+                collapsed={collapsed.has(b.key)}
+                onToggleCollapse={() => toggleCollapsed(b.key)}
+                onAddCard={() => {
+                  setModalCard({
+                    id: "",
+                    bucket: b.key,
+                    priority: "Média",
+                    progress: "Não iniciado",
+                    title: "",
+                    desc: "Sem descrição.",
+                    tags: [],
+                    direction: null,
+                    dueDate: null,
+                    order: getCardsByBucket(b.key).length,
+                  });
+                  setModalMode("new");
+                }}
+                onEditCard={(c) => {
+                  setModalCard(c);
+                  setModalMode("edit");
+                }}
+                onDeleteCard={(id) => setConfirmDelete({ type: "card", id, label: "" })}
+                onDeleteColumn={buckets.length > 1 ? () => setConfirmDelete({ type: "bucket", id: b.key, label: b.label }) : undefined}
+                onSetDirection={(cardId, dir) => {
+                  updateDb((prev) => ({
+                    ...prev,
+                    cards: prev.cards.map((c) =>
+                      c.id === cardId ? { ...c, direction: c.direction === dir ? null : dir } : c
+                    ),
+                  }));
+                }}
+                directions={directions}
+                dirColors={DIR_COLORS}
+              />
+            ))}
+          </SortableContext>
 
-          <DragOverlay>
+          <DragOverlay dropAnimation={null}>
             {activeCard ? (
-              <div className="opacity-90 scale-[0.98]">
+              <div className="rotate-2 scale-105 shadow-xl ring-2 ring-[var(--teal)] ring-opacity-50 transition-shadow">
                 <KanbanCard
                   card={activeCard}
                   directions={directions}
@@ -487,30 +548,6 @@ export function KanbanBoard({
       )}
 
       <div className="fixed top-14 right-6 flex items-center gap-2 z-[200]">
-        <button
-          onClick={() => {
-            if (buckets.length === 0) return;
-            setModalCard({
-              id: "",
-              bucket: buckets[0]?.key || "Backlog",
-              priority: "Média",
-              progress: "Não iniciado",
-              title: "",
-              desc: "Sem descrição.",
-              tags: [],
-              direction: null,
-              dueDate: null,
-              order: 0,
-            });
-            setModalMode("new");
-          }}
-          className={`btn-primary ${buckets.length === 0 ? "!bg-[var(--g200)] !text-[var(--g500)] cursor-not-allowed opacity-70" : ""}`}
-          disabled={buckets.length === 0}
-          title={buckets.length === 0 ? "Adicione uma coluna primeiro" : undefined}
-        >
-          + Novo Card
-        </button>
-        <div className="w-px h-6 bg-[var(--g200)] mx-1" />
         <label className="btn-secondary cursor-pointer inline-flex items-center justify-center gap-1.5 text-[var(--g600)] hover:text-[var(--g700)]">
           Importar
           <input
