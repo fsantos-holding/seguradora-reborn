@@ -25,19 +25,22 @@ export interface User {
 }
 
 export async function ensureAdminUser(): Promise<User | null> {
-  const users = await kv.get<string[]>(USERS_KEY);
-  if (!users || users.length === 0) {
-    const admin: User = {
-      ...ADMIN_USER,
-      passwordHash: hashPassword("Admin"),
-    };
-    await kv.set(USER_PREFIX + "admin", JSON.stringify(admin));
-    await kv.set(USER_BY_USERNAME + "Admin".toLowerCase(), "admin");
-    await kv.set(USER_BY_EMAIL + "admin@reborn.local".toLowerCase(), "admin");
-    await kv.set(USERS_KEY, ["admin"]);
-    return admin;
+  const existing = await kv.get(USER_PREFIX + "admin");
+  if (existing) return (typeof existing === "string" ? JSON.parse(existing) : existing) as User;
+
+  const admin: User = {
+    ...ADMIN_USER,
+    passwordHash: hashPassword("Admin"),
+  };
+  await kv.set(USER_PREFIX + "admin", JSON.stringify(admin));
+  await kv.set(USER_BY_USERNAME + "Admin".toLowerCase(), "admin");
+  await kv.set(USER_BY_EMAIL + "admin@reborn.local".toLowerCase(), "admin");
+  const users = ((await kv.get(USERS_KEY)) as string[]) || [];
+  if (!users.includes("admin")) {
+    users.unshift("admin");
+    await kv.set(USERS_KEY, users);
   }
-  return null;
+  return admin;
 }
 
 export async function getUserById(id: string): Promise<User | null> {
