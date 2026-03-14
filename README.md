@@ -70,6 +70,18 @@ O sistema usa **Vercel KV (Redis)** para persistir dados.
 3. Variáveis adicionadas automaticamente: `KV_REST_API_URL`, `KV_REST_API_TOKEN`, etc.
 4. Opcional: `JWT_SECRET` para produção
 
+## Erro 403 no login/cadastro (Vercel)
+
+Se login e cadastro retornam **403 Forbidden** na Vercel, a causa provável é a **Deployment Protection** bloqueando as requisições à API antes de chegarem à aplicação.
+
+**Solução:** Desative a Deployment Protection para o ambiente de produção:
+
+1. Vercel Dashboard → seu projeto → **Settings** → **Deployment Protection**
+2. Em **Vercel Authentication** ou **Password Protection**, desative para **Production**
+3. Faça um novo deploy se necessário
+
+A aplicação já possui autenticação própria (JWT, usuário Admin), então a proteção da Vercel é redundante e pode impedir o funcionamento do login.
+
 ## Rotas
 
 | Rota | Descrição |
@@ -80,6 +92,10 @@ O sistema usa **Vercel KV (Redis)** para persistir dados.
 | `/board/[id]` | Kanban do board |
 | `/users` | Administração de usuários (admin) |
 | `/resumo-reborn.html` | Apresentação executiva |
+
+## Credenciais padrão
+
+- **Admin:** usuário `Admin`, senha `Admin` (case sensitive)
 
 ## Funcionalidades
 

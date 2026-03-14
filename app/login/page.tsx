@@ -33,7 +33,13 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: userInput, password: pwd }),
       });
-      const data = await r.json();
+      if (r.status === 403) {
+        setError(
+          "Acesso bloqueado (403). Se estiver na Vercel, desative a Deployment Protection em Settings → Deployment Protection."
+        );
+        return;
+      }
+      const data = await r.json().catch(() => ({}));
       if (!r.ok) {
         setError(data.error || "Erro ao entrar.");
         return;
@@ -70,7 +76,13 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password: pwd }),
       });
-      const data = await r.json();
+      if (r.status === 403) {
+        setError(
+          "Acesso bloqueado (403). Se estiver na Vercel, desative a Deployment Protection em Settings → Deployment Protection."
+        );
+        return;
+      }
+      const data = await r.json().catch(() => ({}));
       if (!r.ok) {
         setError(data.error || "Erro ao cadastrar.");
         return;
