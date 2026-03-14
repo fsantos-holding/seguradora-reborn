@@ -1,5 +1,5 @@
 import { kv } from "@vercel/kv";
-import { hashPassword } from "./auth";
+import { hashPassword, verifyPassword } from "./auth";
 
 const USERS_KEY = "reborn_users";
 const USER_PREFIX = "reborn_user:";
@@ -24,21 +24,14 @@ export interface User {
   isAdmin: boolean;
 }
 
-export async function ensureAdminUser(): Promise<User | null> {
-  const raw = await kv.get(USER_PREFIX + "admin");
-  if (raw) {
-    const existing = (typeof raw === "string" ? JSON.parse(raw) : raw) as User;
-    if (!existing.isAdmin) {
-      existing.isAdmin = true;
-      await kv.set(USER_PREFIX + "admin", JSON.stringify(existing));
-    }
-    return existing;
-  }
-
-  const admin: User = {
+function recreateAdminUser(): User {
+  return {
     ...ADMIN_USER,
     passwordHash: hashPassword("Admin"),
   };
+}
+
+async function persistAdminUser(admin: User): Promise<void> {
   await kv.set(USER_PREFIX + "admin", JSON.stringify(admin));
   await kv.set(USER_BY_USERNAME + "Admin".toLowerCase(), "admin");
   await kv.set(USER_BY_EMAIL + "admin@reborn.local".toLowerCase(), "admin");
@@ -47,6 +40,27 @@ export async function ensureAdminUser(): Promise<User | null> {
     users.unshift("admin");
     await kv.set(USERS_KEY, users);
   }
+}
+
+export async function ensureAdminUser(): Promise<User | null> {
+  const raw = await kv.get(USER_PREFIX + "admin");
+  if (raw) {
+    const existing = (typeof raw === "string" ? JSON.parse(raw) : raw) as User;
+    const needsRecreate =
+      !existing.isAdmin ||
+      !existing.passwordHash ||
+      !verifyPassword("Admin", existing.passwordHash);
+
+    if (needsRecreate) {
+      const admin = recreateAdminUser();
+      await persistAdminUser(admin);
+      return admin;
+    }
+    return existing;
+  }
+
+  const admin = recreateAdminUser();
+  await persistAdminUser(admin);
   return admin;
 }
 
