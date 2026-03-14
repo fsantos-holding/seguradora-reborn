@@ -15,13 +15,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Usuário não encontrado" }, { status: 401 });
     }
 
+    const isAdmin = user.id === "admin" || !!user.isAdmin;
     return NextResponse.json({
       user: {
         id: user.id,
         username: user.username,
         name: user.name,
         email: user.email,
-        isAdmin: !!user.isAdmin,
+        isAdmin,
       },
     });
   } catch (err) {

@@ -37,5 +37,10 @@ export function verifyToken(token: string): { id: string; username: string; isAd
 export function getAuthFromRequest(req: NextRequest): { id: string; username: string; isAdmin: boolean } | null {
   const auth = req.headers.get("authorization") || req.headers.get("Authorization");
   if (!auth || !auth.startsWith("Bearer ")) return null;
-  return verifyToken(auth.slice(7));
+  const payload = verifyToken(auth.slice(7));
+  if (!payload) return null;
+  return {
+    ...payload,
+    isAdmin: payload.id === "admin" || payload.isAdmin,
+  };
 }

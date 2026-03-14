@@ -21,7 +21,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Usuário ou senha inválidos" }, { status: 401 });
     }
 
-    const token = createToken(user);
+    const isAdmin = user.id === "admin" || !!user.isAdmin;
+    const token = createToken({ ...user, isAdmin });
     return NextResponse.json({
       token,
       user: {
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
         username: user.username,
         name: user.name,
         email: user.email,
-        isAdmin: !!user.isAdmin,
+        isAdmin,
       },
     });
   } catch (err) {

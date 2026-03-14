@@ -25,8 +25,15 @@ export interface User {
 }
 
 export async function ensureAdminUser(): Promise<User | null> {
-  const existing = await kv.get(USER_PREFIX + "admin");
-  if (existing) return (typeof existing === "string" ? JSON.parse(existing) : existing) as User;
+  const raw = await kv.get(USER_PREFIX + "admin");
+  if (raw) {
+    const existing = (typeof raw === "string" ? JSON.parse(raw) : raw) as User;
+    if (!existing.isAdmin) {
+      existing.isAdmin = true;
+      await kv.set(USER_PREFIX + "admin", JSON.stringify(existing));
+    }
+    return existing;
+  }
 
   const admin: User = {
     ...ADMIN_USER,
