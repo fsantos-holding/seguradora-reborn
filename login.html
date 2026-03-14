@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login — Plataforma Reborn</title>
+<title>Login — Plataforma</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -38,7 +38,7 @@ body{font-family:var(--font-b);background:linear-gradient(135deg,var(--navy) 0%,
 </head>
 <body>
 <div class="card">
-  <div class="brand"><div class="brand-bar"></div><h1>AUSTRAL <span>SEGURADORA</span> — REBORN</h1></div>
+  <div class="brand"><div class="brand-bar"></div><h1>AUSTRAL <span>SEGURADORA</span></h1></div>
   <div class="tabs">
     <button class="tab active" data-panel="login">Entrar</button>
     <button class="tab" data-panel="register">Cadastrar</button>
@@ -47,7 +47,7 @@ body{font-family:var(--font-b);background:linear-gradient(135deg,var(--navy) 0%,
 
   <div id="panel-login" class="panel active">
     <form id="form-login" onsubmit="return doLogin(event)">
-      <div class="form-row"><label class="form-label">Usuário ou E-mail</label><input class="form-input" id="login-user" type="text" placeholder="Admin ou seu e-mail" autocomplete="username"></div>
+      <div class="form-row"><label class="form-label">Usuário ou E-mail</label><input class="form-input" id="login-user" type="text" placeholder="Usuário ou e-mail" autocomplete="username"></div>
       <div class="form-row"><label class="form-label">Senha</label><input class="form-input" id="login-pwd" type="password" placeholder="••••••••" autocomplete="current-password"></div>
       <div class="remember"><input type="checkbox" id="login-remember" checked><label for="login-remember">Manter conectado (gravar no navegador)</label></div>
       <button type="submit" class="btn btn-primary" id="btn-login">Entrar</button>

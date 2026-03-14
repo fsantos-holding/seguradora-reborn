@@ -1,5 +1,6 @@
 const { getAuthFromRequest } = require("../lib/auth");
-const { getBoardIds, getBoard, createBoard } = require("../lib/kv-boards");
+const { getBoardIds, getBoard, createBoard, ensureBoardReborn, BOARD_REBORN_ID } = require("../lib/kv-boards");
+const { ensureAdminUser } = require("../lib/kv-users");
 const fs = require("fs");
 const path = require("path");
 
@@ -33,6 +34,9 @@ module.exports = async (req, res) => {
   if (!payload) return res.status(401).json({ error: "Não autenticado" });
 
   try {
+    await ensureAdminUser();
+    await ensureBoardReborn("admin", getDefaultBoardData);
+
     const boardIds = await getBoardIds(payload.id, payload.isAdmin);
 
     if (req.method === "GET") {
@@ -48,8 +52,12 @@ module.exports = async (req, res) => {
       let body = req.body;
       if (typeof body === "string") body = JSON.parse(body || "{}");
       const name = (body.name || "Novo Board").trim().slice(0, 100);
-      const defaultData = getDefaultBoardData();
-      const board = await createBoard(payload.id, name, defaultData);
+      // Usar Board-Reborn do Vercel (dados atualizados) como template quando existir
+      const boardReborn = await getBoard(BOARD_REBORN_ID);
+      const templateData = boardReborn
+        ? { version: boardReborn.version || "2.0", cards: boardReborn.cards || [], config: boardReborn.config || { bucketOrder: [], collapsedColumns: [] }, mapaProducao: boardReborn.mapaProducao || [] }
+        : getDefaultBoardData();
+      const board = await createBoard(payload.id, name, templateData);
       return res.status(201).json({
         board: { id: board.id, name: board.name, ownerId: board.ownerId, lastUpdated: board.lastUpdated },
       });
