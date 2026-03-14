@@ -1,0 +1,15 @@
+{
+  "/api/auth/login/route": "/api/auth/login",
+  "/api/auth/me/route": "/api/auth/me",
+  "/api/auth/register/route": "/api/auth/register",
+  "/_not-found/page": "/_not-found",
+  "/api/boards/[id]/route": "/api/boards/[id]",
+  "/api/boards/route": "/api/boards",
+  "/api/users/[id]/route": "/api/users/[id]",
+  "/api/users/route": "/api/users",
+  "/board/[id]/page": "/board/[id]",
+  "/page": "/",
+  "/boards/page": "/boards",
+  "/login/page": "/login",
+  "/users/page": "/users"
+}
