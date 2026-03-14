@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === "DELETE") {
-      if (boardId === BOARD_REBORN_ID) return res.status(400).json({ error: "O Board-Reborn não pode ser excluído" });
+      if (boardId === BOARD_REBORN_ID && !payload.isAdmin) return res.status(400).json({ error: "O Board-Reborn não pode ser excluído" });
       const ok = await deleteBoard(boardId, payload.id, payload.isAdmin);
       if (!ok) return res.status(404).json({ error: "Board não encontrado" });
       return res.status(200).json({ ok: true });
