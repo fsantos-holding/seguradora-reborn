@@ -1,5 +1,15 @@
 {
   "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/boards/route": "app/api/boards/route.js",
+  "/api/auth/register/route": "app/api/auth/register/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/users/[id]/route": "app/api/users/[id]/route.js",
+  "/api/boards/[id]/route": "app/api/boards/[id]/route.js",
+  "/api/users/route": "app/api/users/route.js",
+  "/boards/page": "app/boards/page.js",
+  "/board/[id]/page": "app/board/[id]/page.js",
+  "/users/page": "app/users/page.js",
   "/page": "app/page.js",
   "/login/page": "app/login/page.js"
 }

@@ -9,6 +9,18 @@ import {
 } from "@/lib/kv-boards";
 import { ensureAdminUser } from "@/lib/kv-users";
 
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders() });
+}
+
 export async function GET(request: NextRequest) {
   const payload = getAuthFromRequest(request);
   if (!payload) {
