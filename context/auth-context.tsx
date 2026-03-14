@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { getApiHeaders, apiFetch } from "@/lib/api-client";
 
 const AUTH_KEY = "reborn_auth";
 
@@ -28,6 +29,25 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+function getStoredAuth(): { token: string; user?: AuthUser } | null {
+  if (typeof window === "undefined") return null;
+  const raw = localStorage.getItem(AUTH_KEY) || sessionStorage.getItem(AUTH_KEY);
+  if (!raw) return null;
+  try {
+    const data = JSON.parse(raw);
+    return data?.token ? data : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearStoredAuth(): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(AUTH_KEY);
+    sessionStorage.removeItem(AUTH_KEY);
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
     token: null,
@@ -46,10 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(AUTH_KEY);
-      sessionStorage.removeItem(AUTH_KEY);
-    }
+    clearStoredAuth();
     setState({ token: null, user: null, isLoading: false, isChecked: true });
   }, []);
 
@@ -58,53 +75,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [setAuth]);
 
   const getHeaders = useCallback(() => {
-    const token = state.token;
-    return {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
+    return getApiHeaders(
+      state.token ? { Authorization: `Bearer ${state.token}` } : undefined
+    );
   }, [state.token]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const raw = localStorage.getItem(AUTH_KEY) || sessionStorage.getItem(AUTH_KEY);
-    if (!raw) {
+    const stored = getStoredAuth();
+    if (!stored) {
       setState((s) => ({ ...s, isLoading: false, isChecked: true }));
       return;
     }
-    try {
-      const data = JSON.parse(raw);
-      if (data?.token) {
-        fetch("/api/auth/me", {
-          headers: { Authorization: `Bearer ${data.token}` },
-          credentials: "same-origin",
-        })
-          .then((r) => r.json())
-          .then((res) => {
-            if (res.user) {
-              setState({
-                token: data.token,
-                user: res.user,
-                isLoading: false,
-                isChecked: true,
-              });
-            } else {
-              localStorage.removeItem(AUTH_KEY);
-              sessionStorage.removeItem(AUTH_KEY);
-              setState({ token: null, user: null, isLoading: false, isChecked: true });
-            }
-          })
-          .catch(() => {
-            localStorage.removeItem(AUTH_KEY);
-            sessionStorage.removeItem(AUTH_KEY);
-            setState({ token: null, user: null, isLoading: false, isChecked: true });
+
+    apiFetch("/api/auth/me", {
+      headers: getApiHeaders({ Authorization: `Bearer ${stored.token}` }),
+    })
+      .then(async (r) => {
+        if (!r.ok) {
+          clearStoredAuth();
+          setState({ token: null, user: null, isLoading: false, isChecked: true });
+          return;
+        }
+        const res = await r.json();
+        if (res.user) {
+          setState({
+            token: stored.token,
+            user: res.user,
+            isLoading: false,
+            isChecked: true,
           });
-      } else {
-        setState((s) => ({ ...s, isLoading: false, isChecked: true }));
-      }
-    } catch {
-      setState((s) => ({ ...s, isLoading: false, isChecked: true }));
-    }
+        } else {
+          clearStoredAuth();
+          setState({ token: null, user: null, isLoading: false, isChecked: true });
+        }
+      })
+      .catch(() => {
+        clearStoredAuth();
+        setState({ token: null, user: null, isLoading: false, isChecked: true });
+      });
   }, []);
 
   return (

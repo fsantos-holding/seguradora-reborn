@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
+import { apiFetch, apiPut } from "@/lib/api-client";
 
 const FILTER_LABELS = [
   "Comercial",
@@ -89,7 +90,7 @@ export default function BoardPage() {
 
   async function loadBoard() {
     try {
-      const r = await fetch(`/api/boards/${boardId}`, {
+      const r = await apiFetch(`/api/boards/${boardId}`, {
         cache: "no-store",
         headers: getHeaders(),
       });
@@ -102,9 +103,7 @@ export default function BoardPage() {
         router.replace("/boards");
         return;
       }
-      if (!r.ok) {
-        throw new Error("Erro ao carregar");
-      }
+      if (!r.ok) throw new Error("Erro ao carregar");
       const d = await r.json();
       setBoardName(d.name || "Board");
       const cards = (d.cards || []).map((c: CardData, i: number) => ({
@@ -143,18 +142,9 @@ export default function BoardPage() {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       saveTimeoutRef.current = setTimeout(async () => {
         try {
-          const r = await fetch(`/api/boards/${boardId}`, {
-            method: "PUT",
-            headers: getHeaders(),
-            body: JSON.stringify(payload),
-          });
-          if (r.ok) {
-            setSaveStatus("saved");
-            setTimeout(() => setSaveStatus("idle"), 1500);
-          } else {
-            setSaveStatus("error");
-            setTimeout(() => setSaveStatus("idle"), 3000);
-          }
+          await apiPut(`/api/boards/${boardId}`, payload, getHeaders());
+          setSaveStatus("saved");
+          setTimeout(() => setSaveStatus("idle"), 1500);
         } catch {
           setSaveStatus("error");
           setTimeout(() => setSaveStatus("idle"), 3000);

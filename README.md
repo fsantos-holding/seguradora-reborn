@@ -20,6 +20,7 @@ seguradora-reborn/
 ├── context/
 │   └── auth-context.tsx     # Autenticação JWT
 ├── lib/
+│   ├── api-client.ts        # Cliente API com suporte a Vercel bypass
 │   ├── auth.ts              # JWT, hash de senha
 │   ├── kv-boards.ts         # CRUD boards (Vercel KV)
 │   └── kv-users.ts          # CRUD usuários (Vercel KV)
@@ -70,22 +71,26 @@ O sistema usa **Vercel KV (Redis)** para persistir dados.
 3. Variáveis adicionadas automaticamente: `KV_REST_API_URL`, `KV_REST_API_TOKEN`, etc.
 4. Opcional: `JWT_SECRET` para produção
 
-## Erro 403 no login/cadastro (Vercel)
+## Deployment Protection na Vercel
 
-Se login e cadastro retornam **403 Forbidden** na Vercel, a causa é a **Deployment Protection** bloqueando requisições à API antes de chegarem à aplicação.
+A aplicação suporta **Protection Bypass for Automation**, permitindo que login e API funcionem mesmo com Deployment Protection ativa (Standard, Vercel Authentication, etc.), sem precisar definir Protection para "None".
 
-### Solução: desative a Deployment Protection
+### Configuração do Bypass (recomendado)
 
 1. Acesse o [Vercel Dashboard](https://vercel.com/dashboard) → seu projeto
 2. Vá em **Settings** → **Deployment Protection**
-3. Em **Protection**, selecione **None** (ou desative Vercel Authentication e defina o escopo para None)
-4. Salve e faça um **novo deploy** (Redeploy no último deployment)
+3. Em **Protection Bypass for Automation**, clique em **Create** para gerar um secret
+4. Em **Settings** → **Environment Variables**, adicione:
+   - Nome: `NEXT_PUBLIC_VERCEL_BYPASS_SECRET`
+   - Valor: o mesmo secret gerado no passo 3
+   - Ambiente: Production (e Preview, se desejar)
+5. Faça um **novo deploy**
 
-### Observações
+Com isso, todas as requisições da aplicação incluem o header de bypass automaticamente.
 
-- **Standard Protection** protege previews; produção fica pública. Se estiver em URL de preview (`*-git-*.vercel.app`), ainda receberá 403.
-- **All Deployments** protege tudo (produção e preview). Requer Pro/Enterprise.
-- **None** deixa todos os deploys públicos. A aplicação já usa autenticação própria (JWT), então a proteção da Vercel é redundante.
+### Alternativa: Protection None
+
+Se preferir não usar o bypass, defina **Protection** para **None** em Deployment Protection. A aplicação já usa autenticação própria (JWT).
 
 ## Rotas
 
