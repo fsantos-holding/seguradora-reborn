@@ -506,9 +506,14 @@ export function KanbanBoard({
             ))}
           </SortableContext>
 
-          <DragOverlay dropAnimation={null}>
+          <DragOverlay
+            dropAnimation={{
+              duration: 200,
+              easing: "cubic-bezier(0.18, 0.67, 0.6, 1.02)",
+            }}
+          >
             {activeCard ? (
-              <div className="rotate-2 scale-105 shadow-xl ring-2 ring-[var(--teal)] ring-opacity-50 transition-shadow">
+              <div className="scale-[1.02] shadow-[0_12px_32px_rgba(10,31,63,0.15)] ring-2 ring-[var(--teal)]/40 rounded-xl transition-all duration-200 ease-out">
                 <KanbanCard
                   card={activeCard}
                   directions={directions}

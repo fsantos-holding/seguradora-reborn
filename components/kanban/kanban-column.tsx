@@ -25,8 +25,8 @@ function DroppableSlot({ id }: { id: string }) {
   return (
     <div
       ref={setNodeRef}
-      className={`min-h-[20px] flex-shrink-0 rounded transition-all duration-150 ${
-        isOver ? "bg-[var(--teal)]/25 ring-2 ring-[var(--teal)]/50 scale-[1.02]" : "hover:bg-[var(--g200)]/30"
+      className={`min-h-[12px] flex-shrink-0 rounded transition-all duration-200 ease-out ${
+        isOver ? "bg-[var(--teal)]/20 ring-2 ring-[var(--teal)]/40 scale-[1.01]" : "hover:bg-[var(--g200)]/25"
       }`}
     />
   );
@@ -129,9 +129,9 @@ export function KanbanColumn({
       {collapsed ? (
         <div ref={setBucketRef} className="flex-1 min-h-[50px]" />
       ) : (
-        <div ref={setBucketRef} className="p-2 flex-1 overflow-y-auto flex flex-col gap-2 min-h-[50px]">
+        <div ref={setBucketRef} className="p-2 flex-1 overflow-y-auto flex flex-col gap-1 min-h-[50px] scrollbar-kanban">
           {cards.map((c, idx) => (
-            <div key={c.id} className="flex flex-col gap-2">
+            <div key={c.id} className="flex flex-col gap-1">
               <DroppableSlot id={`slot-${bucket.key}-${idx}`} />
               <KanbanCard
                 card={c}
