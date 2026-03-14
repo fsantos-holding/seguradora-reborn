@@ -115,8 +115,11 @@ async function loadBoards() {
         const card = document.createElement("div");
         card.className = "board-card";
         const isBoardReborn = b.id === "b_reborn";
+        const isAdmin = getAuth()?.user?.isAdmin;
         const actionsHtml = isBoardReborn
-          ? '<span class="meta" style="font-style:italic">Board padrão</span>'
+          ? (isAdmin
+              ? `<div class="actions"><button class="btn-del" onclick="event.stopPropagation();deleteBoard('${b.id}','${escapeHtml(b.name).replace(/'/g,"\\'")}')">Excluir</button></div>`
+              : '<span class="meta" style="font-style:italic">Board padrão</span>')
           : `<div class="actions">
           <button onclick="event.stopPropagation();editBoardName('${b.id}','${escapeHtml(b.name).replace(/'/g,"\\'")}')">Renomear</button>
           <button class="btn-del" onclick="event.stopPropagation();deleteBoard('${b.id}','${escapeHtml(b.name).replace(/'/g,"\\'")}')">Excluir</button>
