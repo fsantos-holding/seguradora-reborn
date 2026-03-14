@@ -61,7 +61,7 @@ async function updateBoard(boardId, updates) {
 }
 
 async function deleteBoard(boardId, userId, isAdmin) {
-  if (boardId === BOARD_REBORN_ID) return false;
+  if (boardId === BOARD_REBORN_ID && !isAdmin) return false;
   const board = await getBoard(boardId);
   if (!board) return false;
   if (board.ownerId !== userId && !isAdmin) return false;
