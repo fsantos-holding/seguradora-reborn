@@ -111,20 +111,24 @@ async function loadBoards() {
   grid.innerHTML = '<div class="card-new" onclick="openNewBoardModal()">+ Novo Board</div>';
   if (boards && boards.length > 0) {
     empty.style.display = "none";
-    boards.forEach((b) => {
-      const card = document.createElement("div");
-      card.className = "board-card";
-      card.innerHTML = `
-        <h3>${escapeHtml(b.name)}</h3>
-        <span class="meta">Atualizado: ${formatDate(b.lastUpdated)}</span>
-        <div class="actions">
+      boards.forEach((b) => {
+        const card = document.createElement("div");
+        card.className = "board-card";
+        const isBoardReborn = b.id === "b_reborn";
+        const actionsHtml = isBoardReborn
+          ? '<span class="meta" style="font-style:italic">Board padrão</span>'
+          : `<div class="actions">
           <button onclick="event.stopPropagation();editBoardName('${b.id}','${escapeHtml(b.name).replace(/'/g,"\\'")}')">Renomear</button>
           <button class="btn-del" onclick="event.stopPropagation();deleteBoard('${b.id}','${escapeHtml(b.name).replace(/'/g,"\\'")}')">Excluir</button>
-        </div>
+        </div>`;
+        card.innerHTML = `
+        <h3>${escapeHtml(b.name)}</h3>
+        <span class="meta">Atualizado: ${formatDate(b.lastUpdated)}</span>
+        ${actionsHtml}
       `;
-      card.onclick = () => { window.location.href = "board.html?id=" + encodeURIComponent(b.id); };
-      grid.insertBefore(card, grid.firstChild);
-    });
+        card.onclick = () => { window.location.href = "board.html?id=" + encodeURIComponent(b.id); };
+        grid.insertBefore(card, grid.firstChild);
+      });
   } else {
     empty.style.display = "block";
   }

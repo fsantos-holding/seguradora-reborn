@@ -4,6 +4,7 @@ const {
   updateBoard,
   deleteBoard,
   userCanAccessBoard,
+  BOARD_REBORN_ID,
 } = require("../lib/kv-boards");
 
 function cors(res) {
@@ -42,7 +43,7 @@ module.exports = async (req, res) => {
       if (typeof body === "string") body = JSON.parse(body || "{}");
 
       const updates = {};
-      if (body.name !== undefined) updates.name = (body.name || "").trim().slice(0, 100);
+      if (body.name !== undefined && boardId !== BOARD_REBORN_ID) updates.name = (body.name || "").trim().slice(0, 100);
       if (body.cards !== undefined) updates.cards = body.cards;
       if (body.config !== undefined) updates.config = body.config;
       if (body.mapaProducao !== undefined) updates.mapaProducao = body.mapaProducao;
@@ -59,6 +60,7 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === "DELETE") {
+      if (boardId === BOARD_REBORN_ID) return res.status(400).json({ error: "O Board-Reborn não pode ser excluído" });
       const ok = await deleteBoard(boardId, payload.id, payload.isAdmin);
       if (!ok) return res.status(404).json({ error: "Board não encontrado" });
       return res.status(200).json({ ok: true });

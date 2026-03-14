@@ -42,5 +42,11 @@
       {"key":"Em Produção","label":"Em Produção","color":"#10B981"}
     ],
     "collapsedColumns": []
-  }
+  },
+  "mapaProducao": [
+    {"papel":"Corretor","equipe":"Comercial","linha":"Todas as Linhas","operacoes":"SERPRO (RF), SUSEP"},
+    {"papel":"Cliente / Pagador","equipe":"D&O","linha":"Financial Lines","operacoes":"SERPRO (RF), SERASA"},
+    {"papel":"Cliente","equipe":"E&O, RCG, Petróleo","linha":"Garantia — RC Profissional, RC Geral, Energy, Subscrição","operacoes":"SERPRO (RF)"},
+    {"papel":"Tomador","equipe":"Comercial","linha":"Garantia","operacoes":"SERPRO (RF), SERASA"}
+  ]
 }
