@@ -3,36 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
-import { apiFetch, ApiError } from "@/lib/api-client";
-import type { AuthUser } from "@/context/auth-context";
-
-const VERCEL_403_MSG =
-  "Acesso bloqueado (403). Se estiver na Vercel com Deployment Protection ativa, " +
-  "configure Protection Bypass for Automation e defina NEXT_PUBLIC_VERCEL_BYPASS_SECRET. " +
-  "Veja o README para detalhes.";
-
-async function handleAuthResponse(
-  res: Response,
-  remember: boolean,
-  onSuccess: (token: string, user: AuthUser, remember: boolean) => void,
-  onError: (msg: string) => void
-): Promise<boolean> {
-  if (res.status === 403) {
-    onError(VERCEL_403_MSG);
-    return false;
-  }
-  const data = await res.json().catch(() => ({})) as { token?: string; user?: AuthUser; error?: string };
-  if (!res.ok) {
-    onError(data.error ?? "Erro ao processar.");
-    return false;
-  }
-  if (data.token && data.user) {
-    onSuccess(data.token, data.user, remember);
-    return true;
-  }
-  onError("Resposta inválida do servidor.");
-  return false;
-}
+import { loginAction, registerAction } from "@/app/actions/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -45,29 +16,6 @@ export default function LoginPage() {
     if (isChecked && user) router.replace("/boards");
   }, [isChecked, user, router]);
 
-  const submitAuth = async (
-    endpoint: string,
-    body: Record<string, string>,
-    remember: boolean
-  ) => {
-    setError("");
-    setLoading(true);
-    try {
-      const res = await apiFetch(endpoint, {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
-      const ok = await handleAuthResponse(res, remember, (token, u, rem) => login(token, u, rem), setError);
-      if (ok) router.replace("/boards");
-    } catch (e) {
-      setError(
-        e instanceof ApiError ? e.message : "Erro de conexão. Tente novamente."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -78,7 +26,21 @@ export default function LoginPage() {
       setError("Preencha usuário e senha.");
       return;
     }
-    await submitAuth("/api/auth/login", { username: userInput, password: pwd }, remember);
+    setError("");
+    setLoading(true);
+    try {
+      const result = await loginAction(userInput, pwd);
+      if (result.ok) {
+        login(result.token, result.user, remember);
+        router.replace("/boards");
+      } else {
+        setError(result.error);
+      }
+    } catch {
+      setError("Erro de conexão. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +58,21 @@ export default function LoginPage() {
       setError("Senha deve ter pelo menos 4 caracteres.");
       return;
     }
-    await submitAuth("/api/auth/register", { name, email, password: pwd }, remember);
+    setError("");
+    setLoading(true);
+    try {
+      const result = await registerAction(name, email, pwd);
+      if (result.ok) {
+        login(result.token, result.user, remember);
+        router.replace("/boards");
+      } else {
+        setError(result.error);
+      }
+    } catch {
+      setError("Erro de conexão. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const switchTab = (tab: "login" | "register") => {

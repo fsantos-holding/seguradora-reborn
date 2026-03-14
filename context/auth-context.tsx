@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { getApiHeaders, apiFetch } from "@/lib/api-client";
+import { validateTokenAction } from "@/app/actions/auth";
 
 const AUTH_KEY = "reborn_auth";
 
@@ -87,20 +88,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    apiFetch("/api/auth/me", {
-      headers: getApiHeaders({ Authorization: `Bearer ${stored.token}` }),
-    })
-      .then(async (r) => {
-        if (!r.ok) {
-          clearStoredAuth();
-          setState({ token: null, user: null, isLoading: false, isChecked: true });
-          return;
-        }
-        const res = await r.json();
-        if (res.user) {
+    // Usa Server Action para validar token (evita 403 da Vercel Protection)
+    validateTokenAction(stored.token)
+      .then((result) => {
+        if (result.ok) {
           setState({
             token: stored.token,
-            user: res.user,
+            user: result.user,
             isLoading: false,
             isChecked: true,
           });
