@@ -77,6 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data?.token) {
         fetch("/api/auth/me", {
           headers: { Authorization: `Bearer ${data.token}` },
+          credentials: "same-origin",
         })
           .then((r) => r.json())
           .then((res) => {

@@ -32,10 +32,14 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: userInput, password: pwd }),
+        credentials: "same-origin",
       });
       if (r.status === 403) {
+        const isPreview = typeof window !== "undefined" && /-git-/.test(window.location.hostname);
         setError(
-          "Acesso bloqueado (403). Se estiver na Vercel, desative a Deployment Protection em Settings → Deployment Protection."
+          "Acesso bloqueado (403) pela Vercel Deployment Protection. " +
+          (isPreview ? "Você está em uma URL de preview — use a URL de produção ou " : "") +
+          "Vá em: Projeto → Settings → Deployment Protection → defina Protection para 'None'. Depois faça um novo deploy."
         );
         return;
       }
@@ -75,10 +79,14 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password: pwd }),
+        credentials: "same-origin",
       });
       if (r.status === 403) {
+        const isPreview = typeof window !== "undefined" && /-git-/.test(window.location.hostname);
         setError(
-          "Acesso bloqueado (403). Se estiver na Vercel, desative a Deployment Protection em Settings → Deployment Protection."
+          "Acesso bloqueado (403) pela Vercel Deployment Protection. " +
+          (isPreview ? "Você está em uma URL de preview — use a URL de produção ou " : "") +
+          "Vá em: Projeto → Settings → Deployment Protection → defina Protection para 'None'. Depois faça um novo deploy."
         );
         return;
       }

@@ -72,15 +72,20 @@ O sistema usa **Vercel KV (Redis)** para persistir dados.
 
 ## Erro 403 no login/cadastro (Vercel)
 
-Se login e cadastro retornam **403 Forbidden** na Vercel, a causa provável é a **Deployment Protection** bloqueando as requisições à API antes de chegarem à aplicação.
+Se login e cadastro retornam **403 Forbidden** na Vercel, a causa é a **Deployment Protection** bloqueando requisições à API antes de chegarem à aplicação.
 
-**Solução:** Desative a Deployment Protection para o ambiente de produção:
+### Solução: desative a Deployment Protection
 
-1. Vercel Dashboard → seu projeto → **Settings** → **Deployment Protection**
-2. Em **Vercel Authentication** ou **Password Protection**, desative para **Production**
-3. Faça um novo deploy se necessário
+1. Acesse o [Vercel Dashboard](https://vercel.com/dashboard) → seu projeto
+2. Vá em **Settings** → **Deployment Protection**
+3. Em **Protection**, selecione **None** (ou desative Vercel Authentication e defina o escopo para None)
+4. Salve e faça um **novo deploy** (Redeploy no último deployment)
 
-A aplicação já possui autenticação própria (JWT, usuário Admin), então a proteção da Vercel é redundante e pode impedir o funcionamento do login.
+### Observações
+
+- **Standard Protection** protege previews; produção fica pública. Se estiver em URL de preview (`*-git-*.vercel.app`), ainda receberá 403.
+- **All Deployments** protege tudo (produção e preview). Requer Pro/Enterprise.
+- **None** deixa todos os deploys públicos. A aplicação já usa autenticação própria (JWT), então a proteção da Vercel é redundante.
 
 ## Rotas
 
