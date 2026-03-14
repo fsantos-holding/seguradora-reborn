@@ -60,6 +60,8 @@ export function KanbanBoard({
     id: string;
     label: string;
   } | null>(null);
+  const [addColumnOpen, setAddColumnOpen] = useState(false);
+  const [newColumnName, setNewColumnName] = useState("");
 
   const buckets = db.config.bucketOrder;
   const collapsed = new Set(db.config.collapsedColumns || []);
@@ -90,6 +92,36 @@ export function KanbanBoard({
 
   const visibleCardsByBucket = (bucketKey: string) =>
     getCardsByBucket(bucketKey).filter(filterCard);
+
+  const COLUMN_COLORS = ["#9CA3AF", "#8B5CF6", "#0A1F3F", "#00C9B7", "#F97316", "#10B981", "#3B82F6", "#EC4899"];
+  const addColumn = () => {
+    const label = newColumnName.trim() || "Nova Coluna";
+    const key = `col_${Date.now()}`;
+    const color = COLUMN_COLORS[buckets.length % COLUMN_COLORS.length];
+    updateDb((prev) => ({
+      ...prev,
+      config: {
+        ...prev.config,
+        bucketOrder: [...prev.config.bucketOrder, { key, label, color }],
+      },
+    }));
+    setNewColumnName("");
+    setAddColumnOpen(false);
+  };
+
+  const deleteColumn = (key: string) => {
+    const fallbackKey = buckets.find((b) => b.key !== key)?.key;
+    updateDb((prev) => ({
+      ...prev,
+      cards: prev.cards.map((c) => (c.bucket === key && fallbackKey ? { ...c, bucket: fallbackKey } : c)),
+      config: {
+        ...prev.config,
+        bucketOrder: prev.config.bucketOrder.filter((b) => b.key !== key),
+        collapsedColumns: (prev.config.collapsedColumns || []).filter((k) => k !== key),
+      },
+    }));
+    setConfirmDelete(null);
+  };
 
   const toggleCollapsed = (key: string) => {
     const next = new Set(collapsed);
@@ -389,6 +421,7 @@ export function KanbanBoard({
                 setModalMode("edit");
               }}
               onDeleteCard={(id) => setConfirmDelete({ type: "card", id, label: "" })}
+              onDeleteColumn={buckets.length > 1 ? () => setConfirmDelete({ type: "bucket", id: b.key, label: b.label }) : undefined}
               onSetDirection={(cardId, dir) => {
                 updateDb((prev) => ({
                   ...prev,
@@ -401,6 +434,15 @@ export function KanbanBoard({
               dirColors={DIR_COLORS}
             />
           ))}
+
+          <button
+            type="button"
+            onClick={() => setAddColumnOpen(true)}
+            className="shrink-0 min-w-[52px] w-[52px] h-[120px] rounded-[var(--rad)] border border-dashed border-[var(--g300)] bg-[var(--g50)] flex items-center justify-center text-[var(--g400)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] hover:bg-[rgba(0,201,183,0.04)] transition-all cursor-pointer group"
+            title="Adicionar coluna"
+          >
+            <span className="text-xl font-light group-hover:scale-110 transition-transform">+</span>
+          </button>
 
           <DragOverlay>
             {activeCard ? (
@@ -446,6 +488,7 @@ export function KanbanBoard({
       <div className="fixed top-14 right-6 flex gap-2 z-[200]">
         <button
           onClick={() => {
+            if (buckets.length === 0) return;
             setModalCard({
               id: "",
               bucket: buckets[0]?.key || "Backlog",
@@ -460,7 +503,9 @@ export function KanbanBoard({
             });
             setModalMode("new");
           }}
-          className="px-3.5 py-2 rounded-md font-bold text-sm bg-[var(--lime)] text-[var(--navy)] hover:bg-[var(--teal)]"
+          className={`px-3.5 py-2 rounded-md font-bold text-sm ${buckets.length === 0 ? "bg-[var(--g200)] text-[var(--g500)] cursor-not-allowed" : "bg-[var(--lime)] text-[var(--navy)] hover:bg-[var(--teal)]"}`}
+          disabled={buckets.length === 0}
+          title={buckets.length === 0 ? "Adicione uma coluna primeiro" : undefined}
         >
           + Novo Card
         </button>
@@ -517,6 +562,43 @@ export function KanbanBoard({
         />
       )}
 
+      {addColumnOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-[400] flex items-center justify-center"
+          onClick={() => setAddColumnOpen(false)}
+        >
+          <div
+            className="bg-white rounded-[var(--rad)] p-6 min-w-[280px] shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-display font-bold text-[var(--navy)] mb-4">Nova coluna</h3>
+            <input
+              type="text"
+              value={newColumnName}
+              onChange={(e) => setNewColumnName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addColumn()}
+              placeholder="Ex: Backlog, Em progresso..."
+              className="w-full px-3 py-2 border border-[var(--g200)] rounded-lg text-sm mb-4 focus:border-[var(--teal)] outline-none"
+              autoFocus
+            />
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={() => { setAddColumnOpen(false); setNewColumnName(""); }}
+                className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-[var(--g100)] text-[var(--g600)] border border-[var(--g200)] hover:bg-[var(--g200)]"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={addColumn}
+                className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)]"
+              >
+                Criar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {confirmDelete && (
         <div className="fixed inset-0 bg-black/30 z-[400] flex items-center justify-center">
           <div className="bg-white rounded-[var(--rad)] p-6 min-w-[280px] text-center shadow-xl">
@@ -539,6 +621,8 @@ export function KanbanBoard({
                       ...prev,
                       cards: prev.cards.filter((c) => c.id !== confirmDelete.id),
                     }));
+                  } else {
+                    deleteColumn(confirmDelete.id);
                   }
                   setConfirmDelete(null);
                 }}

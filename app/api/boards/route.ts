@@ -6,7 +6,6 @@ import {
   createBoard,
   ensureBoardReborn,
   getDefaultBoardData,
-  BOARD_REBORN_ID,
 } from "@/lib/kv-boards";
 import { ensureAdminUser } from "@/lib/kv-users";
 
@@ -49,21 +48,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const name = (body.name || "Novo Board").trim().slice(0, 100);
 
-    const boardReborn = await getBoard(BOARD_REBORN_ID);
-    const templateData = boardReborn
-      ? {
-          version: boardReborn.version || "2.0",
-          cards: boardReborn.cards || [],
-          config: boardReborn.config || { bucketOrder: [], collapsedColumns: [] },
-          mapaProducao: boardReborn.mapaProducao || [],
-        }
-      : getDefaultBoardData();
-
     const board = await createBoard(payload.id, name, {
-      version: templateData.version,
-      cards: templateData.cards,
-      config: templateData.config as { bucketOrder: unknown[]; collapsedColumns?: string[] },
-      mapaProducao: templateData.mapaProducao,
+      version: "2.0",
+      cards: [],
+      config: { bucketOrder: [], collapsedColumns: [] },
+      mapaProducao: [],
     });
     return NextResponse.json(
       {

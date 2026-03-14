@@ -11,6 +11,7 @@ interface KanbanColumnProps {
   onToggleCollapse: () => void;
   onEditCard: (card: CardData) => void;
   onDeleteCard: (id: string) => void;
+  onDeleteColumn?: () => void;
   onSetDirection: (cardId: string, dir: string) => void;
   directions: string[];
   dirColors: Record<string, string>;
@@ -23,6 +24,7 @@ export function KanbanColumn({
   onToggleCollapse,
   onEditCard,
   onDeleteCard,
+  onDeleteColumn,
   onSetDirection,
   directions,
   dirColors,
@@ -64,6 +66,19 @@ export function KanbanColumn({
         >
           ◂
         </button>
+        {onDeleteColumn && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteColumn();
+            }}
+            className="w-5 h-5 rounded-full border border-[var(--g200)] bg-white text-[var(--g500)] flex items-center justify-center text-[10px] hover:border-[var(--red)] hover:text-[var(--red)]"
+            title="Excluir coluna"
+          >
+            ×
+          </button>
+        )}
       </div>
 
       {!collapsed && (

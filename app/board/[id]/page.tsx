@@ -194,9 +194,15 @@ export default function BoardPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/boards"
-              className="text-[var(--g400)] text-sm no-underline mr-2 hover:text-white"
+              className="flex items-center gap-1.5 text-[var(--g400)] text-sm no-underline mr-2 hover:text-white transition-colors"
             >
-              ← Boards
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 opacity-80">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+              Boards
             </Link>
             <div className="w-1 h-6 bg-[var(--teal)] rounded-sm" />
             <h1 className="font-display font-extrabold text-base text-white">

@@ -86,14 +86,14 @@ export default function LoginPage() {
 
   if (!isChecked) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--navy)] to-[#0d2d5c]">
-        <p className="text-white/80">Carregando...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f8fafc] to-[#eef2f6]">
+        <p className="text-[var(--g600)]">Carregando...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-[var(--navy)] to-[#0d2d5c]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-[#f8fafc] to-[#eef2f6]">
       <div className="bg-white rounded-xl shadow-[0_8px_32px_rgba(10,31,63,0.12)] w-full max-w-[400px] p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-7 bg-[var(--teal)] rounded-sm" />
