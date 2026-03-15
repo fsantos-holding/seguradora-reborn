@@ -15,6 +15,9 @@ interface CardModalProps {
   onDelete?: (cardId: string) => void;
 }
 
+const inputBase =
+  "w-full px-4 py-3 border border-[var(--g200)] rounded-xl text-sm transition-all duration-200 outline-none focus:border-[var(--teal)] focus:ring-2 focus:ring-[rgba(0,201,183,0.15)] hover:border-[var(--g300)]";
+
 export function CardModal({
   card,
   mode,
@@ -78,181 +81,200 @@ export function CardModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-[300] flex items-center justify-center backdrop-blur-sm"
+      className="fixed inset-0 z-[300] flex items-center justify-center p-4 card-modal-backdrop"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-[var(--rad)] w-[95%] max-w-[560px] max-h-[90vh] overflow-y-auto p-6 shadow-[var(--shadow-drag)] relative"
+        className="absolute inset-0 bg-[var(--navy)]/40 backdrop-blur-md"
+        aria-hidden
+      />
+      <div
+        className="relative bg-white rounded-2xl w-full max-w-[720px] max-h-[90vh] overflow-y-auto shadow-[0_24px_80px_rgba(10,31,63,0.2)] border border-[var(--g200)]/60 scrollbar-kanban card-modal-content"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-3 right-3 w-7 h-7 rounded-full border-none bg-[var(--g100)] text-[var(--g500)] flex items-center justify-center text-sm hover:bg-[var(--g200)] hover:text-[var(--g800)]"
-        >
-          ×
-        </button>
-        <div className="font-display font-extrabold text-base text-[var(--g800)] mb-4 flex items-center gap-2">
-          {mode === "edit" ? "Editar" : "Novo Card"}{" "}
-          {mode === "edit" && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-lg bg-[var(--blue-bg)] text-[var(--blue)] border border-[var(--blue-b)]">
-              {card.id}
-            </span>
-          )}
-        </div>
+        {/* Barra de destaque superior */}
+        <div
+          className="h-1 rounded-t-2xl"
+          style={{
+            background: "linear-gradient(90deg, var(--teal), var(--teal-d))",
+          }}
+        />
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-              ID
-            </label>
-            <input
-              type="text"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
-              placeholder="Ex: DI-700"
-              className="w-full px-3 py-2 border border-[var(--g200)] rounded-[var(--rad-sm)] text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-              Título
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Título executivo"
-              className="w-full px-3 py-2 border border-[var(--g200)] rounded-[var(--rad-sm)] text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-              Descrição
-            </label>
-            <textarea
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              placeholder="Descrição"
-              rows={3}
-              className="w-full px-3 py-2 border border-[var(--g200)] rounded-[var(--rad-sm)] text-sm resize-y"
-            />
-          </div>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-                Coluna
-              </label>
-              <select
-                value={bucket}
-                onChange={(e) => setBucket(e.target.value)}
-                className="w-full px-3 py-2 border border-[var(--g200)] rounded-[var(--rad-sm)] text-sm"
-              >
-                {buckets.map((b) => (
-                  <option key={b.key} value={b.key}>
-                    {b.label}
-                  </option>
-                ))}
-              </select>
+        <div className="p-8">
+          <div className="flex items-start justify-between gap-4 mb-6">
+            <div>
+              <h2 className="font-display font-extrabold text-xl text-[var(--g800)] flex items-center gap-3">
+                {mode === "edit" ? "Editar Card" : "Novo Card"}
+                {mode === "edit" && (
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[var(--blue-bg)] text-[var(--blue)] border border-[var(--blue-b)]">
+                    {card.id}
+                  </span>
+                )}
+              </h2>
+              <p className="text-sm text-[var(--g500)] mt-1">
+                {mode === "edit"
+                  ? "Atualize as informações do card"
+                  : "Preencha os dados para criar um novo card"}
+              </p>
             </div>
-            <div className="flex-1">
-              <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-                Prioridade
-              </label>
-              <select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
-                className="w-full px-3 py-2 border border-[var(--g200)] rounded-[var(--rad-sm)] text-sm"
-              >
-                {priorities.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-                Progresso
-              </label>
-              <select
-                value={progress}
-                onChange={(e) => setProgress(e.target.value)}
-                className="w-full px-3 py-2 border border-[var(--g200)] rounded-[var(--rad-sm)] text-sm"
-              >
-                {progresses.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex-1">
-              <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-                Data de Conclusão
-              </label>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 border border-[var(--g200)] rounded-[var(--rad-sm)] text-sm"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-[var(--g600)] mb-1 uppercase tracking-wide">
-              Rótulos
-            </label>
-            <div className="flex flex-wrap gap-1">
-              {filterLabels.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => toggleTag(t)}
-                  className={`px-2 py-1 rounded-full text-xs font-semibold border transition-all ${
-                    tags.has(t)
-                      ? "bg-[var(--teal)] text-[var(--navy)] border-[var(--teal)]"
-                      : "bg-white text-[var(--g600)] border-[var(--g200)] hover:border-[var(--teal)]"
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex gap-2 justify-end mt-6 flex-wrap">
-          {mode === "edit" && onDelete && (
             <button
               type="button"
-              onClick={() => {
-                if (confirm("Excluir este card?")) {
-                  onDelete(card.id);
-                  onClose();
-                }
-              }}
-              className="mr-auto px-3 py-2 rounded-md text-sm font-semibold bg-[var(--red-bg)] text-[var(--red)] border border-[var(--red-b)] hover:bg-[var(--red)] hover:text-white"
+              onClick={onClose}
+              className="w-10 h-10 rounded-xl border border-[var(--g200)] bg-[var(--g50)] text-[var(--g500)] flex items-center justify-center text-lg hover:bg-[var(--g200)] hover:text-[var(--g800)] transition-all duration-200 shrink-0"
             >
-              Excluir
+              ×
             </button>
-          )}
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-3.5 py-2 rounded-md font-semibold text-sm bg-[var(--g100)] text-[var(--g600)] border border-[var(--g200)]"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            className="px-3.5 py-2 rounded-md font-bold text-sm bg-[var(--teal)] text-[var(--navy)] hover:bg-[var(--lime)]"
-          >
-            Salvar
-          </button>
+          </div>
+
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-xs font-semibold text-[var(--g600)] mb-2 uppercase tracking-wider">
+                  ID
+                </label>
+                <input
+                  type="text"
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
+                  placeholder="Ex: DI-700"
+                  className={inputBase}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[var(--g600)] mb-2 uppercase tracking-wider">
+                  Coluna
+                </label>
+                <select
+                  value={bucket}
+                  onChange={(e) => setBucket(e.target.value)}
+                  className={inputBase}
+                >
+                  {buckets.map((b) => (
+                    <option key={b.key} value={b.key}>
+                      {b.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[var(--g600)] mb-2 uppercase tracking-wider">
+                Título
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Título executivo do card"
+                className={`${inputBase} text-base font-medium`}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[var(--g600)] mb-2 uppercase tracking-wider">
+                Descrição
+              </label>
+              <textarea
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                placeholder="Descreva os detalhes do card..."
+                rows={4}
+                className={`${inputBase} resize-y min-h-[100px]`}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              <div>
+                <label className="block text-xs font-semibold text-[var(--g600)] mb-2 uppercase tracking-wider">
+                  Prioridade
+                </label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className={inputBase}
+                >
+                  {priorities.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[var(--g600)] mb-2 uppercase tracking-wider">
+                  Progresso
+                </label>
+                <select
+                  value={progress}
+                  onChange={(e) => setProgress(e.target.value)}
+                  className={inputBase}
+                >
+                  {progresses.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[var(--g600)] mb-2 uppercase tracking-wider">
+                  Data de Conclusão
+                </label>
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className={inputBase}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[var(--g600)] mb-2 uppercase tracking-wider">
+                Rótulos
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {filterLabels.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => toggleTag(t)}
+                    className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all duration-200 ${
+                      tags.has(t)
+                        ? "bg-[var(--teal)] text-[var(--navy)] border-[var(--teal)] shadow-sm"
+                        : "bg-white text-[var(--g600)] border-[var(--g200)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] hover:bg-[rgba(0,201,183,0.06)]"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-3 justify-end mt-8 pt-6 border-t border-[var(--g200)] flex-wrap">
+            {mode === "edit" && onDelete && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm("Excluir este card?")) {
+                    onDelete(card.id);
+                    onClose();
+                  }
+                }}
+                className="mr-auto btn-danger"
+              >
+                Excluir
+              </button>
+            )}
+            <button type="button" onClick={onClose} className="btn-secondary">
+              Cancelar
+            </button>
+            <button type="button" onClick={handleSave} className="btn-primary">
+              Salvar
+            </button>
+          </div>
         </div>
       </div>
     </div>

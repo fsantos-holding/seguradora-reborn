@@ -63,12 +63,12 @@ export function KanbanCard({
           onEdit();
         }
       }}
-      className={`bg-white border border-[var(--g200)] rounded-[var(--rad-sm)] p-2.5 cursor-grab active:cursor-grabbing transition-all hover:shadow-[var(--shadow-md)] hover:border-[var(--g300)] ${
-        isDragging ? "opacity-35 scale-[0.96]" : ""
+      className={`bg-white border border-[var(--g200)] rounded-xl p-3.5 cursor-grab active:cursor-grabbing transition-all duration-200 ease-out hover:shadow-[0_4px_20px_rgba(10,31,63,0.08)] hover:border-[var(--g300)] ${
+        isDragging ? "opacity-40 scale-[0.98]" : ""
       }`}
     >
-      <div className="flex items-center justify-between gap-2 mb-1">
-        <span className="text-[10px] font-bold text-[var(--g400)] font-mono">{card.id}</span>
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <span className="text-[11px] font-bold text-[var(--g400)] font-mono">{card.id}</span>
         <div className="flex items-center gap-1">
           <button
             type="button"
@@ -85,17 +85,17 @@ export function KanbanCard({
           </span>
         </div>
       </div>
-      <div className="font-display font-bold text-xs text-[var(--g800)] leading-tight mb-1">
+      <div className="font-display font-bold text-sm text-[var(--g800)] leading-tight mb-1.5">
         {card.title}
       </div>
-      <div className="text-[11px] text-[var(--g500)] leading-snug mb-2 line-clamp-2">
+      <div className="text-xs text-[var(--g500)] leading-snug mb-2.5 line-clamp-2">
         {card.desc}
       </div>
-      <div className="flex flex-wrap gap-1 mb-2">
+      <div className="flex flex-wrap gap-1.5 mb-2">
         {card.tags.map((t) => (
           <span
             key={t}
-            className={`text-[10px] font-medium px-1 py-0.5 rounded bg-[var(--g100)] text-[var(--g500)] ${
+            className={`text-[11px] font-medium px-1.5 py-0.5 rounded-md bg-[var(--g100)] text-[var(--g500)] ${
               t === "Incidente" ? "bg-[var(--orange-bg)] text-[var(--orange)] border border-[var(--orange-b)] font-semibold" : ""
             }`}
           >
@@ -106,23 +106,23 @@ export function KanbanCard({
       <div className="flex items-center gap-2 flex-wrap mb-2">
         <div className="flex items-center gap-1">
           <div
-            className="w-1 h-1 rounded-full"
+            className="w-1.5 h-1.5 rounded-full"
             style={{ background: progColor }}
           />
-          <span className="text-[10px] text-[var(--g400)] font-medium">{card.progress}</span>
+          <span className="text-[11px] text-[var(--g400)] font-medium">{card.progress}</span>
         </div>
         {dr !== null && (
-          <span className={`flex items-center gap-1 text-[10px] font-semibold ${dueClass}`}>
+          <span className={`flex items-center gap-1 text-[11px] font-semibold ${dueClass}`}>
             <span>◷</span>
             {dueText}
           </span>
         )}
       </div>
-      <div className="border-t border-[var(--g100)] pt-2 mt-1">
-        <span className="text-[10px] font-semibold text-[var(--g400)] uppercase block mb-1">
+      <div className="border-t border-[var(--g100)] pt-2.5 mt-2">
+        <span className="text-[11px] font-semibold text-[var(--g400)] uppercase block mb-2">
           Direcionamento
         </span>
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {directions.map((d) => {
             const dk = d.toLowerCase();
             const sel = card.direction === dk;
@@ -130,7 +130,7 @@ export function KanbanCard({
               <button
                 key={d}
                 type="button"
-                className={`dir-btn text-[10px] font-semibold px-2 py-1 rounded border transition-all ${
+                className={`dir-btn text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border transition-all duration-200 ${
                   sel
                     ? `text-white ${dk === "manter" ? "bg-[#059669] border-[#059669]" : dk === "priorizar" ? "bg-[var(--teal-d)] border-[var(--teal-d)]" : dk === "adiar" ? "bg-[var(--amber)] border-[var(--amber)] text-[var(--g800)]" : dk === "cancelar" ? "bg-[var(--red)] border-[var(--red)]" : "bg-[var(--g600)] border-[var(--g600)]"}`
                     : "bg-white text-[var(--g500)] border-[var(--g200)] hover:border-[var(--teal)] hover:text-[var(--teal-d)] hover:bg-[#F0FDFB]"

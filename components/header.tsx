@@ -15,7 +15,7 @@ export function Header({ title = "PLATAFORMA REBORN", backHref, backLabel = "←
 
   return (
     <header className="bg-[var(--navy)] sticky top-0 z-[200]">
-      <div className="max-w-[1900px] mx-auto px-6 py-3.5 flex items-center justify-between gap-4 flex-wrap">
+      <div className="max-w-[1900px] mx-auto px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           {backHref && (
             <Link
@@ -31,7 +31,7 @@ export function Header({ title = "PLATAFORMA REBORN", backHref, backLabel = "←
             {title && <> — {title}</>}
           </h1>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
           {user && (
             <span className="text-sm text-[var(--g400)]">
               {user.name || user.username || "Usuário"}
@@ -41,14 +41,14 @@ export function Header({ title = "PLATAFORMA REBORN", backHref, backLabel = "←
           {user?.isAdmin && (
             <Link
               href="/users"
-              className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-transparent text-[var(--g400)] border border-[var(--g600)] hover:text-white hover:border-[var(--g400)] transition-colors no-underline"
+              className="btn-ghost no-underline"
             >
               Administrar Usuários
             </Link>
           )}
           <button
             onClick={logout}
-            className="px-3.5 py-2 rounded-lg font-semibold text-sm bg-transparent text-[var(--g400)] border border-[var(--g600)] hover:text-white hover:border-[var(--g400)] transition-colors cursor-pointer"
+            className="btn-ghost cursor-pointer"
           >
             Sair
           </button>
