@@ -162,6 +162,14 @@
   .card-modal-content {
     animation: cardModalSlideIn 0.25s cubic-bezier(0.18, 0.67, 0.6, 1.02) forwards;
   }
+
+  /* Animação fade-in genérica para modais (descrição, mapa, etc.) */
+  .modal-overlay-animate {
+    animation: modalOverlayFade 0.28s ease forwards;
+  }
+  .modal-content-animate {
+    animation: modalContentFade 0.3s ease forwards;
+  }
 }
 
 @keyframes cardModalFadeIn {
@@ -181,5 +189,25 @@
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalOverlayFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalContentFade {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

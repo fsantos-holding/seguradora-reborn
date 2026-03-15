@@ -119,11 +119,11 @@ export function MapaModal({ mapaProducao, onClose, onSave }: MapaModalProps) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-[300] flex items-center justify-center backdrop-blur-sm p-4"
+      className="fixed inset-0 bg-black/50 z-[300] flex items-center justify-center backdrop-blur-sm p-4 modal-overlay-animate"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl w-full max-w-[960px] max-h-[90vh] overflow-y-auto shadow-xl relative border border-[var(--g100)]"
+        className="bg-white rounded-2xl w-full max-w-[960px] max-h-[90vh] overflow-y-auto shadow-xl relative border border-[var(--g100)] modal-content-animate"
         onClick={(e) => e.stopPropagation()}
       >
         <button
