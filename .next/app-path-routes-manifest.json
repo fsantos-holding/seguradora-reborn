@@ -1,15 +1,15 @@
 {
-  "/_not-found/page": "/_not-found",
   "/api/auth/login/route": "/api/auth/login",
-  "/api/boards/[id]/route": "/api/boards/[id]",
   "/api/auth/me/route": "/api/auth/me",
-  "/api/boards/route": "/api/boards",
   "/api/auth/register/route": "/api/auth/register",
-  "/api/users/route": "/api/users",
   "/api/users/[id]/route": "/api/users/[id]",
-  "/page": "/",
+  "/api/users/route": "/api/users",
+  "/api/boards/route": "/api/boards",
+  "/api/boards/[id]/route": "/api/boards/[id]",
+  "/_not-found/page": "/_not-found",
   "/board/[id]/page": "/board/[id]",
-  "/login/page": "/login",
   "/boards/page": "/boards",
-  "/users/page": "/users"
+  "/page": "/",
+  "/users/page": "/users",
+  "/login/page": "/login"
 }

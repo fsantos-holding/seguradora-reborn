@@ -16,6 +16,7 @@ interface KanbanColumnProps {
   onDeleteCard: (id: string) => void;
   onDeleteColumn?: () => void;
   onSetDirection: (cardId: string, dir: string) => void;
+  onOpenDesc?: (card: CardData) => void;
   directions: string[];
   dirColors: Record<string, string>;
 }
@@ -42,6 +43,7 @@ export function KanbanColumn({
   onDeleteCard,
   onDeleteColumn,
   onSetDirection,
+  onOpenDesc,
   directions,
   dirColors,
 }: KanbanColumnProps) {
@@ -140,6 +142,7 @@ export function KanbanColumn({
                 onEdit={() => onEditCard(c)}
                 onDelete={() => onDeleteCard(c.id)}
                 onSetDirection={(dir) => onSetDirection(c.id, dir)}
+                onOpenDesc={onOpenDesc ? () => onOpenDesc(c) : undefined}
               />
             </div>
           ))}

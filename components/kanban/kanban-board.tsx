@@ -17,6 +17,7 @@ import { KanbanColumn } from "./kanban-column";
 import { KanbanCard } from "./kanban-card";
 import { CardModal } from "./card-modal";
 import { MapaModal } from "./mapa-modal";
+import { DescModal } from "./desc-modal";
 import type { BoardData, CardData, BucketConfig } from "@/app/board/[id]/page";
 
 interface KanbanBoardProps {
@@ -63,6 +64,7 @@ export function KanbanBoard({
   } | null>(null);
   const [addColumnOpen, setAddColumnOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
+  const [descModalCard, setDescModalCard] = useState<CardData | null>(null);
 
   const buckets = db.config.bucketOrder;
   const collapsed = new Set(db.config.collapsedColumns || []);
@@ -500,6 +502,7 @@ export function KanbanBoard({
                     ),
                   }));
                 }}
+                onOpenDesc={(c) => setDescModalCard(c)}
                 directions={directions}
                 dirColors={DIR_COLORS}
               />
@@ -521,6 +524,7 @@ export function KanbanBoard({
                   onEdit={() => {}}
                   onDelete={() => {}}
                   onSetDirection={() => {}}
+                  onOpenDesc={undefined}
                   isDragging
                 />
               </div>
@@ -594,6 +598,20 @@ export function KanbanBoard({
           onDelete={(id) => {
             updateDb((prev) => ({ ...prev, cards: prev.cards.filter((c) => c.id !== id) }));
             setModalCard(null);
+          }}
+        />
+      )}
+
+      {descModalCard && (
+        <DescModal
+          card={descModalCard}
+          onClose={() => setDescModalCard(null)}
+          onSave={(cardId, desc) => {
+            updateDb((prev) => ({
+              ...prev,
+              cards: prev.cards.map((c) => (c.id === cardId ? { ...c, desc } : c)),
+            }));
+            setDescModalCard(null);
           }}
         />
       )}

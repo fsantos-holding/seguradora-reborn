@@ -10,6 +10,7 @@ interface KanbanCardProps {
   onEdit: () => void;
   onDelete: () => void;
   onSetDirection: (dir: string) => void;
+  onOpenDesc?: () => void;
   isDragging?: boolean;
 }
 
@@ -27,6 +28,7 @@ export function KanbanCard({
   onEdit,
   onDelete,
   onSetDirection,
+  onOpenDesc,
   isDragging = false,
 }: KanbanCardProps) {
   const { attributes, listeners, setNodeRef } = useDraggable({
@@ -67,9 +69,11 @@ export function KanbanCard({
         isDragging ? "opacity-40 scale-[0.98]" : ""
       }`}
     >
-      <div className="flex items-center justify-between gap-2 mb-1.5">
-        <span className="text-[11px] font-bold text-[var(--g400)] font-mono">{card.id}</span>
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between gap-2 mb-1.5 card-top">
+        <div className="flex items-center gap-0 card-id-wrap">
+          <span className="text-[11px] font-bold text-[var(--g400)] font-mono card-id">{card.id}</span>
+        </div>
+        <div className="flex items-center gap-1 card-top-right">
           <button
             type="button"
             onClick={(e) => {
@@ -80,6 +84,23 @@ export function KanbanCard({
           >
             ✕
           </button>
+          {onOpenDesc && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDesc();
+              }}
+              className="card-desc-btn w-[22px] h-[22px] rounded-md border border-[var(--g200)] bg-[var(--g50)] text-[var(--g500)] flex items-center justify-center shrink-0 hover:bg-[var(--teal)] hover:text-white hover:border-[var(--teal)] transition-all duration-200 [&_svg]:w-3 [&_svg]:h-3 [&_svg]:stroke-[2.5]"
+              title="Ver descrição"
+              aria-label="Ver descrição"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          )}
           <span className={`text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded ${prioClass}`}>
             {card.priority}
           </span>
