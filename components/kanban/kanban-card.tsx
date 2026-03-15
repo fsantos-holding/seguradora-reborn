@@ -79,11 +79,14 @@ export function KanbanCard({
                 e.stopPropagation();
                 onOpenDesc();
               }}
-              className="card-desc-btn w-[22px] h-[22px] rounded-md border border-[var(--g200)] bg-[var(--g50)] text-[var(--g500)] flex items-center justify-center text-xs shrink-0 ml-0.5 hover:bg-[var(--teal)] hover:text-white hover:border-[var(--teal)] transition-all duration-200"
+              className="card-desc-btn w-[22px] h-[22px] rounded-md border border-[var(--g200)] bg-[var(--g50)] text-[var(--g500)] flex items-center justify-center shrink-0 ml-0.5 hover:bg-[var(--teal)] hover:text-white hover:border-[var(--teal)] transition-all duration-200 [&_svg]:w-3 [&_svg]:h-3 [&_svg]:stroke-[2.5]"
               title="Ver descrição"
               aria-label="Ver descrição"
             >
-              👁
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
             </button>
           )}
         </div>
